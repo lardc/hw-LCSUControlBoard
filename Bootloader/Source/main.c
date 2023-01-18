@@ -57,8 +57,6 @@ void ConfigGPIO()
 	
 	//Выходы
 	GPIO_Config(LED_BLINK_PORT, LED_BLINK_PIN, Output, PushPull, HighSpeed, NoPull);
-	GPIO_Config(DAC_PORT, DAC_PIN, Output, PushPull, HighSpeed, NoPull);
-	GPIO_Bit_Rst(DAC_PORT, DAC_PIN);
 	
 	//Альтернативные функции портов
 	GPIO_Config(GPIOA, Pin_9, AltFn, PushPull, HighSpeed, NoPull); //PA9(USART1 TX)

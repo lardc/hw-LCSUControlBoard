@@ -19,9 +19,7 @@
 //
 // Blinking LED settings
 #define LED_BLINK_PORT		GPIOB
-#define LED_BLINK_PIN		Pin_15
+#define LED_BLINK_PIN		Pin_13
 //
-#define DAC_PORT			GPIOA
-#define DAC_PIN				Pin_4
 
 #endif // __BOARD_CONFIG_H
