@@ -35,11 +35,11 @@ extern volatile Int64U CONTROL_TimeCounter;
 extern Int64U CONTROL_LEDTimeout;
 extern volatile Int16U CONTROL_Values_Counter;
 extern volatile Int16U CONTROL_RegulatorErr_Counter;
-extern volatile Int16U CONTROL_ValuesCurrent[VALUES_x_SIZE];
-extern volatile Int16U CONTROL_RegulatorErr[VALUES_x_SIZE];
-extern volatile Int16U CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
-extern volatile Int16U CONTROL_RegulatorOutput[VALUES_x_SIZE];
-extern volatile Int16U CONTROL_DACRawData[VALUES_x_SIZE];
+extern volatile float  CONTROL_ValuesCurrent[VALUES_x_SIZE];
+extern volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
+extern volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
+extern volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
+extern volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 //
 extern volatile RegulatorParamsStruct RegulatorParams;
 

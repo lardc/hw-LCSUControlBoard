@@ -7,7 +7,7 @@
 
 // Constants
 //
-const TableItemConstraint NVConstraint[DATA_TABLE_NV_SIZE] = {
+const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{I_RANGE0_THRESHOLD_MIN, I_RANGE0_THRESHOLD_MAX, I_RANGE0_THRESHOLD_DEF},	// 0
 		{I_RANGE1_THRESHOLD_MIN, I_RANGE1_THRESHOLD_MAX, I_RANGE1_THRESHOLD_DEF},	// 1
 		{V_BAT_THRESHOLD_MIN, V_BAT_THRESHOLD_MAX, V_BAT_THRESHOLD_DEF},			// 2
@@ -135,10 +135,7 @@ const TableItemConstraint NVConstraint[DATA_TABLE_NV_SIZE] = {
 		{0, 0, 0},																	// 124
 		{0, 0, 0},																	// 125
 		{0, 0, 0},																	// 126
-		{0, 0, 0}																	// 127
-};
-
-const TableItemConstraint VConstraint[DATA_TABLE_WP_START - DATA_TABLE_WR_START] = {
+		{0, 0, 0},																	// 127
 		{CURRENT_SETPOINT_MIN, CURRENT_SETPOINT_MAX, 0},							// 128
 		{0, 0, 0},																	// 129
 		{NO, YES, NO},																// 130
