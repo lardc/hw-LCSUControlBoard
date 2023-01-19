@@ -48,6 +48,15 @@ bool DIAG_HandleDiagnosticAction(uint16_t ActionID, uint16_t *pUserError)
 			}
 			break;
 
+		case ACT_DBG_IND_CTRL:
+			{
+				if(CONTROL_State == DS_None)
+					DBGACT_ExtIndication(DataTable[REG_DBG]);
+				else
+					*pUserError = ERR_OPERATION_BLOCKED;
+			}
+			break;
+
 		default:
 			return false;
 	}

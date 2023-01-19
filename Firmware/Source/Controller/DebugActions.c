@@ -15,20 +15,7 @@
 //
 void DBGACT_SetCurrentRange(uint16_t Range)
 {
-	switch(Range)
-	{
-		case CURRENT_RANGE_0:
-			LL_SetCurrentRange0();
-			break;
-
-		case CURRENT_RANGE_1:
-			LL_SetCurrentRange1();
-			break;
-
-		case CURRENT_RANGE_2:
-			LL_SetCurrentRange2();
-			break;
-	}
+	Range ? LL_SetCurrentRange1() : LL_SetCurrentRange0();
 }
 //-----------------------------
 
@@ -44,6 +31,12 @@ void DBGACT_FanControl(bool State)
 }
 //-----------------------------
 
+void DBGACT_ExtIndication(bool State)
+{
+	LL_ExtIndication(State);
+}
+//-----------------------------
+
 void DBGACT_PulseProcess(Int16U DACValue)
 {
 	if(DACValue > DAC_MAX_VAL)
@@ -53,8 +46,6 @@ void DBGACT_PulseProcess(Int16U DACValue)
 	RegulatorParams.CurrentTarget = DACValue;
 	RegulatorParams.DACOffset = DataTable[REG_DAC_OFFSET];
 	CONTROL_SineConfig(&RegulatorParams);
-	CONTROL_LinearConfig(&RegulatorParams);
-	CONTROL_CopyCurrentToEP(&RegulatorParams);
 
 	CONTROL_SetDeviceState(DS_None, SS_Pulse);
 	CONTROL_StartProcess();
