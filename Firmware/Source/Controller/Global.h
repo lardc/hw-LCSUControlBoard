@@ -19,6 +19,8 @@
 #define PI										3.1416f	// Значение числа Пи
 #define DAC_MAX_VAL								0x0FFF	// Максимальное значение ЦАП
 #define	CURRENT_RANGES							2		// Количество диапазонов измерения тока
+#define CURRENT_RANGE_0							0
+#define CURRENT_RANGE_1							1
 
 // Размер массивов EP
 #define VALUES_x_SIZE	((CURRENT_PULSE_WIDTH + CURRENT_PULSE_TAIL) / TIMER15_uS)

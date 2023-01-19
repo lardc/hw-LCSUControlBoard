@@ -78,11 +78,11 @@ void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
 	{
 		ScopeLogStep = 0;
 
-		CONTROL_ValuesCurrent[LocalCounter] = (Int16U)(Regulator->MeasuredCurrent);
-		CONTROL_RegulatorErr[LocalCounter] = (Int16S)(Regulator->RegulatorError);
-		CONTROL_RegulatorOutput[LocalCounter] = (Int16S)(Regulator->RegulatorOutput);
-		CONTROL_ValuesBatteryVoltage[LocalCounter] = (Int16U)(Regulator->MeasuredBatteryVoltage * 10);
-		CONTROL_DACRawData[LocalCounter] = (Int16U)(Regulator->DACSetpoint);
+		CONTROL_ValuesCurrent[LocalCounter] = Regulator->MeasuredCurrent;
+		CONTROL_RegulatorErr[LocalCounter] = Regulator->RegulatorError;
+		CONTROL_RegulatorOutput[LocalCounter] = Regulator->RegulatorOutput;
+		CONTROL_ValuesBatteryVoltage[LocalCounter] = Regulator->MeasuredBatteryVoltage;
+		CONTROL_DACRawData[LocalCounter] = Regulator->DACSetpoint;
 
 		CONTROL_Values_Counter = LocalCounter;
 
@@ -101,15 +101,15 @@ void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
 
 void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 {
-	float CurrentMax = (float)DataTable[REG_CURRENT_PER_CURBOARD] / 10 * DataTable[REG_CURBOARD_QUANTITY];
-	float CurrentTarget = (float)DataTable[REG_CURRENT_PULSE_VALUE] / 10;
+	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARD_QUANTITY];
+	float CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	// Кеширование коэффициентов регулятора
-	for(int i = 0; i < CURRENT_RANGE_QUANTITY; i++)
+	for(int i = 0; i < CURRENT_RANGES; i++)
 	{
-		Regulator->Kp[i] = (float)DataTable[REG_REGULATOR_RANGE0_Kp + i * 2] / 1000;
-		Regulator->Ki[i] = (float)DataTable[REG_REGULATOR_RANGE0_Ki + i * 2] / 1000;
-		Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * (float)DataTable[REG_REGULATOR_TF_Ki_RANG0 + i] / 1e6;
+		Regulator->Kp[i] = DataTable[REG_REGULATOR_RANGE0_Kp + i * 2];
+		Regulator->Ki[i] = DataTable[REG_REGULATOR_RANGE0_Ki + i * 2];
+		Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + i];
 	}
 
 	Regulator->DebugMode = false;

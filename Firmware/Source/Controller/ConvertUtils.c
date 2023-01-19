@@ -18,8 +18,8 @@ typedef struct __ConvertParams
 
 // Variables
 ConvertParams AdcToVoltageParams;
-ConvertParams AdcToCurrentParams[CURRENT_RANGE_QUANTITY];
-ConvertParams CurrentToDacParams[CURRENT_RANGE_QUANTITY];
+ConvertParams AdcToCurrentParams[CURRENT_RANGES];
+ConvertParams CurrentToDacParams[CURRENT_RANGES];
 
 // Functions prototypes
 float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients);
@@ -60,21 +60,21 @@ float CU_ADCtoV(Int16U Data)
 void CU_LoadConvertParams()
 {
 	// Параметры преобразования значения АЦП в напряжение
-	AdcToVoltageParams.K = (float)DataTable[REG_ADC_VOLTAGE_K] / 1e6;
-	AdcToVoltageParams.B = (Int16S)DataTable[REG_ADC_VOLTAGE_B];
+	AdcToVoltageParams.K = DataTable[REG_ADC_VOLTAGE_K];
+	AdcToVoltageParams.B = DataTable[REG_ADC_VOLTAGE_B];
 
 	// Параметры преобразования значения АЦП в ток и тока в ЦАП
-	for(int i = 0; i < CURRENT_RANGE_QUANTITY; i++)
+	for(int i = 0; i < CURRENT_RANGES; i++)
 	{
-		AdcToCurrentParams[i].P2 = (float)((Int16S)DataTable[REG_ADC_I_RANGE0_P2 + i * 6]) / 1e6;
-		AdcToCurrentParams[i].P1 = (float)DataTable[REG_ADC_I_RANGE0_P1 + i * 6] / 1000;
-		AdcToCurrentParams[i].P0 = (float)((Int16S)DataTable[REG_ADC_I_RANGE0_P0 + i * 6]) / 10;
-		AdcToCurrentParams[i].K = (float)DataTable[REG_ADC_I_RANGE0_N + i * 6] / DataTable[REG_ADC_I_RANGE0_D + i * 6];
-		AdcToCurrentParams[i].B = (Int16S)DataTable[REG_ADC_I_RANGE0_B + i * 6];
-		AdcToCurrentParams[i].Kamp = (float)DataTable[REG_K_AMP_RANGE0 + i] / 100;
+		AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_P2 + i * 6];
+		AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_P1 + i * 6];
+		AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_P0 + i * 6];
+		AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_K + i * 6];
+		AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_B + i * 6];
+		AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE0 + i];
 
-		CurrentToDacParams[i].K = (float)DataTable[REG_I_TO_DAC_RANGE0_K + i * 2] / 1000;
-		CurrentToDacParams[i].B = (Int16S)DataTable[REG_I_TO_DAC_RANGE0_B + i * 2];
+		CurrentToDacParams[i].K = DataTable[REG_I_TO_DAC_RANGE0_K + i * 2];
+		CurrentToDacParams[i].B = DataTable[REG_I_TO_DAC_RANGE0_B + i * 2];
 	}
 }
 //-----------------------------
