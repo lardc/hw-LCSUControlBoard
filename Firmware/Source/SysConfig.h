@@ -31,8 +31,9 @@
 // ADC
 #define DMA_ADC_CURRENT_CHANNEL			DMA2_Channel5	// Канал DMA для АЦП тока
 #define DMA_ADC_V_BAT_CHANNEL			DMA1_Channel1	// Канал DMA для АЦП напряжения батареи
-#define ADC1_V_BAT_CHANNEL				4				// АЦП1 номер канала напряжения
-#define ADC3_CURRENT_CHANNEL			5				// АЦП1 номер канала тока
+#define ADC1_V_BAT_CHANNEL				3				// АЦП1 номер канала напряжения
+#define ADC3_CURRENT_CHANNEL_R0			1				// АЦП3 номер канала тока (диапазон 0)
+#define ADC3_CURRENT_CHANNEL_R1			12				// АЦП3 номер канала тока (диапазон 1)
 #define ADC_DMA_BUFF_SIZE				5				// Количество данных для DMA
 // ----------------------------------------------
 

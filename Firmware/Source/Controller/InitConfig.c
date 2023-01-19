@@ -31,20 +31,25 @@ void INITCFG_ConfigIO()
 	// Выходы
 	GPIO_InitPushPullOutput(GPIO_FAN);
 	GPIO_InitPushPullOutput(GPIO_PS_CTRL);
-	GPIO_InitPushPullOutput(GPIO_IFB_R0);
-	GPIO_InitPushPullOutput(GPIO_IFB_R1);
 	GPIO_InitPushPullOutput(GPIO_LED);
+	GPIO_InitPushPullOutput(GPIO_IND_CTRL);
+	GPIO_InitPushPullOutput(GPIO_CURRENT_RANGE);
 
 	// Выходы OpenDrain
-	GPIO_InitOpenDrainOutput(GPIO_SYNC_CTRL, NoPull);
+	GPIO_InitOpenDrainOutput(GPIO_OUT_LOCK, NoPull);
+	GPIO_InitOpenDrainOutput(GPIO_OFFSET_CTRL, NoPull);
+
+	// Входы
+	GPIO_InitInput(GPIO_SYNC, Pull_Up);
 
 	// Начальная установка состояний выводов
 	GPIO_SetState(GPIO_FAN, false);
 	GPIO_SetState(GPIO_PS_CTRL, false);
-	GPIO_SetState(GPIO_SYNC_CTRL, true);
-	GPIO_SetState(GPIO_IFB_R0, false);
-	GPIO_SetState(GPIO_IFB_R1, false);
 	GPIO_SetState(GPIO_LED, false);
+	GPIO_SetState(GPIO_IND_CTRL, false);
+	GPIO_SetState(GPIO_CURRENT_RANGE, false);
+	GPIO_SetState(GPIO_OUT_LOCK, true);
+	GPIO_SetState(GPIO_OFFSET_CTRL, true);
 
 	// Альтернативные функции
 	GPIO_InitAltFunction(GPIO_ALT_CAN_RX, AltFn_9);
@@ -109,29 +114,23 @@ void INITCFG_ConfigADC()
 	RCC_ADC_Clk_EN(ADC_12_ClkEN);
 	RCC_ADC_Clk_EN(ADC_34_ClkEN);
 
-	// ADC1
-	ADC_Calibration(ADC1);
-	ADC_SoftTrigConfig(ADC1);
-	ADC_ChannelSeqReset(ADC1);
+	INITCFG_ADCConfigChannel(ADC1, ADC1_V_BAT_CHANNEL);
+	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+}
+//------------------------------------------------
+
+void INITCFG_ADCConfigChannel(ADC_TypeDef* ADCx, Int16U Channel)
+{
+	ADC_Calibration(ADCx);
+	ADC_SoftTrigConfig(ADCx);
+	ADC_ChannelSeqReset(ADCx);
 
 	for (uint8_t i = 1; i <= ADC_DMA_BUFF_SIZE; ++i)
-		ADC_ChannelSet_Sequence(ADC1, ADC1_V_BAT_CHANNEL, i);
+		ADC_ChannelSet_Sequence(ADCx, Channel, i);
 
-	ADC_ChannelSeqLen(ADC1, ADC_DMA_BUFF_SIZE);
-	ADC_DMAConfig(ADC1);
-	ADC_Enable(ADC1);
-
-	// ADC3
-	ADC_Calibration(ADC3);
-	ADC_SoftTrigConfig(ADC3);
-	ADC_ChannelSeqReset(ADC3);
-
-	for (uint8_t i = 1; i <= ADC_DMA_BUFF_SIZE; ++i)
-		ADC_ChannelSet_Sequence(ADC3, ADC3_CURRENT_CHANNEL, i);
-
-	ADC_ChannelSeqLen(ADC3, ADC_DMA_BUFF_SIZE);
-	ADC_DMAConfig(ADC3);
-	ADC_Enable(ADC3);
+	ADC_ChannelSeqLen(ADCx, ADC_DMA_BUFF_SIZE);
+	ADC_DMAConfig(ADCx);
+	ADC_Enable(ADCx);
 }
 //------------------------------------------------
 
@@ -158,7 +157,7 @@ void INITCFG_ConfigDMA()
 
 void INITCFG_ConfigExtInterrupt()
 {
-	EXTI_Config(EXTI_PB, EXTI_4, FALL_TRIG, 0);
-	EXTI_EnableInterrupt(EXTI4_IRQn, 0, true);
+	EXTI_Config(EXTI_PB, EXTI_10, FALL_TRIG, 0);
+	EXTI_EnableInterrupt(EXTI15_10_IRQn, 0, true);
 }
 //------------------------------------------------
