@@ -436,6 +436,7 @@ void CONTROL_ExternalInterruptProcess()
 void CONTROL_StartProcess()
 {
 	CONTROL_HandleFanLogic(true);
+	CONTROL_HandleExternalLamp(true);
 
 	LL_OutputAmplifierOffset(true);
 	LL_LSLCurrentBoardLock(false);
@@ -472,6 +473,37 @@ void CONTROL_HandleFanLogic(bool IsImpulse)
 	}
 	else
 		LL_Fan(false);
+}
+//-----------------------------------------------
+
+void CONTROL_HandleExternalLamp(bool IsImpulse)
+{
+	static Int64U ExternalLampCounter = 0;
+
+	if(DataTable[REG_EXT_IND_CTRL])
+	{
+		if(CONTROL_State == DS_Fault)
+		{
+			if(++ExternalLampCounter > TIME_FAULT_EXT_LED_BLINK)
+			{
+				LL_ToggleExtIndication();
+				ExternalLampCounter = 0;
+			}
+		}
+		else
+			{
+				if(IsImpulse)
+				{
+					LL_ExtIndication(true);
+					ExternalLampCounter = CONTROL_TimeCounter + EXT_LAMP_ON_STATE_TIME;
+				}
+				else
+				{
+					if(CONTROL_TimeCounter >= ExternalLampCounter)
+						LL_ExtIndication(false);
+				}
+			}
+	}
 }
 //-----------------------------------------------
 

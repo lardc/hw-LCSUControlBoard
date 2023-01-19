@@ -33,5 +33,7 @@
 
 // Временные параметры
 #define TIME_LED_BLINK							500		// Мигание светодиодом (в мс)
+#define TIME_FAULT_EXT_LED_BLINK				250		// Период мигания внешней индикации в состоянии Fault (в мс)
+#define EXT_LAMP_ON_STATE_TIME					500		// Время зажигания внешнего индикатора во время импульса (в мс)
 
 #endif //  __GLOBAL_H

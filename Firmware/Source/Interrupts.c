@@ -57,6 +57,7 @@ void TIM7_IRQHandler()
 	if(TIM_StatusCheck(TIM7))
 	{
 		CONTROL_HandleFanLogic(false);
+		CONTROL_HandleExternalLamp(false);
 
 		CONTROL_TimeCounter++;
 		if(++LED_BlinkTimeCounter > TIME_LED_BLINK)

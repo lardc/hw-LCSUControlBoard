@@ -52,6 +52,12 @@ void LL_ExtIndication(bool State)
 }
 //-----------------------------
 
+void LL_ToggleExtIndication()
+{
+	GPIO_Toggle(GPIO_IND_CTRL);
+}
+//-----------------------------
+
 void LL_OutputAmplifierOffset(bool State)
 {
 	GPIO_SetState(GPIO_OFFSET_CTRL, State);

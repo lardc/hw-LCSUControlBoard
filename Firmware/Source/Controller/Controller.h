@@ -59,5 +59,6 @@ void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_CopyCurrentToEP(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartProcess();
 void CONTROL_HandleFanLogic(bool IsImpulse);
+void CONTROL_HandleExternalLamp(bool IsImpulse);
 
 #endif // __CONTROLLER_H

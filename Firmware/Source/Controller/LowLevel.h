@@ -16,5 +16,6 @@ void LL_Fan(bool State);
 void LL_WriteDAC(Int16U Data);
 void LL_ExtIndication(bool State);
 void LL_OutputAmplifierOffset(bool State);
+void LL_ToggleExtIndication();
 
 #endif //__LOWLEVEL_H

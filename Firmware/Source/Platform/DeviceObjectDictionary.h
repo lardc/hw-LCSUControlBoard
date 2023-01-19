@@ -34,15 +34,16 @@
 #define REG_SHUNT_RESISTANCE			5	// Сопротивление шунта (мкОм)
 #define REG_REGULATOR_QI_MAX			6	// Ограничение уровня интегральной составляющей
 #define REG_FAN_CTRL					7	// Включение управления вентилятором
-#define REG_AFTER_PULSE_PAUSE			8	// Пауза после импульса (мс)
-#define REG_CURRENT_PER_CURBOARD		9	// Максимальная амплитуда тока с одной CurrentBoard (А)
-#define REG_CURBOARD_QUANTITY			10	// Количество CurrentBoard
-#define REG_SCOPE_STEP					11	// Шаг сохранения оцифрованных значений
-#define REG_FAN_OPERATE_PERIOD			12	// Период работы вентилятора (сек)
-#define REG_FAN_OPERATE_TIME			13	// Время включенного состояния вентилятора (сек)
-#define REG_DAC_OFFSET					14	// Смещение сигнала с ЦАП
-#define REG_CONFIG_READY_STATE_TIMEOUT	15	// Таймаут нахождения блока в состоянии DS_ConfigReady
-#define REG_TRAPEZE_CURRENT_RATE		16	// dI/dt фронтов трапецеидального импульса тока (А/мкс)
+#define REG_EXT_IND_CTRL				8	// Включение управления внешним индикатором
+#define REG_AFTER_PULSE_PAUSE			9	// Пауза после импульса (мс)
+#define REG_CURRENT_PER_CURBOARD		10	// Максимальная амплитуда тока с одной CurrentBoard (А)
+#define REG_CURBOARD_QUANTITY			11	// Количество CurrentBoard
+#define REG_SCOPE_STEP					12	// Шаг сохранения оцифрованных значений
+#define REG_FAN_OPERATE_PERIOD			13	// Период работы вентилятора (сек)
+#define REG_FAN_OPERATE_TIME			14	// Время включенного состояния вентилятора (сек)
+#define REG_DAC_OFFSET					15	// Смещение сигнала с ЦАП
+#define REG_CONFIG_READY_STATE_TIMEOUT	16	// Таймаут нахождения блока в состоянии DS_ConfigReady
+#define REG_TRAPEZE_CURRENT_RATE		17	// dI/dt фронтов трапецеидального импульса тока (А/мкс)
 //
 #define REG_I_TO_DAC_RANGE0_K			20	// Диапазон 0 - Коэффициент пересчета в значение ЦАП
 #define REG_I_TO_DAC_RANGE0_B			21	// Диапазон 0 - Смещение пересчета в значение ЦАП
