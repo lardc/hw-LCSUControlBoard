@@ -14,9 +14,6 @@
 #include "Measurement.h"
 #include "math.h"
 
-// Types
-//
-typedef void (*FUNC_AsyncDelegate)();
 
 // Variables
 //
@@ -39,7 +36,6 @@ volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 float CONTROL_CurrentMaxValue = 0;
 //
 volatile RegulatorParamsStruct RegulatorParams;
-static FUNC_AsyncDelegate LowPriorityHandle = NULL;
 
 /// Forward functions
 //
@@ -49,7 +45,6 @@ void CONTROL_UpdateWatchDog();
 void CONTROL_ResetToDefaultState();
 void CONTROL_LogicProcess();
 void CONTROL_StopProcess();
-void CONTROL_PostPulseSlowSequence();
 void CONTROL_ResetOutputRegisters();
 bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
@@ -124,12 +119,6 @@ void CONTROL_Idle()
 
 	DEVPROFILE_ProcessRequests();
 	CONTROL_UpdateWatchDog();
-
-	if(LowPriorityHandle)
-	{
-		LowPriorityHandle();
-		LowPriorityHandle = NULL;
-	}
 }
 //------------------------------------------
 
@@ -408,18 +397,13 @@ void CONTROL_CopyCurrentToEP(volatile RegulatorParamsStruct* Regulator)
 void CONTROL_StopProcess()
 {
 	TIM_Stop(TIM15);
-	LowPriorityHandle = &CONTROL_PostPulseSlowSequence;
+	LL_WriteDAC(0);
+	LL_LSLCurrentBoardLock(true);
+	LL_OutputAmplifierOffset(false);
 
 	float AfterPulseCoefficient = RegulatorParams.CurrentTarget / CONTROL_CurrentMaxValue;
 	CONTROL_AfterPulsePause = CONTROL_TimeCounter + DataTable[REG_AFTER_PULSE_PAUSE] * AfterPulseCoefficient;
 	CONTROL_BatteryChargeTimeCounter = CONTROL_TimeCounter + DataTable[REG_BATTERY_RECHARGE_TIMEOUT];
-}
-//------------------------------------------
-
-void CONTROL_PostPulseSlowSequence()
-{
-	LL_WriteDAC(0);
-	LL_LSLCurrentBoardLock(true);
 }
 //------------------------------------------
 
