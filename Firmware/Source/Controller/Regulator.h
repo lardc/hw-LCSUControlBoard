@@ -20,9 +20,9 @@ typedef struct __RegulatorParams
 	float MeasuredCurrent;
 	float MeasuredBatteryVoltage;
 	float CurrentTable[PULSE_BUFFER_SIZE];
-	float Kp[CURRENT_RANGE_QUANTITY];
-	float Ki[CURRENT_RANGE_QUANTITY];
-	float KiTune[CURRENT_RANGE_QUANTITY];
+	float Kp[CURRENT_RANGES];
+	float Ki[CURRENT_RANGES];
+	float KiTune[CURRENT_RANGES];
 	float RegulatorError;
 	bool DebugMode;
 	Int16U RegulatorPulseCounter;
