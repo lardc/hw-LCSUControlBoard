@@ -17,5 +17,6 @@ void LL_WriteDAC(Int16U Data);
 void LL_ExtIndication(bool State);
 void LL_OutputAmplifierOffset(bool State);
 void LL_ToggleExtIndication();
+bool LL_SyncLineGetState();
 
 #endif //__LOWLEVEL_H

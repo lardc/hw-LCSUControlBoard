@@ -70,3 +70,8 @@ void LL_WriteDAC(Int16U Data)
 }
 //-----------------------------
 
+bool LL_SyncLineGetState()
+{
+	return GPIO_GetState(GPIO_SYNC);
+}
+//-----------------------------

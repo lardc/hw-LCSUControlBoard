@@ -157,7 +157,7 @@ void INITCFG_ConfigDMA()
 
 void INITCFG_ConfigExtInterrupt()
 {
-	EXTI_Config(EXTI_PB, EXTI_10, FALL_TRIG, 0);
+	EXTI_Config(EXTI_PB, EXTI_10, BOTH_TRIG, 0);
 	EXTI_EnableInterrupt(EXTI15_10_IRQn, 0, true);
 }
 //------------------------------------------------

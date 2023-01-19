@@ -409,10 +409,17 @@ void CONTROL_StopProcess()
 
 void CONTROL_ExternalInterruptProcess()
 {
-	if (CONTROL_State == DS_ConfigReady)
+	if (CONTROL_State == DS_ConfigReady && !LL_SyncLineGetState())
 	{
 		CONTROL_SetDeviceState(DS_InProcess, SS_Pulse);
 		CONTROL_StartProcess();
+	}
+
+	if (CONTROL_SubState == SS_Pulse && LL_SyncLineGetState())
+	{
+		CONTROL_StopProcess();
+		CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
+		DataTable[REG_OP_RESULT] = OPRESULT_OK;
 	}
 }
 //------------------------------------------
