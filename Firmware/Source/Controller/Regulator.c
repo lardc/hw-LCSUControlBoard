@@ -16,7 +16,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
 	static float Qi = 0, Qp;
 
-	Regulator->RegulatorError = (Regulator->RegulatorPulseCounter == 0) ? 0 : (Regulator->CurrentTable[Regulator->RegulatorPulseCounter] - Regulator->MeasuredCurrent);
+	Regulator->RegulatorError = (Regulator->PulseCounter == 0) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
 
 	Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
 	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
@@ -27,12 +27,12 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	else if (Qi < -Qi_max)
 		Qi = -Qi_max;
 
-	Regulator->RegulatorOutput = Regulator->CurrentTable[Regulator->RegulatorPulseCounter] + Qp + Qi;
+	Regulator->RegulatorOutput = Regulator->CurrentTable[Regulator->PulseCounter] + Qp + Qi;
 
 	// Выбор источника данных для записи в ЦАП
 	float ValueToDAC;
 	if(Regulator->DebugMode)
-		ValueToDAC = Regulator->CurrentTable[Regulator->RegulatorPulseCounter];
+		ValueToDAC = Regulator->CurrentTable[Regulator->PulseCounter];
 	else
 		ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput, Regulator->CurrentRange);
 
@@ -41,11 +41,11 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	LL_WriteDAC(Regulator->DACSetpoint);
 
 	REGULATOR_LoggingData(Regulator);
-	Regulator->RegulatorPulseCounter++;
-	if(Regulator->RegulatorPulseCounter >= PULSE_BUFFER_SIZE)
+	Regulator->PulseCounter++;
+	if(Regulator->PulseCounter >= Regulator->PulseCounterMax)
 	{
 		Regulator->DebugMode = false;
-		Regulator->RegulatorPulseCounter = 0;
+		Regulator->PulseCounter = 0;
 		Qi = 0;
 		return true;
 	}

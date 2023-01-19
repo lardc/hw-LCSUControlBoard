@@ -25,7 +25,8 @@ typedef struct __RegulatorParams
 	float KiTune[CURRENT_RANGES];
 	float RegulatorError;
 	bool DebugMode;
-	Int16U RegulatorPulseCounter;
+	Int16U PulseCounter;
+	Int16U PulseCounterMax;
 	float RegulatorOutput;
 	Int16U DACOffset;
 	Int16U DACLimitValue;

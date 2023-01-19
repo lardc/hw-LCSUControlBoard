@@ -264,7 +264,7 @@ void CONTROL_LogicProcess()
 
 bool CONTROL_BatteryVoltageCheck()
 {
-	DataTable[REG_BATTERY_VOLTAGE] = (Int16U)(MEASURE_SingleSampleBatteryVoltage() * 10);
+	DataTable[REG_BATTERY_VOLTAGE] = MEASURE_SingleSampleBatteryVoltage();
 
 	if(DataTable[REG_BATTERY_VOLTAGE] < DataTable[REG_BATTERY_VOLTAGE_THRESHOLD])
 		return false;
@@ -301,8 +301,7 @@ void CONTROL_StartPrepare()
 	CU_LoadConvertParams();
 	REGULATOR_CashVariables(&RegulatorParams);
 	CONTROL_CashVariables();
-	CONTROL_SineConfig(&RegulatorParams);
-	CONTROL_LinearConfig(&RegulatorParams);
+	CONTROL_PulseShapeConfig(&RegulatorParams);
 	CONTROL_CopyCurrentToEP(&RegulatorParams);
 
 	MEASURE_SetCurrentRange(&RegulatorParams);
@@ -319,43 +318,82 @@ void CONTROL_CashVariables()
 }
 //-----------------------------------------------
 
-void CONTROL_SineConfig(volatile RegulatorParamsStruct* Regulator)
+void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
-	for(int i = 0; i < PULSE_BUFFER_SIZE; ++i)
+	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
 	{
-		float Setpoint = Regulator->CurrentTarget * sin(PI * i / ((CURRENT_PULSE_WIDTH / TIMER15_uS) - 1));
+	case SINE_SHAPE:
+		CONTROL_SineShapeConfig(Regulator);
+		break;
+
+	case MOD_SINE_SHAPE:
+		CONTROL_ModSineShapeConfig(Regulator);
+		break;
+
+	case TRAPEZE_SHAPE:
+		CONTROL_TrapezeShapeConfig(Regulator);
+		break;
+	}
+}
+//-----------------------------------------------
+
+void CONTROL_SineShapeConfig(volatile RegulatorParamsStruct* Regulator)
+{
+	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
+
+	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
+	{
+		float Setpoint = Regulator->CurrentTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
 		Regulator->CurrentTable[i] = (Setpoint > 0) ? Setpoint : 0;
 	}
 }
 //-----------------------------------------------
 
-void CONTROL_LinearConfig(volatile RegulatorParamsStruct* Regulator)
+void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
-	if(DataTable[REG_USE_LINEAR_DOWN])
+	float LinearCurrent = LINEAR_FRAGMENT_AMPLITUDE;
+	Int16U LinearStartIndex = 0;
+
+	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
+
+	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		float StartCurrent = CURRENT_TAIL_START_CURR;
-		float StopCurrent = -CURRENT_TAIL_START_CURR;
+		float Setpoint = Regulator->CurrentTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
+		Regulator->CurrentTable[i] = (Setpoint > 0) ? Setpoint : 0;
 
-		Int16U TopIndex = CURRENT_PULSE_WIDTH / TIMER15_uS / 2;
-
-		// Поиск стартового индекса
-		Int16U StartIndex = TopIndex;
-		for (int i = TopIndex; i < PULSE_BUFFER_SIZE; ++i)
+		if((i > Regulator->PulseCounterMax / 2) && (Regulator->CurrentTable[i] <= LinearCurrent))
 		{
-			if (Regulator->CurrentTable[i] < StartCurrent)
-			{
-				StartIndex = i;
-				break;
-			}
+			LinearStartIndex = i;
+			break;
 		}
+	}
 
-		// Дописываем плавно спадающий хвост
-		float DecreaseStep = (StartCurrent - StopCurrent) / (PULSE_BUFFER_SIZE - StartIndex);
-		for (int i = StartIndex; i < PULSE_BUFFER_SIZE; ++i)
+	// Дописываем плавно спадающий хвост
+	float dI = LinearCurrent / (SINE_PULSE_DURATION + LINEAR_FRAGMENT_DURATION - LinearStartIndex);
+	for (int i = LinearStartIndex; i < PULSE_BUFFER_SIZE; ++i)
+	{
+		LinearCurrent -= dI;
+		Regulator->CurrentTable[i] = LinearCurrent;
+	}
+}
+//-----------------------------------------------
+
+void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
+{
+	float dI = 0, Setpoint = 0;
+
+	Regulator->PulseCounterMax = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
+	dI = Regulator->CurrentTarget / DataTable[REG_TRAPEZE_CURRENT_RATE] / TIMER15_uS * 1000;
+
+	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
+	{
+		if(Setpoint < Regulator->CurrentTarget)
 		{
-			StartCurrent -= DecreaseStep;
-			Regulator->CurrentTable[i] = StartCurrent;
+			Regulator->CurrentTable[i] = Setpoint;
+			Setpoint += dI;
 		}
+		else
+			Regulator->CurrentTable[i] = Regulator->CurrentTarget;
 	}
 }
 //-----------------------------------------------
@@ -399,6 +437,7 @@ void CONTROL_StartProcess()
 {
 	CONTROL_HandleFanLogic(true);
 
+	LL_OutputAmplifierOffset(true);
 	LL_LSLCurrentBoardLock(false);
 	TIM_Reset(TIM15);
 	TIM_Start(TIM15);
