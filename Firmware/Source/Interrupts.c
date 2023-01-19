@@ -31,11 +31,11 @@ void USB_LP_CAN_RX0_IRQHandler()
 }
 //-----------------------------------------
 
-void EXTI4_IRQHandler(void)
+void EXTI15_10_IRQHandler(void)
 {
 	CONTROL_ExternalInterruptProcess();
 
-	EXTI_FlagReset(EXTI_4);
+	EXTI_FlagReset(EXTI_10);
 }
 //-----------------------------------------------
 

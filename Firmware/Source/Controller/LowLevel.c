@@ -4,6 +4,7 @@
 #include "Board.h"
 #include "Delay.h"
 #include "Global.h"
+#include "InitConfig.h"
 
 // Functions
 //
@@ -15,7 +16,7 @@ void LL_ToggleBoardLED()
 
 void LL_LSLCurrentBoardLock(bool State)
 {
-	GPIO_SetState(GPIO_SYNC_CTRL, State);
+	GPIO_SetState(GPIO_OUT_LOCK, State);
 }
 //-----------------------------
 
@@ -33,22 +34,27 @@ void LL_PowerSupplyEnable(bool State)
 
 void LL_SetCurrentRange0()
 {
-	GPIO_SetState(GPIO_IFB_R0, false);
-	GPIO_SetState(GPIO_IFB_R1, false);
+	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+	GPIO_SetState(GPIO_CURRENT_RANGE, false);
 }
 //-----------------------------
 
 void LL_SetCurrentRange1()
 {
-	GPIO_SetState(GPIO_IFB_R0, true);
-	GPIO_SetState(GPIO_IFB_R1, false);
+	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R1);
+	GPIO_SetState(GPIO_CURRENT_RANGE, true);
 }
 //-----------------------------
 
-void LL_SetCurrentRange2()
+void LL_ExtIndication(bool State)
 {
-	GPIO_SetState(GPIO_IFB_R0, false);
-	GPIO_SetState(GPIO_IFB_R1, true);
+	GPIO_SetState(GPIO_IND_CTRL, State);
+}
+//-----------------------------
+
+void LL_OutputAmplifierOffset(bool State)
+{
+	GPIO_SetState(GPIO_OFFSET_CTRL, State);
 }
 //-----------------------------
 
