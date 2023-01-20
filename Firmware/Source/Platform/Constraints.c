@@ -8,64 +8,64 @@
 // Constants
 //
 const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
-		{I_RANGE0_THRESHOLD_MIN, I_RANGE0_THRESHOLD_MAX, I_RANGE0_THRESHOLD_DEF},	// 0
-		{I_RANGE1_THRESHOLD_MIN, I_RANGE1_THRESHOLD_MAX, I_RANGE1_THRESHOLD_DEF},	// 1
-		{V_BAT_THRESHOLD_MIN, V_BAT_THRESHOLD_MAX, V_BAT_THRESHOLD_DEF},			// 2
-		{DAC_OUTPUT_LIM_MIN, DAC_OUTPUT_LIM_MAX, DAC_OUTPUT_LIM_DEF},				// 3
-		{FULL_CHARGE_TIMEOUT_MIN, FULL_CHARGE_TIMEOUT_MAX, FULL_CHARGE_TIMEOUT_DEF},// 4
-		{RECHARGE_TIMEOUT_MIN, RECHARGE_TIMEOUT_MAX, RECHARGE_TIMEOUT_DEF},			// 5
-		{SHUNT_RESISTANCE_MIN, SHUNT_RESISTANCE_MAX, SHUNT_RESISTANCE_DEF},			// 6
-		{0, INT16U_MAX, 0},															// 7
+		{CURRENT_THRESHOLD_MIN, CURRENT_THRESHOLD_MAX, CURRENT_THRESHOLD_DEF},		// 0
+		{V_BAT_THRESHOLD_MIN, V_BAT_THRESHOLD_MAX, V_BAT_THRESHOLD_DEF},			// 1
+		{DAC_OUTPUT_LIM_MIN, DAC_OUTPUT_LIM_MAX, DAC_OUTPUT_LIM_DEF},				// 2
+		{FULL_CHARGE_TIMEOUT_MIN, FULL_CHARGE_TIMEOUT_MAX, FULL_CHARGE_TIMEOUT_DEF},// 3
+		{RECHARGE_TIMEOUT_MIN, RECHARGE_TIMEOUT_MAX, RECHARGE_TIMEOUT_DEF},			// 4
+		{SHUNT_RESISTANCE_MIN, SHUNT_RESISTANCE_MAX, SHUNT_RESISTANCE_DEF},			// 5
+		{0, INT16U_MAX, 0},															// 6
+		{NO, YES, YES},																// 7
 		{NO, YES, YES},																// 8
 		{AFTER_PULSE_PAUSE_MIN, AFTER_PULSE_PAUSE_MAX, AFTER_PULSE_PAUSE_DEF},		// 9
 		{I_PER_CURBOARD_MIN, I_PER_CURBOARD_MAX, I_PER_CURBOARD_DEF},				// 10
-		{CURBOARD_QUANTITY_MIN, CURBOARD_QUANTITY_MAX, CURBOARD_QUANTITY_DEF},		// 11
+		{CURBOARDS_MIN, CURBOARDS_MAX, CURBOARDS_DEF},								// 11
 		{0, INT16U_MAX, 0},															// 12
 		{FAN_PERIOD_MIN, FAN_PERIOD_MAX, FAN_PERIOD_DEF},							// 13
 		{FAN_TIME_MIN, FAN_TIME_MAX, FAN_TIME_DEF},									// 14
 		{DAC_OFFSET_MIN, DAC_OFFSET_MAX, DAC_OFFSET_DEF},							// 15
 		{CONF_STATE_TIMEOUT_MIN, CONF_STATE_TIMEOUT_MAX, CONF_STATE_TIMEOUT_DEF},	// 16
-		{0, 0, 0},																	// 17
+		{TRAPEZE_CUR_RATE_MIN, TRAPEZE_CUR_RATE_MAX, TRAPEZE_CUR_RATE_DEF},			// 17
 		{0, 0, 0},																	// 18
 		{0, 0, 0},																	// 19
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 20
 		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 21
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 22
 		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 23
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 24
+		{V_BAT_K_MIN, V_BAT_K_MAX, V_BAT_K_DEF},									// 24
 		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 25
-		{V_BAT_K_MIN, V_BAT_K_MAX, V_BAT_K_DEF},									// 26
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 27
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 28
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 29
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 30
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 31
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 32
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 33
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 34
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 35
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 36
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 37
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 26
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 27
+		{0, 0, 0},																	// 28
+		{0, 0, 0},																	// 29
+		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 30
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 31
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 32
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 33
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 34
+		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 35
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 36
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 37
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 38
 		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 39
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 40
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 41
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 42
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 43
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 44
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 45
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 46
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 47
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 48
-		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, 0},									// 49
-		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, 0},									// 50
-		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, 0},									// 51
-		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, 0},									// 52
-		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, 0},									// 53
-		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, 0},									// 54
-		{0, INT16U_MAX, 0},															// 55
-		{0, INT16U_MAX, 0},															// 56
-		{0, INT16U_MAX, 0},															// 57
+		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, REGULATOR_KP_DEF},						// 40
+		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 41
+		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, REGULATOR_KP_DEF},						// 42
+		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 43
+		{0, 0, 0},																	// 44
+		{-INT16S_MAX, INT16S_MAX, 0},												// 45
+		{-INT16S_MAX, INT16S_MAX, 0},												// 46
+		{0, 0, 0},																	// 47
+		{0, 0, 0},																	// 48
+		{0, 0, 0},																	// 49
+		{0, 0, 0},																	// 50
+		{0, 0, 0},																	// 51
+		{0, 0, 0},																	// 52
+		{0, 0, 0},																	// 53
+		{0, 0, 0},																	// 54
+		{0, 0, 0},																	// 55
+		{0, 0, 0},																	// 56
+		{0, 0, 0},																	// 57
 		{0, 0, 0},																	// 58
 		{0, 0, 0},																	// 59
 		{0, 0, 0},																	// 60
@@ -137,8 +137,8 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, 0, 0},																	// 126
 		{0, 0, 0},																	// 127
 		{CURRENT_SETPOINT_MIN, CURRENT_SETPOINT_MAX, 0},							// 128
-		{0, 0, 0},																	// 129
-		{NO, YES, NO},																// 130
+		{SINE_SHAPE, TRAPEZE_SHAPE, SINE_SHAPE},									// 129
+		{TRAPEZE_DURATION_MIN, TRAPEZE_DURATION_MAX, TRAPEZE_DURATION_DEF},			// 130
 		{0, 0, 0},																	// 131
 		{0, 0, 0},																	// 132
 		{0, 0, 0},																	// 133
@@ -158,7 +158,7 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, 0, 0},																	// 147
 		{0, 0, 0},																	// 148
 		{0, 0, 0},																	// 149
-		{0, INT16U_MAX, 0},															// 150
+		{-INT16S_MAX, INT16S_MAX, 0},												// 150
 		{0, 0, 0},																	// 151
 		{0, 0, 0},																	// 152
 		{0, 0, 0},																	// 153

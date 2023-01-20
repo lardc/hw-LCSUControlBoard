@@ -101,7 +101,7 @@ void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
 
 void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 {
-	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARD_QUANTITY];
+	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	float CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	// Кеширование коэффициентов регулятора
