@@ -44,6 +44,8 @@
 #define REG_DAC_OFFSET					15	// Смещение сигнала с ЦАП
 #define REG_CONFIG_READY_STATE_TIMEOUT	16	// Таймаут нахождения блока в состоянии DS_ConfigReady
 #define REG_TRAPEZE_CURRENT_RATE		17	// dI/dt фронтов трапецеидального импульса тока (А/мкс)
+#define REG_TRAPEZE_DURATION			18	// Длительность импульса тока (мс)
+#define REG_PULSE_SHAPE					19	// Форма импульса (0 - полусинус, 1 - мод. полусинус, 2 - трапеция)
 //
 #define REG_I_TO_DAC_RANGE0_K			20	// Диапазон 0 - Коэффициент пересчета в значение ЦАП
 #define REG_I_TO_DAC_RANGE0_B			21	// Диапазон 0 - Смещение пересчета в значение ЦАП
@@ -78,9 +80,7 @@
 
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)
-#define REG_PULSE_SHAPE					129	// Форма импульса (0 - полусинус, 1 - мод. полусинус, 2 - трапеция)
-#define REG_TRAPEZE_DURATION			130	// Длительность импульса тока (мс)
-
+//
 #define REG_DBG							150	// Регистр режима Отладки
 
 // Регистры только чтение
