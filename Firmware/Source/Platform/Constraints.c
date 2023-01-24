@@ -26,8 +26,8 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{DAC_OFFSET_MIN, DAC_OFFSET_MAX, DAC_OFFSET_DEF},							// 15
 		{CONF_STATE_TIMEOUT_MIN, CONF_STATE_TIMEOUT_MAX, CONF_STATE_TIMEOUT_DEF},	// 16
 		{TRAPEZE_CUR_RATE_MIN, TRAPEZE_CUR_RATE_MAX, TRAPEZE_CUR_RATE_DEF},			// 17
-		{0, 0, 0},																	// 18
-		{0, 0, 0},																	// 19
+		{TRAPEZE_DURATION_MIN, TRAPEZE_DURATION_MAX, TRAPEZE_DURATION_DEF},			// 18
+		{SINE_SHAPE, TRAPEZE_SHAPE, SINE_SHAPE},									// 19
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 20
 		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 21
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 22
@@ -137,8 +137,8 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, 0, 0},																	// 126
 		{0, 0, 0},																	// 127
 		{CURRENT_SETPOINT_MIN, CURRENT_SETPOINT_MAX, 0},							// 128
-		{SINE_SHAPE, TRAPEZE_SHAPE, SINE_SHAPE},									// 129
-		{TRAPEZE_DURATION_MIN, TRAPEZE_DURATION_MAX, TRAPEZE_DURATION_DEF},			// 130
+		{0, 0, 0},																	// 129
+		{0, 0, 0},																	// 130
 		{0, 0, 0},																	// 131
 		{0, 0, 0},																	// 132
 		{0, 0, 0},																	// 133

@@ -290,18 +290,17 @@ void CONTROL_StartPrepare()
 	CU_LoadConvertParams();
 	REGULATOR_CashVariables(&RegulatorParams);
 	CONTROL_CashVariables();
+	MEASURE_SetCurrentRange(&RegulatorParams);
 	CONTROL_PulseShapeConfig(&RegulatorParams);
 	CONTROL_CopyCurrentToEP(&RegulatorParams);
-
-	MEASURE_SetCurrentRange(&RegulatorParams);
 }
 //-----------------------------------------------
 
 void CONTROL_CashVariables()
 {
-	RegulatorParams.CurrentTarget = (float)DataTable[REG_CURRENT_PULSE_VALUE] / 10;
+	RegulatorParams.CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
-	CONTROL_CurrentMaxValue = (float)DataTable[REG_CURRENT_PER_CURBOARD] / 10 * DataTable[REG_CURBOARDS];
+	CONTROL_CurrentMaxValue = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	if(RegulatorParams.CurrentTarget > CONTROL_CurrentMaxValue)
 		RegulatorParams.CurrentTarget = CONTROL_CurrentMaxValue;
 }
@@ -370,6 +369,7 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
 	float dI = 0, Setpoint = 0;
+	Int16U EdgeIndex = 0;
 
 	Regulator->PulseCounterMax = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
 	dI = Regulator->CurrentTarget / DataTable[REG_TRAPEZE_CURRENT_RATE] / TIMER15_uS * 1000;
@@ -382,7 +382,18 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 			Setpoint += dI;
 		}
 		else
-			Regulator->CurrentTable[i] = Regulator->CurrentTarget;
+		{
+			if(!EdgeIndex)
+				EdgeIndex = i;
+
+			if(i < (Regulator->PulseCounterMax - EdgeIndex))
+				Regulator->CurrentTable[i] = Regulator->CurrentTarget;
+			else
+			{
+				Setpoint -= dI;
+				Regulator->CurrentTable[i] = Setpoint;
+			}
+		}
 	}
 }
 //-----------------------------------------------
