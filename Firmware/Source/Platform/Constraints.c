@@ -26,38 +26,38 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{DAC_OFFSET_MIN, DAC_OFFSET_MAX, DAC_OFFSET_DEF},							// 15
 		{CONF_STATE_TIMEOUT_MIN, CONF_STATE_TIMEOUT_MAX, CONF_STATE_TIMEOUT_DEF},	// 16
 		{TRAPEZE_CUR_RATE_MIN, TRAPEZE_CUR_RATE_MAX, TRAPEZE_CUR_RATE_DEF},			// 17
-		{0, 0, 0},																	// 18
-		{0, 0, 0},																	// 19
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 20
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 21
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 22
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 23
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 24
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 25
+		{TRAPEZE_DURATION_MIN, TRAPEZE_DURATION_MAX, TRAPEZE_DURATION_DEF},			// 18
+		{SINE_SHAPE, TRAPEZE_SHAPE, SINE_SHAPE},									// 19
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 20
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 21
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 22
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 23
+		{V_BAT_K_MIN, V_BAT_K_MAX, V_BAT_K_DEF},									// 24
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 25
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 26
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 27
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 28
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 29
-		{V_BAT_K_MIN, V_BAT_K_MAX, V_BAT_K_DEF},									// 30
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 31
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 32
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 27
+		{0, 0, 0},																	// 28
+		{0, 0, 0},																	// 29
+		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 30
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 31
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 32
 		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 33
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 34
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 35
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 36
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 37
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 38
-		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 39
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 40
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 41
-		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 42
-		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 43
-		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, REGULATOR_KP_DEF},						// 44
-		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 45
-		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, REGULATOR_KP_DEF},						// 46
-		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 47
-		{-INT16S_MAX, INT16S_MAX, 0},												// 48
-		{-INT16S_MAX, INT16S_MAX, 0},												// 49
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 34
+		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},									// 35
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 36
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 37
+		{COEF_K_MIN, COEF_K_MAX, COEF_K_DEF},										// 38
+		{OFFSET_MIN, OFFSET_MAX, OFFSET_DEF},										// 39
+		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, REGULATOR_KP_DEF},						// 40
+		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 41
+		{REGULATOR_KP_MIN, REGULATOR_KP_MAX, REGULATOR_KP_DEF},						// 42
+		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 43
+		{0, 0, 0},																	// 44
+		{-INT16S_MAX, INT16S_MAX, 0},												// 45
+		{-INT16S_MAX, INT16S_MAX, 0},												// 46
+		{0, 0, 0},																	// 47
+		{0, 0, 0},																	// 48
+		{0, 0, 0},																	// 49
 		{0, 0, 0},																	// 50
 		{0, 0, 0},																	// 51
 		{0, 0, 0},																	// 52
@@ -137,8 +137,8 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, 0, 0},																	// 126
 		{0, 0, 0},																	// 127
 		{CURRENT_SETPOINT_MIN, CURRENT_SETPOINT_MAX, 0},							// 128
-		{SINE_SHAPE, TRAPEZE_SHAPE, SINE_SHAPE},									// 129
-		{TRAPEZE_DURATION_MIN, TRAPEZE_DURATION_MAX, TRAPEZE_DURATION_DEF},			// 130
+		{0, 0, 0},																	// 129
+		{0, 0, 0},																	// 130
 		{0, 0, 0},																	// 131
 		{0, 0, 0},																	// 132
 		{0, 0, 0},																	// 133
