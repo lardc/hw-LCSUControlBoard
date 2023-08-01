@@ -410,7 +410,7 @@ void CONTROL_StopProcess()
 	TIM_Stop(TIM15);
 	LL_WriteDAC(0);
 	LL_LSLCurrentBoardLock(true);
-	LL_OutputAmplifierOffset(false);
+	LL_OutputAmplifierOffset(true);
 
 	float AfterPulseCoefficient = RegulatorParams.CurrentTarget / CONTROL_CurrentMaxValue;
 	CONTROL_AfterPulsePause = CONTROL_TimeCounter + DataTable[REG_AFTER_PULSE_PAUSE] * AfterPulseCoefficient;
@@ -440,7 +440,7 @@ void CONTROL_StartProcess()
 	CONTROL_HandleFanLogic(true);
 	CONTROL_HandleExternalLamp(true);
 
-	LL_OutputAmplifierOffset(true);
+	LL_OutputAmplifierOffset(false);
 	LL_LSLCurrentBoardLock(false);
 	TIM_Reset(TIM15);
 	TIM_Start(TIM15);
