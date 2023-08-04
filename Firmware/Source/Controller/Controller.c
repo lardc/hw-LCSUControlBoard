@@ -328,10 +328,16 @@ void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator)
 void CONTROL_SineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
 	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
+	// Вычисление амплитуды задания коррекции мосфетов
+	float CorrP2, CorrP1, CorrP0, CorrectionTarget;
+	CorrP2 = (float)DataTable[REG_DAC_I_RANGE0_P2 + Regulator->CurrentRange * 5];
+	CorrP1 = (float)DataTable[REG_DAC_I_RANGE0_P1 + Regulator->CurrentRange * 5];
+	CorrP0 = (float)DataTable[REG_DAC_I_RANGE0_P0 + Regulator->CurrentRange * 5];
+	CorrectionTarget = Regulator->CurrentTarget * Regulator->CurrentTarget * CorrP2 + Regulator->CurrentTarget * CorrP1 + CorrP0;
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		float Setpoint = Regulator->CurrentTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
+		float Setpoint = CorrectionTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
 		Regulator->CurrentTable[i] = (Setpoint > 0) ? Setpoint : 0;
 	}
 }
@@ -343,10 +349,16 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	Int16U LinearStartIndex = 0;
 
 	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
+	// Вычисление амплитуды задания коррекции мосфетов
+	float CorrP2, CorrP1, CorrP0, CorrectionTarget;
+	CorrP2 = (float)DataTable[REG_DAC_I_RANGE0_P2 + Regulator->CurrentRange * 5];
+	CorrP1 = (float)DataTable[REG_DAC_I_RANGE0_P1 + Regulator->CurrentRange * 5];
+	CorrP0 = (float)DataTable[REG_DAC_I_RANGE0_P0 + Regulator->CurrentRange * 5];
+	CorrectionTarget = Regulator->CurrentTarget * Regulator->CurrentTarget * CorrP2 + Regulator->CurrentTarget * CorrP1 + CorrP0;
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		float Setpoint = Regulator->CurrentTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
+		float Setpoint = CorrectionTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
 		Regulator->CurrentTable[i] = (Setpoint > 0) ? Setpoint : 0;
 
 		if((i > Regulator->PulseCounterMax / 2) && (Regulator->CurrentTable[i] <= LinearCurrent))
@@ -371,12 +383,19 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	float dI = 0, Setpoint = 0;
 	Int16U EdgeIndex = 0;
 
+	// Вычисление амплитуды задания коррекции мосфетов
+	float CorrP2, CorrP1, CorrP0, CorrectionTarget;
+	CorrP2 = (float)DataTable[REG_DAC_I_RANGE0_P2 + Regulator->CurrentRange * 5];
+	CorrP1 = (float)DataTable[REG_DAC_I_RANGE0_P1 + Regulator->CurrentRange * 5];
+	CorrP0 = (float)DataTable[REG_DAC_I_RANGE0_P0 + Regulator->CurrentRange * 5];
+	CorrectionTarget = Regulator->CurrentTarget * Regulator->CurrentTarget * CorrP2 + Regulator->CurrentTarget * CorrP1 + CorrP0;
+
 	Regulator->PulseCounterMax = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
-	dI = Regulator->CurrentTarget / DataTable[REG_TRAPEZE_CURRENT_RATE] / TIMER15_uS * 1000;
+	dI = CorrectionTarget / DataTable[REG_TRAPEZE_CURRENT_RATE] / TIMER15_uS * 1000;
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		if(Setpoint < Regulator->CurrentTarget)
+		if(Setpoint < CorrectionTarget)
 		{
 			Regulator->CurrentTable[i] = Setpoint;
 			Setpoint += dI;
@@ -387,7 +406,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 				EdgeIndex = i;
 
 			if(i < (Regulator->PulseCounterMax - EdgeIndex))
-				Regulator->CurrentTable[i] = Regulator->CurrentTarget;
+				Regulator->CurrentTable[i] = CorrectionTarget;
 			else
 			{
 				Setpoint -= dI;
