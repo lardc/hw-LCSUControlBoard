@@ -20,6 +20,7 @@ typedef struct __RegulatorParams
 	float MeasuredCurrent;
 	float MeasuredBatteryVoltage;
 	float CurrentTable[PULSE_BUFFER_SIZE];
+	float CurrentCorrectionTable[PULSE_BUFFER_SIZE];
 	float Kp[CURRENT_RANGES];
 	float Ki[CURRENT_RANGES];
 	float KiTune[CURRENT_RANGES];

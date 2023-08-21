@@ -116,10 +116,11 @@
 
 //  Fault and disable codes
 #define DF_NONE							0
+#define DF_PROBLEM_BATTERY				1
 
 // Problem
 #define PROBLEM_NONE					0
-#define PROBLEM_BATTERY					1
+
 
 //  Warning
 #define WARNING_NONE					0

@@ -34,12 +34,17 @@ float CU_ItoDAC(float Current, Int16U CurrentRange)
 	B = CurrentToDacParams[CurrentRange].B;
 
 	// Пересчет амплитуды тока в расчете на одну CurrentBoard
-	if(Current > DataTable[REG_CURRENT_THRESHOLD])
+	if(CurrentRange)
 	{
 		Current = Current / DataTable[REG_CURBOARDS];
 	}
 
 	return Current * K + B;
+}
+//-----------------------------
+float CU_ItoIcorrect(float Current, Int16U CurrentRange)
+{
+	return Current * Current * CurrentToDacParams[CurrentRange].P2 + Current * CurrentToDacParams[CurrentRange].P1 + CurrentToDacParams[CurrentRange].P0;
 }
 //-----------------------------
 
@@ -81,6 +86,9 @@ void CU_LoadConvertParams()
 		AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_B + i * 5];
 		AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE0 + i];
 
+		CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE0_P2 + i * 5];
+		CurrentToDacParams[i].P1 = DataTable[REG_DAC_I_RANGE0_P1 + i * 5];
+		CurrentToDacParams[i].P0 = DataTable[REG_DAC_I_RANGE0_P0 + i * 5];
 		CurrentToDacParams[i].K = DataTable[REG_DAC_I_RANGE0_K + i * 5];
 		CurrentToDacParams[i].B = DataTable[REG_DAC_I_RANGE0_B + i * 5];
 	}

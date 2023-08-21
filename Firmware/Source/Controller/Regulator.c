@@ -27,7 +27,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	else if (Qi < -Qi_max)
 		Qi = -Qi_max;
 
-	Regulator->RegulatorOutput = Regulator->CurrentTable[Regulator->PulseCounter] + Qp + Qi;
+	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter] + Qp + Qi;
 
 	// Выбор источника данных для записи в ЦАП
 	float ValueToDAC;
@@ -115,6 +115,7 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 	Regulator->DebugMode = false;
 	Regulator->DACOffset = DataTable[REG_DAC_OFFSET];
 	Regulator->DACLimitValue = (DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? \
-			DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
+	DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
+	Regulator->PulseCounter = 0;
 }
 //-----------------------------------------------
