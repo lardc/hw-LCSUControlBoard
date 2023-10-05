@@ -105,6 +105,8 @@
 #define TRAPEZE_DURATION_MAX		10			// мс
 #define TRAPEZE_DURATION_DEF		10			// мс
 
+#define REGULATOR_DELAY_MAX			10
+
 // Types
 typedef struct __TableItemConstraint
 {

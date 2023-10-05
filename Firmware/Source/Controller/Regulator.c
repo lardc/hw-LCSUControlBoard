@@ -16,7 +16,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
 	static float Qi = 0, Qp;
 
-	Regulator->RegulatorError = (Regulator->PulseCounter == 0) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
+	Regulator->RegulatorError = (Regulator->PulseCounter <= DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS)) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
 
 	Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
 	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
@@ -44,6 +44,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	Regulator->PulseCounter++;
 	if(Regulator->PulseCounter >= Regulator->PulseCounterMax)
 	{
+		Regulator->RegulatorError = 0;
 		Regulator->DebugMode = false;
 		Regulator->PulseCounter = 0;
 		Qi = 0;

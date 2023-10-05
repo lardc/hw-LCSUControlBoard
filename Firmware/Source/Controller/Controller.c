@@ -380,8 +380,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget, Regulator->CurrentRange);
 	Regulator->PulseCounterMax = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
 	dI = DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS;
-	//dICorrect = CorrectionTarget / (DataTable[REG_TRAPEZE_CURRENT_RATE] / TIMER15_uS);
-	DataTable[REG_DBG]=dI;
+
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
 		//запись заданного значения
@@ -389,6 +388,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 		{
 			Regulator->CurrentTable[i] = Setpoint;
 			Setpoint += dI;
+			Regulator->ShelfIndex = i + 1;
 		}
 		else
 		{

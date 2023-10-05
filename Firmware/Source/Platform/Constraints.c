@@ -58,7 +58,7 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{REGULATOR_KI_MIN, REGULATOR_KI_MAX, REGULATOR_KI_DEF},						// 47
 		{0, 0, 0},																	// 48
 		{0, 0, 0},																	// 49
-		{0, 0, 0},																	// 50
+		{0, REGULATOR_DELAY_MAX, 0},												// 50
 		{0, 0, 0},																	// 51
 		{0, 0, 0},																	// 52
 		{0, 0, 0},																	// 53
