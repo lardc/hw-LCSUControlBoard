@@ -85,7 +85,7 @@
 #define REG_REGULATOR_TF_Ki_RANG0		48	// Диапазон 0 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
 #define REG_REGULATOR_TF_Ki_RANG1		49	// Диапазон 1 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
 //
-#define REG_REGULATOR_DELAY				50	// Задержка включения регулятора
+#define REG_REGULATOR_DELAY				50	// Задержка включения регулятора (в тактах регулятора)
 
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)

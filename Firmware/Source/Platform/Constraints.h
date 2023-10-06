@@ -104,8 +104,10 @@
 #define TRAPEZE_DURATION_MIN		5			// мс
 #define TRAPEZE_DURATION_MAX		10			// мс
 #define TRAPEZE_DURATION_DEF		10			// мс
-
-#define REGULATOR_DELAY_MAX			10
+//
+#define REGULATOR_DELAY_MIN			0			// тактов
+#define REGULATOR_DELAY_MAX			10			// тактов
+#define REGULATOR_DELAY_DEF			4			// тактов
 
 // Types
 typedef struct __TableItemConstraint
