@@ -16,16 +16,15 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
 	static float Qi = 0, Qp;
 
-	Regulator->RegulatorError = (Regulator->PulseCounter <= DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS)) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
+	Regulator->RegulatorError = (Regulator->PulseCounter <= Regulator->PlateIndex) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
 
 	Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
 	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
 
-	float Qi_max = (float)DataTable[REG_REGULATOR_QI_MAX];
-	if(Qi > Qi_max)
-		Qi = Qi_max;
-	else if (Qi < -Qi_max)
-		Qi = -Qi_max;
+	if(Qi > DataTable[REG_REGULATOR_QI_MAX])
+		Qi = DataTable[REG_REGULATOR_QI_MAX];
+	else if (Qi < -DataTable[REG_REGULATOR_QI_MAX])
+		Qi = -DataTable[REG_REGULATOR_QI_MAX];
 
 	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter] + Qp + Qi;
 
