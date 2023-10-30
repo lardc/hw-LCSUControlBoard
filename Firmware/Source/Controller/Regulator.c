@@ -4,6 +4,8 @@
 #include "DataTable.h"
 #include "LowLevel.h"
 #include "ConvertUtils.h"
+#include "Controller.h"
+#include "Math.h"
 
 // Functions prototypes
 //
@@ -15,8 +17,23 @@ Int16U REGULATOR_DACApplyLimits(float Value, Int16U Offset, Int16U LimitValue);
 bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
 	static float Qi = 0, Qp;
-
+	static Int16U  FollowingErrorCounter = 0;
 	Regulator->RegulatorError = (Regulator->PulseCounter <= Regulator->PlateIndex) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
+
+	if(fabsf(Regulator->RegulatorError / Regulator->CurrentTarget * 100) < Regulator->RegulatorAlowedError)
+		FollowingErrorCounter = 0;
+
+	else
+		FollowingErrorCounter++;
+
+	if(FollowingErrorCounter >= Regulator->FollowingErrorCounterMax && !DataTable[REG_FOLLOWING_ERR_MUTE])
+		{
+			FollowingErrorCounter = 0;
+			CONTROL_StopProcess();
+			CONTROL_SetDeviceState(DS_Ready, SS_None);
+			DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
+		}
+
 
 	Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
 	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
@@ -43,12 +60,13 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 		DataTable[REG_RESULT_CURRENT] = Regulator->MeasuredCurrent;
 	REGULATOR_LoggingData(Regulator);
 	Regulator->PulseCounter++;
-	if(Regulator->PulseCounter >= Regulator->PulseCounterMax)
+	if(Regulator->PulseCounter >= Regulator->PulseCounterMax || DataTable[REG_PROBLEM] == PROBLEM_FOLLOWING_ERROR)
 	{
 		Regulator->RegulatorError = 0;
 		Regulator->DebugMode = false;
 		Regulator->PulseCounter = 0;
 		Qi = 0;
+		FollowingErrorCounter = 0;
 		return true;
 	}
 	else
@@ -119,5 +137,7 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 	Regulator->DACLimitValue = (DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? \
 	DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
 	Regulator->PulseCounter = 0;
+	Regulator->RegulatorAlowedError = DataTable[REG_REGULATOR_ALLOWED_ERR];
+	Regulator->FollowingErrorCounterMax = DataTable[REG_FOLLOWING_ERR_CNT];
 }
 //-----------------------------------------------

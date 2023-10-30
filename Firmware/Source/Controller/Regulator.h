@@ -33,6 +33,8 @@ typedef struct __RegulatorParams
 	Int16U DACOffset;
 	Int16U DACLimitValue;
 	Int16U DACSetpoint;
+	float RegulatorAlowedError;
+	Int16U FollowingErrorCounterMax;
 }RegulatorParamsStruct;
 
 // Functions

@@ -86,6 +86,9 @@
 #define REG_REGULATOR_TF_Ki_RANG1		49	// Диапазон 1 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
 //
 #define REG_REGULATOR_DELAY				50	// Задержка включения регулятора (в тактах регулятора)
+#define REG_REGULATOR_ALLOWED_ERR		51	// Максимально допустимая ошибка регулятора
+#define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
+#define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
 
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)
@@ -122,6 +125,7 @@
 
 // Problem
 #define PROBLEM_NONE					0
+#define PROBLEM_FOLLOWING_ERROR			1
 
 
 //  Warning

@@ -45,7 +45,6 @@ void CONTROL_SwitchToFault(Int16U Reason);
 void CONTROL_UpdateWatchDog();
 void CONTROL_ResetToDefaultState();
 void CONTROL_LogicProcess();
-void CONTROL_StopProcess();
 void CONTROL_ResetOutputRegisters();
 bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
