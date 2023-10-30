@@ -39,6 +39,8 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACOffset, Regulator->DACLimitValue);
 	LL_WriteDAC(Regulator->DACSetpoint);
 
+	if (Regulator->PulseCounter == Regulator->PulseCounterMax/2)
+		DataTable[REG_RESULT_CURRENT] = Regulator->MeasuredCurrent;
 	REGULATOR_LoggingData(Regulator);
 	Regulator->PulseCounter++;
 	if(Regulator->PulseCounter >= Regulator->PulseCounterMax)
