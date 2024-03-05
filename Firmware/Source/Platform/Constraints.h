@@ -101,7 +101,7 @@
 #define TRAPEZE_CUR_RATE_MAX		3			// A/мкс
 #define TRAPEZE_CUR_RATE_DEF		10			// A/мкс
 //
-#define TRAPEZE_DURATION_MIN		5			// мс
+#define TRAPEZE_DURATION_MIN		1			// мс
 #define TRAPEZE_DURATION_MAX		10			// мс
 #define TRAPEZE_DURATION_DEF		10			// мс
 //
