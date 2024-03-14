@@ -98,8 +98,8 @@
 #define CONF_STATE_TIMEOUT_DEF		5000		// мс
 //
 #define TRAPEZE_CUR_RATE_MIN		1			// А/мкс
-#define TRAPEZE_CUR_RATE_MAX		3			// A/мкс
-#define TRAPEZE_CUR_RATE_DEF		10			// A/мкс
+#define TRAPEZE_CUR_RATE_MAX		10			// A/мкс
+#define TRAPEZE_CUR_RATE_DEF		3			// A/мкс
 //
 #define TRAPEZE_DURATION_MIN		1			// мс
 #define TRAPEZE_DURATION_MAX		10			// мс
