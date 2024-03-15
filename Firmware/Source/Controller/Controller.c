@@ -381,6 +381,9 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	Regulator->PlateIndex = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
 	dI = DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS;
 
+	if(dI > DataTable[REG_CURRENT_PULSE_VALUE])
+	dI = DataTable[REG_CURRENT_PULSE_VALUE];
+
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
 		//запись заданного значения
