@@ -22,18 +22,16 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 
 	if(fabsf(Regulator->RegulatorError / Regulator->CurrentTarget * 100) < Regulator->RegulatorAlowedError)
 		FollowingErrorCounter = 0;
-
 	else
 		FollowingErrorCounter++;
 
 	if(FollowingErrorCounter >= Regulator->FollowingErrorCounterMax && !DataTable[REG_FOLLOWING_ERR_MUTE])
-		{
-			FollowingErrorCounter = 0;
-			CONTROL_StopProcess();
-			CONTROL_SetDeviceState(DS_Ready, SS_None);
-			DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
-		}
-
+	{
+		FollowingErrorCounter = 0;
+		CONTROL_StopProcess();
+		CONTROL_SetDeviceState(DS_Ready, SS_None);
+		DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
+	}
 
 	Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
 	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
@@ -135,7 +133,7 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 	Regulator->DebugMode = false;
 	Regulator->DACOffset = DataTable[REG_DAC_OFFSET];
 	Regulator->DACLimitValue = (DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? \
-	DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
+			DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
 	Regulator->PulseCounter = 0;
 	Regulator->RegulatorAlowedError = DataTable[REG_REGULATOR_ALLOWED_ERR];
 	Regulator->FollowingErrorCounterMax = DataTable[REG_FOLLOWING_ERR_CNT];
