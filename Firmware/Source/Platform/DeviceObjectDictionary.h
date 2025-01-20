@@ -14,6 +14,7 @@
 #define ACT_DBG_IND_CTRL				54	// Проверка работы внешнего индикатора
 
 #define ACT_STUDY_FIND_RESULT			60	// Учебная команда для расчета по формуле(а-в\с)
+#define ACT_STUDY_LED					61	// Учебная команда для зажигания лампы на 500мс
 
 #define ACT_CONFIG_UNIT					100	// Конфигурация блока
 #define ACT_SOFTWARE_START				101	// Старт измерения

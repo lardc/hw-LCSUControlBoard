@@ -18,7 +18,7 @@
 // Определения для выходных портов
 GPIO_PortPinSettingMacro GPIO_FAN				= {GPIOB, Pin_4};
 GPIO_PortPinSettingMacro GPIO_PS_CTRL			= {GPIOB, Pin_3};
-GPIO_PortPinSettingMacro GPIO_LED				= {GPIOB, Pin_13};
+GPIO_PortPinSettingMacro GPIO_LED				= {GPIOB, Pin_15};
 GPIO_PortPinSettingMacro GPIO_OFFSET_CTRL		= {GPIOB, Pin_7};
 GPIO_PortPinSettingMacro GPIO_IND_CTRL			= {GPIOB, Pin_5};
 GPIO_PortPinSettingMacro GPIO_OUT_LOCK			= {GPIOB, Pin_6};

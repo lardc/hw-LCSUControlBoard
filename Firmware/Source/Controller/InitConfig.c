@@ -45,7 +45,7 @@ void INITCFG_ConfigIO()
 	// Начальная установка состояний выводов
 	GPIO_SetState(GPIO_FAN, false);
 	GPIO_SetState(GPIO_PS_CTRL, false);
-	GPIO_SetState(GPIO_LED, false);
+	GPIO_SetState(GPIO_LED, true);
 	GPIO_SetState(GPIO_IND_CTRL, false);
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
 	GPIO_SetState(GPIO_OUT_LOCK, true);

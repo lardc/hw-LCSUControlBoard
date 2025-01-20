@@ -14,6 +14,12 @@ void LL_ToggleBoardLED()
 }
 //-----------------------------
 
+void LL_SetStateBoardLED(bool State)
+{
+	GPIO_SetState(GPIO_LED, State);
+}
+//-----------------------------
+
 void LL_LSLCurrentBoardLock(bool State)
 {
 	GPIO_SetState(GPIO_OUT_LOCK, State);

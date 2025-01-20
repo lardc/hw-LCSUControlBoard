@@ -200,6 +200,12 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			DataTable[REG_STUDY_SAVE_PARAM] = (DataTable[REG_STUDY_PARAM_A] - DataTable[REG_STUDY_PARAM_B]) / DataTable[REG_STUDY_PARAM_C];
 			break;
 
+		case ACT_STUDY_LED:
+			LL_SetStateBoardLED(false);
+			DELAY_MS(500);
+			LL_SetStateBoardLED(true);
+			break;
+
 		default:
 			return DIAG_HandleDiagnosticAction(ActionID, pUserError);
 			
