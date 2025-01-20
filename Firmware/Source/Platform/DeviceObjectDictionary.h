@@ -13,6 +13,8 @@
 #define ACT_DBG_FAN_CTRL				53	// Проверка работы вентилятора
 #define ACT_DBG_IND_CTRL				54	// Проверка работы внешнего индикатора
 
+#define ACT_STUDY_FIND_RESULT			60	// Учебная команда для расчета по формуле(а-в\с)
+
 #define ACT_CONFIG_UNIT					100	// Конфигурация блока
 #define ACT_SOFTWARE_START				101	// Старт измерения
 #define ACT_STOP_PROCESS				102	// Стоп измерения
@@ -112,7 +114,7 @@
 #define REG_RESULT_CURRENT				200	// Достигнутое значение импульса тока (А)
 #define REG_BATTERY_VOLTAGE				201	// Напряжение на батарее конденсаторов (В)
 //
-#define REG_STUDY_SAVE_PARAM			210 // Параметр для сохранения работы программы при работе с ознакомлением устройства прошивки
+#define REG_STUDY_SAVE_PARAM			210 // регистр для сохранения работы программы при работе с ознакомлением устройства прошивки
 // -----------------------------
 #define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID
 #define REG_FWINFO_MASTER_NID			257	// Device CAN master node ID (if presented)

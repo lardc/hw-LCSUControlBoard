@@ -50,6 +50,7 @@ bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
 void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
+void CONTROL_Study(Int16U ActionID);
 
 // Functions
 //
@@ -193,6 +194,10 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 		case ACT_CLR_WARNING:
 			DataTable[REG_WARNING] = WARNING_NONE;
+			break;
+
+		case ACT_STUDY_FIND_RESULT:
+			DataTable[REG_STUDY_SAVE_PARAM] = (DataTable[REG_STUDY_PARAM_A] - DataTable[REG_STUDY_PARAM_B]) / DataTable[REG_STUDY_PARAM_C];
 			break;
 
 		default:
@@ -559,4 +564,3 @@ void CONTROL_UpdateWatchDog()
 		IWDG_Refresh();
 }
 //------------------------------------------
-
