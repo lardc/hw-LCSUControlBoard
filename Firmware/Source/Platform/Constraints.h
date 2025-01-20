@@ -116,6 +116,11 @@
 #define FOLLOWING_ERR_CNT_MIN		0
 #define FOLLOWING_ERR_CNT_MAX		30
 #define FOLLOWING_ERR_CNT_DEF		10
+//
+#define STUDY_VALUE_MIN				-INT16S_MAX
+#define STUDY_VALUE_MAX				INT16S_MAX
+#define STUDY_VALUE_NUMEN_DEF		0
+#define STUDY_VALUE_DENOM_DEF		1			//значение 1 чтобы не было деление на 0 по умолчанию
 
 // Types
 typedef struct __TableItemConstraint

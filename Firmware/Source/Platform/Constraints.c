@@ -68,7 +68,7 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, 0, 0},																	// 57
 		{0, 0, 0},																	// 58
 		{0, 0, 0},																	// 59
-		{0, 0, 0},																	// 60
+		{STUDY_VALUE_MIN, STUDY_VALUE_MAX, STUDY_VALUE_NUMEN_DEF},					// 60
 		{0, 0, 0},																	// 61
 		{0, 0, 0},																	// 62
 		{0, 0, 0},																	// 63
@@ -138,8 +138,8 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, 0, 0},																	// 127
 		{CURRENT_SETPOINT_MIN, CURRENT_SETPOINT_MAX, 0},							// 128
 		{0, 0, 0},																	// 129
-		{0, 0, 0},																	// 130
-		{0, 0, 0},																	// 131
+		{STUDY_VALUE_MIN, STUDY_VALUE_MAX, STUDY_VALUE_NUMEN_DEF},					// 130
+		{STUDY_VALUE_MIN, STUDY_VALUE_MAX, STUDY_VALUE_DENOM_DEF},					// 131
 		{0, 0, 0},																	// 132
 		{0, 0, 0},																	// 133
 		{0, 0, 0},																	// 134
