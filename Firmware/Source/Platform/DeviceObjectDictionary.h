@@ -89,9 +89,14 @@
 #define REG_REGULATOR_ALLOWED_ERR		51	// Максимально допустимая ошибка регулятора
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
+//
+#define REG_STUDY_PARAM_A				60  // Значение А для работы с ознокомлением устройства прошивки
 
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)
+//
+#define REG_STUDY_PARAM_B				130 // Значение B для работы с ознокомлением устройства прошивки
+#define REG_STUDY_PARAM_C				131 // Значение C для работы с ознокомлением устройства прошивки
 //
 #define REG_DBG							150	// Регистр режима Отладки
 
@@ -106,6 +111,8 @@
 
 #define REG_RESULT_CURRENT				200	// Достигнутое значение импульса тока (А)
 #define REG_BATTERY_VOLTAGE				201	// Напряжение на батарее конденсаторов (В)
+//
+#define REG_STUDY_SAVE_PARAM			210 // Параметр для сохранения работы программы при работе с ознакомлением устройства прошивки
 // -----------------------------
 #define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID
 #define REG_FWINFO_MASTER_NID			257	// Device CAN master node ID (if presented)
