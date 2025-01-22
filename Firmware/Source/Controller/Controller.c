@@ -240,6 +240,8 @@ void CONTROL_StudyStateMachine()
 			LED_StudyStateCounter = CONTROL_TimeCounter;
 			LL_SetStateBoardLED(false);
 			CONTROL_StudyState = SSM_WaitAfterFirstLightPhase;
+			DataTable[REG_STUDY_SSM_ENUM] = SSM_WaitAfterFirstLightPhase;
+			DataTable[REG_STUDY_SSM_LED] = 1;
 			break;
 
 		case SSM_WaitAfterFirstLightPhase:
@@ -248,6 +250,8 @@ void CONTROL_StudyStateMachine()
 				LL_SetStateBoardLED(true);
 				LED_StudyStateCounter = CONTROL_TimeCounter;
 				CONTROL_StudyState = SSM_WaitAfterDeactivation;
+				DataTable[REG_STUDY_SSM_ENUM] = SSM_WaitAfterDeactivation;
+				DataTable[REG_STUDY_SSM_LED] = 0;
 			}
 			break;
 
@@ -257,6 +261,8 @@ void CONTROL_StudyStateMachine()
 				LL_SetStateBoardLED(false);
 				LED_StudyStateCounter = CONTROL_TimeCounter;
 				CONTROL_StudyState = SSM_WaitAfterSecondLightPhase;
+				DataTable[REG_STUDY_SSM_ENUM] = SSM_WaitAfterSecondLightPhase;
+				DataTable[REG_STUDY_SSM_LED] = 1;
 			}
 			break;
 
@@ -266,6 +272,8 @@ void CONTROL_StudyStateMachine()
 				LL_SetStateBoardLED(true);
 				LED_StudyStateCounter = 0;
 				CONTROL_StudyState = SSM_None;
+				DataTable[REG_STUDY_SSM_ENUM] = SSM_None;
+				DataTable[REG_STUDY_SSM_LED] = 0;
 			}
 			break;
 

@@ -116,6 +116,8 @@
 #define REG_BATTERY_VOLTAGE				201	// Напряжение на батарее конденсаторов (В)
 //
 #define REG_STUDY_SAVE_PARAM			210 // регистр для сохранения работы программы при работе с ознакомлением устройства прошивки
+#define REG_STUDY_SSM_LED				211 // регистр проверки вкл\выкл лампочки SSM
+#define REG_STUDY_SSM_ENUM				212 // регистр текущего enum машины состояний SSM
 // -----------------------------
 #define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID
 #define REG_FWINFO_MASTER_NID			257	// Device CAN master node ID (if presented)
