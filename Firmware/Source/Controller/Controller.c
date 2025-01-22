@@ -18,8 +18,18 @@
 
 // Variables
 //
+typedef enum _DeviceStudyStateMachine
+{
+	SSM_None = 0,
+	SSM_ActivateProcess = 1,
+	SSM_WaitAfterFirstLightPhase = 2,
+	SSM_WaitAfterDeactivation = 3,
+	SSM_WaitAfterSecondLightPhase = 4,
+} DeviceStudyStateMachine;
+//
 volatile DeviceState CONTROL_State = DS_None;
 volatile DeviceSubState CONTROL_SubState = SS_None;
+volatile DeviceStudyStateMachine CONTROL_StudyState = SSM_None;
 static Boolean CycleActive = false;
 //
 volatile Int64U CONTROL_TimeCounter = 0;
@@ -37,6 +47,7 @@ volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 float CONTROL_CurrentMaxValue = 0;
 //
 volatile RegulatorParamsStruct RegulatorParams;
+//
 
 /// Forward functions
 //
@@ -45,6 +56,7 @@ void CONTROL_SwitchToFault(Int16U Reason);
 void CONTROL_UpdateWatchDog();
 void CONTROL_ResetToDefaultState();
 void CONTROL_LogicProcess();
+void CONTROL_StudyStateMachine();
 void CONTROL_ResetOutputRegisters();
 bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
@@ -117,6 +129,8 @@ void CONTROL_ResetToDefaultState()
 void CONTROL_Idle()
 {
 	CONTROL_LogicProcess();
+
+	CONTROL_StudyStateMachine();
 
 	DEVPROFILE_ProcessRequests();
 	CONTROL_UpdateWatchDog();
@@ -213,6 +227,50 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 	return true;
 }
 //-----------------------------------------------
+void CONTROL_StudyStateMachine()
+{
+	static Int64U LED_StudyStateCounter = 0;
+	int LED_FirstLightPhase = 5000;
+	int LED_DeactivationPhase = 3000;
+	int LED_SecondLightPhase = 1000;
+
+	switch(CONTROL_StudyState)
+	{
+		case SSM_ActivateProcess:
+			LED_StudyStateCounter = CONTROL_TimeCounter;
+			LL_SetStateBoardLED(false);
+			CONTROL_StudyState = SSM_WaitAfterFirstLightPhase;
+			break;
+
+		case SSM_WaitAfterFirstLightPhase:
+			if(CONTROL_TimeCounter >= LED_StudyStateCounter + LED_FirstLightPhase)
+			{
+				LL_SetStateBoardLED(true);
+				LED_StudyStateCounter = CONTROL_TimeCounter;
+				CONTROL_StudyState = SSM_WaitAfterDeactivation;
+			}
+			break;
+
+		case SSM_WaitAfterDeactivation:
+			if(CONTROL_TimeCounter >= LED_StudyStateCounter + LED_DeactivationPhase)
+			{
+				LL_SetStateBoardLED(false);
+				LED_StudyStateCounter = CONTROL_TimeCounter;
+				CONTROL_StudyState = SSM_WaitAfterSecondLightPhase;
+			}
+			break;
+
+		case SSM_WaitAfterSecondLightPhase:
+			if(CONTROL_TimeCounter >= LED_StudyStateCounter + LED_SecondLightPhase)
+			{
+				LL_SetStateBoardLED(true);
+				LED_StudyStateCounter = 0;
+				CONTROL_StudyState = SSM_None;
+			}
+			break;
+
+	}
+}
 
 void CONTROL_LogicProcess()
 {
