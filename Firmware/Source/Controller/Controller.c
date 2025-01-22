@@ -97,6 +97,8 @@ void CONTROL_Init()
 	CONTROL_ResetToDefaultState();
 
 	CU_LoadConvertParams();
+	//Начальные значения
+	DataTable[REG_STUDY_SSM_ENUM] = SSM_None;
 }
 //------------------------------------------
 
