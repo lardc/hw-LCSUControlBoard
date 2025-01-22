@@ -220,6 +220,12 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			LL_SetStateBoardLED(true);
 			break;
 
+		case ACT_STUDY_START_SSM:
+			CONTROL_StudyState = SSM_ActivateProcess;
+			DataTable[REG_STUDY_SSM_ENUM] = SSM_ActivateProcess;
+			DataTable[REG_STUDY_SSM_LED] = 0;
+			break;
+
 		default:
 			return DIAG_HandleDiagnosticAction(ActionID, pUserError);
 			
