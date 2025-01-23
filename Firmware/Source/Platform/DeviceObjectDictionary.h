@@ -16,6 +16,7 @@
 #define ACT_STUDY_FIND_RESULT			60	// Учебная команда для расчета по формуле(а-в\с)
 #define ACT_STUDY_LED					61	// Учебная команда для зажигания лампы на 500мс
 #define ACT_STUDY_START_SSM				62	// Учебная команда для запуска учебной машины состоний SSM
+#define ACT_STUDY_EP_RESEARCH			63	// Учебная команда для знакомства с работой ЕР
 
 #define ACT_CONFIG_UNIT					100	// Конфигурация блока
 #define ACT_SOFTWARE_START				101	// Старт измерения
@@ -158,5 +159,8 @@
 #define EP_REGULATOR_ERR				4
 #define EP_CUR_TABLE					5
 #define EP_DAC_RAW_DATA					6
+//
+#define EP_STUDY_ENDPOINT_FIRST			7
+#define EP_STUDY_ENDPOINT_SECOND		8
 
 #endif //  __DEV_OBJ_DIC_H

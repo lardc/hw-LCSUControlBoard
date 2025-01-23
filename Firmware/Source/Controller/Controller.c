@@ -37,12 +37,15 @@ volatile Int64U	CONTROL_AfterPulsePause = 0;
 volatile Int64U	CONTROL_BatteryChargeTimeCounter = 0;
 volatile Int64U CONTROL_ConfigStateCounter = 0;
 volatile Int16U CONTROL_Values_Counter = 0;
+volatile Int16U CONTROL_Values_Counter_Study = 0;
 volatile float 	CONTROL_ValuesCurrent[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
 volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
 volatile float  CONTROL_CurentTable[VALUES_x_SIZE];
 volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
+volatile float  CONTROL_StudyEPfirst[VALUES_x_SIZE_STUDY];
+volatile float  CONTROL_StudyEPsecond[VALUES_x_SIZE_STUDY];
 //
 float CONTROL_CurrentMaxValue = 0;
 //
@@ -70,18 +73,18 @@ void CONTROL_Init()
 {
 	// Переменные для конфигурации EndPoint
 	Int16U FEPIndexes[FEP_COUNT] = {EP_CURRENT, EP_BATTERY_VOLTAGE, EP_REGULATOR_OUTPUT, EP_REGULATOR_ERR, EP_CUR_TABLE,
-			EP_DAC_RAW_DATA};
+			EP_DAC_RAW_DATA, EP_STUDY_ENDPOINT_FIRST, EP_STUDY_ENDPOINT_SECOND};
 
 	Int16U FEPSized[FEP_COUNT] =
-			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE};
+			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE_STUDY, VALUES_x_SIZE_STUDY};
 
 	pInt16U FEPCounters[FEP_COUNT] = {(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
-			(pInt16U)&CONTROL_Values_Counter};
+			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter_Study, (pInt16U)&CONTROL_Values_Counter_Study};
 
 	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)&CONTROL_ValuesCurrent, (pFloat32)&CONTROL_ValuesBatteryVoltage,
 			(pFloat32)&CONTROL_RegulatorOutput, (pFloat32)&CONTROL_RegulatorErr, (pFloat32)&CONTROL_CurentTable,
-			(pFloat32)&CONTROL_DACRawData};
+			(pFloat32)&CONTROL_DACRawData, (pFloat32)&CONTROL_StudyEPfirst, (pFloat32)&CONTROL_StudyEPsecond};
 
 	// Конфигурация сервиса работы Data-table и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
@@ -142,6 +145,7 @@ void CONTROL_Idle()
 static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 {
 	*pUserError = ERR_NONE;
+	static Int16U Local_Study_Counter = 0;
 	
 	switch (ActionID)
 	{
@@ -226,6 +230,25 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			CONTROL_StudyState = SSM_ActivateProcess;
 			DataTable[REG_STUDY_SSM_ENUM] = SSM_ActivateProcess;
 			DataTable[REG_STUDY_SSM_LED] = 0;
+			break;
+
+		case ACT_STUDY_EP_RESEARCH:
+			CONTROL_ResetOutputRegisters();
+
+			for (int i = 2; i <= 12; i++)
+			{
+				CONTROL_StudyEPfirst[Local_Study_Counter] = (i - 2) + (i - 1) + i * 0.1;
+				CONTROL_StudyEPsecond[Local_Study_Counter] = pow(2, i - 2) + i * 0.1;
+
+				Local_Study_Counter++;
+			}
+
+			// Условие обновления счетчика данных
+			if (CONTROL_Values_Counter_Study < VALUES_x_SIZE_STUDY)
+				{
+				CONTROL_Values_Counter_Study = Local_Study_Counter;
+				}
+
 			break;
 
 		default:
