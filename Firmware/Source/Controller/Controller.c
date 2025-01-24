@@ -572,9 +572,28 @@ void CONTROL_UpdateWatchDog()
 		IWDG_Refresh();
 }
 //------------------------------------------
-
+// - & - регистр , без - массив
 void CONTROL_InitStoragePointers()
 {
+		STF_AssignPointer(0, (Int32U)&DataTable[REG_CURRENT_PULSE_VALUE]);
 
+		STF_AssignPointer(1, (Int32U)&DataTable[REG_DEV_STATE]);
+		STF_AssignPointer(2, (Int32U)&DataTable[REG_FAULT_REASON]);
+		STF_AssignPointer(3, (Int32U)&DataTable[REG_DISABLE_REASON]);
+		STF_AssignPointer(4, (Int32U)&DataTable[REG_WARNING]);
+		STF_AssignPointer(5, (Int32U)&DataTable[REG_PROBLEM]);
+		STF_AssignPointer(6, (Int32U)&DataTable[REG_OP_RESULT]);
+		STF_AssignPointer(7, (Int32U)&DataTable[REG_SUB_STATE]);
+
+		STF_AssignPointer(8, (Int32U)&DataTable[REG_RESULT_CURRENT]);
+		STF_AssignPointer(9, (Int32U)&DataTable[REG_BATTERY_VOLTAGE]);
+
+		STF_AssignPointer(10, (Int32U)CONTROL_ValuesBatteryVoltage);
+		STF_AssignPointer(11, (Int32U)CONTROL_ValuesCurrent);
+		STF_AssignPointer(12, (Int32U)CONTROL_RegulatorOutput);
+		STF_AssignPointer(13, (Int32U)CONTROL_RegulatorErr);
+		STF_AssignPointer(14, (Int32U)CONTROL_CurentTable);
+		STF_AssignPointer(15, (Int32U)CONTROL_DACRawData);
+		STF_AssignPointer(16, (Int32U)&CONTROL_Values_Counter);
 }
 //------------------------------------------
