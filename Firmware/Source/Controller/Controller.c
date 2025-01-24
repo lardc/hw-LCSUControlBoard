@@ -14,6 +14,7 @@
 #include "Measurement.h"
 #include "math.h"
 #include "ConvertUtils.h"
+#include "SaveToFlash.h"
 
 
 // Variables
@@ -50,6 +51,7 @@ bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
 void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
+void CONTROL_InitStoragePointers();
 
 // Functions
 //
@@ -84,6 +86,9 @@ void CONTROL_Init()
 	CONTROL_ResetToDefaultState();
 
 	CU_LoadConvertParams();
+
+	// Инициализация указателей на сохраняемые данные
+	CONTROL_InitStoragePointers();
 }
 //------------------------------------------
 
@@ -193,6 +198,14 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 		case ACT_CLR_WARNING:
 			DataTable[REG_WARNING] = WARNING_NONE;
+			break;
+
+		case ACT_FLASH_DIAG_SAVE:
+			STF_SaveDiagData();
+			break;
+
+		case ACT_FLASH_DIAG_ERASE:
+			STF_EraseDataSector();
 			break;
 
 		default:
@@ -560,3 +573,8 @@ void CONTROL_UpdateWatchDog()
 }
 //------------------------------------------
 
+void CONTROL_InitStoragePointers()
+{
+
+}
+//------------------------------------------
