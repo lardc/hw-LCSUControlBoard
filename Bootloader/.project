@@ -504,5 +504,20 @@
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/hw-STM32-libs/System/System/tiny_printf.c</locationURI>
 		</link>
+				<link>
+			<name>Source/Library/Delay.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/hw-STM32-libs/Library/Delay.c</locationURI>
+		</link>
+		<link>
+			<name>Source/Library/Delay.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/hw-STM32-libs/Library/Delay.h</locationURI>
+		</link>
+		<link>
+			<name>Source/Library/Utils.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/hw-STM32-libs/Library/Utils.h</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
