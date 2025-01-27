@@ -55,6 +55,7 @@ void CONTROL_StartPrepare();
 void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
+void CONTROL_FlashTest();
 
 // Functions
 //
@@ -207,6 +208,10 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 		case ACT_CLR_WARNING:
 			DataTable[REG_WARNING] = WARNING_NONE;
+			break;
+
+		case ACT_FLASH_TEST_TEMPORARY:
+			Control_FlashTest();
 			break;
 
 		default:
@@ -437,6 +442,49 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 					}
 			}
 	}
+}
+//-----------------------------------------------
+
+void Control_FlashTest()
+{
+	CONTROL_ResetOutputRegisters();
+	static Int16U Local_Values_counter = 0;
+
+	for (int i = 0; i <= 20; i++)
+		{
+			CONTROL_ValuesCurrent[Local_Values_counter] = i;
+			CONTROL_RegulatorErr[Local_Values_counter] = i + 1;
+			CONTROL_ValuesBatteryVoltage[Local_Values_counter] = i + 2;
+			CONTROL_RegulatorOutput[Local_Values_counter] = i + 3;
+			CONTROL_CurentTable[Local_Values_counter] = i + 4;
+			CONTROL_DACRawData[Local_Values_counter] = i + 5;
+
+			Local_Values_counter++;
+		}
+
+	DataTable[REG_CURRENT_PULSE_VALUE] = 6200;
+
+	DataTable[REG_DEV_STATE] = DS_Fault;
+	DataTable[REG_FAULT_REASON]	= DF_PROBLEM_BATTERY;
+	DataTable[REG_DISABLE_REASON] = DF_PROBLEM_BATTERY;
+	DataTable[REG_WARNING] = WARNING_TEST;
+	DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
+	DataTable[REG_OP_RESULT] = 	OPRESULT_FAIL;
+
+	DataTable[REG_SUB_STATE] = SS_Pulse;
+	DataTable[REG_RESULT_CURRENT] = 10;
+	DataTable[REG_BATTERY_VOLTAGE] = 100;
+
+	// Условие обновления счетчика данных
+	if (CONTROL_Values_Counter < VALUES_x_SIZE)
+		{
+			CONTROL_Values_Counter = Local_Values_counter;
+		}
+	RequestSaveToFlash = true;
+
+	// Сброс локального счетчика
+	if (Local_Values_counter >= VALUES_x_SIZE)
+		Local_Values_counter = 0;
 }
 //-----------------------------------------------
 

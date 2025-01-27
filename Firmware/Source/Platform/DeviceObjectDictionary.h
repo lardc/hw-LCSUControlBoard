@@ -25,11 +25,13 @@
 
 #define ACT_FLASH_DIAG_READ_SYMBOL		330	// Выполнить чтение символа из памяти отладочной информации
 #define ACT_FLASH_DIAG_INIT_READ		331	// Инициализировать начало считывания отладочной информации
-#define ACT_FLASH_DIAG_TO_EP			332	// Выполнить чтение массива из памяти отладочной информации в EP
 
-#define ACT_FLASH_DIAG_SAVE				333	// Сохранение блока отладочной информации во флэш
-#define ACT_FLASH_DIAG_ERASE			334	// Стирание области отладочной информации
+#define ACT_FLASH_DIAG_SAVE				332	// Сохранение блока отладочной информации во флэш
+#define ACT_FLASH_DIAG_ERASE			333	// Стирание области отладочной информации
 
+#define ACT_FLASH_TEST_TEMPORARY		335 // Временная команда для проверки работоспособности флэш
+
+#define ACT_FLASH_DIAG_TO_EP			340	// Выполнить чтение массива из памяти отладочной информации в EP
 // -----------------------------
 
 // Регистры
@@ -140,6 +142,7 @@
 
 //  Warning
 #define WARNING_NONE					0
+#define WARNING_TEST					1	// тестовый warning
 
 //  User Errors
 #define ERR_NONE						0
