@@ -22,6 +22,7 @@
 volatile DeviceState CONTROL_State = DS_None;
 volatile DeviceSubState CONTROL_SubState = SS_None;
 static Boolean CycleActive = false;
+static Boolean RequestSaveToFlash = FALSE;
 //
 volatile Int64U CONTROL_TimeCounter = 0;
 volatile Int64U	CONTROL_AfterPulsePause = 0;
@@ -122,6 +123,12 @@ void CONTROL_Idle()
 {
 	CONTROL_LogicProcess();
 
+	if (RequestSaveToFlash)
+	{
+		RequestSaveToFlash = FALSE;
+		STF_SaveDiagData();
+	}
+
 	DEVPROFILE_ProcessRequests();
 	CONTROL_UpdateWatchDog();
 }
@@ -198,14 +205,6 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 		case ACT_CLR_WARNING:
 			DataTable[REG_WARNING] = WARNING_NONE;
-			break;
-
-		case ACT_FLASH_DIAG_SAVE:
-			STF_SaveDiagData();
-			break;
-
-		case ACT_FLASH_DIAG_ERASE:
-			STF_EraseDataSector();
 			break;
 
 		default:

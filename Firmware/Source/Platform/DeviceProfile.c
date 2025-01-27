@@ -183,6 +183,7 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 		case ACT_BOOT_LOADER_REQUEST:
 			BOOT_LOADER_VARIABLE = BOOT_LOADER_REQUEST;
 			break;
+
 		case ACT_FLASH_DIAG_READ_SYMBOL:
 			DataTable[REG_MEM_SYMBOL] = NFLASH_ReadWord16(MemoryPointer);
 			MemoryPointer += 2;
@@ -190,6 +191,14 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 
 		case ACT_FLASH_DIAG_INIT_READ:
 			MemoryPointer = FLASH_DIAG_START_ADDR;
+			break;
+
+		case ACT_FLASH_DIAG_SAVE:
+			STF_SaveDiagData();
+			break;
+
+		case ACT_FLASH_DIAG_ERASE:
+			STF_EraseDataSector();
 			break;
 
 		default:
