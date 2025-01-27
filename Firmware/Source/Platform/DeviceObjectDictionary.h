@@ -25,9 +25,10 @@
 
 #define ACT_FLASH_DIAG_READ_SYMBOL		330	// Выполнить чтение символа из памяти отладочной информации
 #define ACT_FLASH_DIAG_INIT_READ		331	// Инициализировать начало считывания отладочной информации
+#define ACT_FLASH_DIAG_TO_EP			332	// Выполнить чтение массива из памяти отладочной информации в EP
 
-#define ACT_FLASH_DIAG_SAVE				332	// Сохранение блока отладочной информации во флэш
-#define ACT_FLASH_DIAG_ERASE			333	// Стирание области отладочной информации
+#define ACT_FLASH_DIAG_SAVE				333	// Сохранение блока отладочной информации во флэш
+#define ACT_FLASH_DIAG_ERASE			334	// Стирание области отладочной информации
 
 // -----------------------------
 
@@ -154,5 +155,7 @@
 #define EP_REGULATOR_ERR				4
 #define EP_CUR_TABLE					5
 #define EP_DAC_RAW_DATA					6
+
+#define EP_DiagData						7	// Diag data drom flash
 
 #endif //  __DEV_OBJ_DIC_H

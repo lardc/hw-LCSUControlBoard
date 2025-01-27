@@ -10,7 +10,7 @@
 //
 #define EP_WRITE_COUNT							0		// Количество массивов для записи
 #define EP_COUNT								0		// Количество массивов для чтения типа Int
-#define FEP_COUNT								6		// Количество массивов для чтения типа float
+#define FEP_COUNT								7		// Количество массивов для чтения типа float
 #define ENABLE_LOCKING							FALSE	// Защита NV регистров паролем
 //
 #define SINE_PULSE_DURATION						10000	// Длительность импульса тока (мкс)
@@ -30,6 +30,7 @@
 
 // Размер массивов EP
 #define VALUES_x_SIZE	((SINE_PULSE_DURATION + LINEAR_FRAGMENT_DURATION) / TIMER15_uS)
+#define VALUES_DIAG_SIZE						300
 
 // Временные параметры
 #define TIME_LED_BLINK							500		// Мигание светодиодом (в мс)

@@ -29,12 +29,14 @@ volatile Int64U	CONTROL_AfterPulsePause = 0;
 volatile Int64U	CONTROL_BatteryChargeTimeCounter = 0;
 volatile Int64U CONTROL_ConfigStateCounter = 0;
 volatile Int16U CONTROL_Values_Counter = 0;
+volatile Int16U CONTROL_DiagCounter = 0;
 volatile float 	CONTROL_ValuesCurrent[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
 volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
 volatile float  CONTROL_CurentTable[VALUES_x_SIZE];
 volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
+volatile float  CONTROL_DiagData[VALUES_DIAG_SIZE];
 //
 float CONTROL_CurrentMaxValue = 0;
 //
@@ -60,18 +62,18 @@ void CONTROL_Init()
 {
 	// Переменные для конфигурации EndPoint
 	Int16U FEPIndexes[FEP_COUNT] = {EP_CURRENT, EP_BATTERY_VOLTAGE, EP_REGULATOR_OUTPUT, EP_REGULATOR_ERR, EP_CUR_TABLE,
-			EP_DAC_RAW_DATA};
+			EP_DAC_RAW_DATA, EP_DiagData};
 
 	Int16U FEPSized[FEP_COUNT] =
-			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE};
+			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_DIAG_SIZE};
 
 	pInt16U FEPCounters[FEP_COUNT] = {(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
-			(pInt16U)&CONTROL_Values_Counter};
+			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_DiagCounter};
 
 	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)&CONTROL_ValuesCurrent, (pFloat32)&CONTROL_ValuesBatteryVoltage,
 			(pFloat32)&CONTROL_RegulatorOutput, (pFloat32)&CONTROL_RegulatorErr, (pFloat32)&CONTROL_CurentTable,
-			(pFloat32)&CONTROL_DACRawData};
+			(pFloat32)&CONTROL_DACRawData, (pFloat32)&CONTROL_DiagData};
 
 	// Конфигурация сервиса работы Data-table и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
@@ -571,7 +573,7 @@ void CONTROL_UpdateWatchDog()
 		IWDG_Refresh();
 }
 //------------------------------------------
-// - & - регистр , без - массив
+
 void CONTROL_InitStoragePointers()
 {
 		STF_AssignPointer(0, (Int32U)&DataTable[REG_CURRENT_PULSE_VALUE]);

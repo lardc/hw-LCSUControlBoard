@@ -201,6 +201,16 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 			STF_EraseDataSector();
 			break;
 
+		case ACT_FLASH_DIAG_TO_EP:
+			{
+				DEVPROFILE_ResetEPReadState();
+				DEVPROFILE_ResetScopes(0);
+
+				for(CONTROL_DiagCounter = 0; CONTROL_DiagCounter < VALUES_DIAG_SIZE && MemoryPointer <= FLASH_DIAG_END_ADDR;)
+					CONTROL_DiagData[CONTROL_DiagCounter++] = *(pInt16U)(MemoryPointer++);
+			}
+			break;
+
 		default:
 			return (ControllerDispatchFunction) ? ControllerDispatchFunction(ActionID, UserError) : FALSE;
 	}
