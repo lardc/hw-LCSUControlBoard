@@ -238,7 +238,7 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			for (int i = 2; i <= 12; i++)
 			{
 				CONTROL_StudyEPfirst[Local_Study_Counter] = (i - 2) + (i - 1) + i * 0.1;
-				CONTROL_StudyEPsecond[Local_Study_Counter] = pow(2, i - 2) + i * 0.1;
+				CONTROL_StudyEPsecond[Local_Study_Counter] = powf(2, i - 2) + i * 0.1;
 
 				Local_Study_Counter++;
 			}
@@ -246,7 +246,7 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			// Условие обновления счетчика данных
 			if (CONTROL_Values_Counter_Study < VALUES_x_SIZE_STUDY)
 				{
-				CONTROL_Values_Counter_Study = Local_Study_Counter;
+					CONTROL_Values_Counter_Study = Local_Study_Counter;
 				}
 
 			break;
