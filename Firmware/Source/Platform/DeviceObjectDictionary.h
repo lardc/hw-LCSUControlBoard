@@ -159,6 +159,6 @@
 #define EP_CUR_TABLE					5
 #define EP_DAC_RAW_DATA					6
 
-#define EP_DiagData						7	// Diag data drom flash
+#define EP_DiagData						20	// Diag data drom flash
 
 #endif //  __DEV_OBJ_DIC_H

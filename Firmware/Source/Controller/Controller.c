@@ -211,7 +211,7 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			break;
 
 		case ACT_FLASH_TEST_TEMPORARY:
-			Control_FlashTest();
+			CONTROL_FlashTest();
 			break;
 
 		default:
@@ -445,7 +445,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 }
 //-----------------------------------------------
 
-void Control_FlashTest()
+void CONTROL_FlashTest()
 {
 	CONTROL_ResetOutputRegisters();
 	static Int16U Local_Values_counter = 0;

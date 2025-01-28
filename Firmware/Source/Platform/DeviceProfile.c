@@ -207,7 +207,10 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 				DEVPROFILE_ResetScopes(0);
 
 				for(CONTROL_DiagCounter = 0; CONTROL_DiagCounter < VALUES_DIAG_SIZE && MemoryPointer <= FLASH_DIAG_END_ADDR;)
-					CONTROL_DiagData[CONTROL_DiagCounter++] = *(pInt16U)(MemoryPointer++);
+				{
+					CONTROL_DiagData[CONTROL_DiagCounter++] = NFLASH_ReadWord16(MemoryPointer);
+					MemoryPointer += 2;
+				}
 			}
 			break;
 
