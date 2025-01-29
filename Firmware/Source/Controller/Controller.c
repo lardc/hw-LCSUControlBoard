@@ -448,7 +448,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 void CONTROL_FlashTest()
 {
 	CONTROL_ResetOutputRegisters();
-	static Int16U Local_Values_counter = 0;
+	volatile Int16U Local_Values_counter = 0;
 
 	for (int i = 0; i <= 20; i++)
 		{
