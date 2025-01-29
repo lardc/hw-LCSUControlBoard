@@ -198,6 +198,7 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 			break;
 
 		case ACT_FLASH_DIAG_ERASE:
+			NFLASH_Unlock();
 			STF_EraseDataSector();
 			break;
 
@@ -301,7 +302,13 @@ Int16U DEVPROFILE_CallbackReadX(Int16U Endpoint, pInt16U* Buffer, Boolean Stream
 	
 	// Update content state
 	epState->LastReadCounter = epState->ReadCounter;
-	epState->ReadCounter += pLen;
+	if(!Streamed)
+	{
+		if(pLen == 0)
+			epState->ReadCounter = 0;
+		else
+			epState->ReadCounter += pLen;
+	}
 	
 	return pLen;
 }
@@ -329,7 +336,6 @@ Int16U DEVPROFILE_CallbackReadFastFloatX(Int16U Endpoint, float** Buffer, void* 
 
 	// Update content state
 	epState->LastReadCounter = epState->ReadCounter;
-	epState->ReadCounter += pLen;
 
 	return pLen;
 }

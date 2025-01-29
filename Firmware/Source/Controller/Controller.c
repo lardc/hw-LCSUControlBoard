@@ -452,12 +452,12 @@ void CONTROL_FlashTest()
 
 	for (int i = 0; i <= 20; i++)
 		{
-			CONTROL_ValuesCurrent[Local_Values_counter] = i;
-			CONTROL_RegulatorErr[Local_Values_counter] = i + 1;
-			CONTROL_ValuesBatteryVoltage[Local_Values_counter] = i + 2;
-			CONTROL_RegulatorOutput[Local_Values_counter] = i + 3;
-			CONTROL_CurentTable[Local_Values_counter] = i + 4;
-			CONTROL_DACRawData[Local_Values_counter] = i + 5;
+			CONTROL_ValuesCurrent[Local_Values_counter] = i*0.1;
+			CONTROL_RegulatorErr[Local_Values_counter] = i*0.1 + 1;
+			CONTROL_ValuesBatteryVoltage[Local_Values_counter] = i*0.1 + 2;
+			CONTROL_RegulatorOutput[Local_Values_counter] = i*0.1 + 3;
+			CONTROL_CurentTable[Local_Values_counter] = i*0.1 + 4;
+			CONTROL_DACRawData[Local_Values_counter] = i*0.1 + 5;
 
 			Local_Values_counter++;
 		}
