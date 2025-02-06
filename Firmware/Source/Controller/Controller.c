@@ -577,13 +577,13 @@ void CONTROL_SetDeviceState(DeviceState NewState, DeviceSubState NewSubState)
 //------------------------------------------
 void CONTROL_VersionSwitch()
 {
-	if(DataTable[REG_VERSION_SWITCH] == PCB_VERSION_10)
+	if(DataTable[REG_PCB_VERSION] == PCB_VERSION_10)
 	{
-		DataTable[REG_VERSION_SWITCH] = PCB_VERSION_11;
+		DataTable[REG_PCB_VERSION] = PCB_VERSION_11;
 	}
 	else
 	{
-		DataTable[REG_VERSION_SWITCH] = PCB_VERSION_10;
+		DataTable[REG_PCB_VERSION] = PCB_VERSION_10;
 	}
 }
 //------------------------------------------

@@ -99,7 +99,7 @@
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
 
-#define REG_VERSION_SWITCH				120	// 0 - версия платы 1.0
+#define REG_PCB_VERSION					120	// 0 - версия платы 1.0
 											// 1 - версия  1.1
 
 // Несохраняемые регистры чтения-записи

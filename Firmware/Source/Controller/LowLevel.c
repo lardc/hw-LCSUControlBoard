@@ -37,7 +37,7 @@ void LL_PowerSupplyEnable(bool State)
 
 void LL_SetCurrentRange0()
 {
-	switch((Int16U)DataTable[REG_VERSION_SWITCH])
+	switch((Int16U)DataTable[REG_PCB_VERSION])
 	{
 		case PCB_VERSION_10:
 			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
@@ -54,7 +54,7 @@ void LL_SetCurrentRange0()
 
 void LL_SetCurrentRange1()
 {
-	switch((Int16U)DataTable[REG_VERSION_SWITCH])
+	switch((Int16U)DataTable[REG_PCB_VERSION])
 	{
 		case PCB_VERSION_10:
 			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R1);

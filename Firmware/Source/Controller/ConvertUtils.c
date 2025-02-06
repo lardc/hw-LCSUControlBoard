@@ -4,6 +4,7 @@
 #include "LowLevel.h"
 #include "DataTable.h"
 #include "Global.h"
+#include "Constraints.h"
 
 // Structs
 typedef struct __ConvertParams
@@ -50,7 +51,18 @@ float CU_ItoIcorrect(float Current, Int16U CurrentRange)
 
 float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients)
 {
-	return (Data * Coefficients->K + Coefficients->B);
+	float Uadc;
+	switch((Int16U)DataTable[REG_PCB_VERSION])
+	{
+		case PCB_VERSION_10:
+			return (Data * Coefficients->K + Coefficients->B);
+			break;
+
+		case PCB_VERSION_11:
+			Uadc = Data * ADC_REF_VOLTAGE_PCB11 / ADC_RESOLUTION;
+			return (Uadc * Coefficients->K + Coefficients->B);
+			break;
+	}
 }
 //-----------------------------
 
@@ -59,7 +71,14 @@ float CU_ADCtoI(Int16U Data, Int16U CurrentRange)
 	float Uadc, Current;
 
 	Uadc = CU_ADCtoX(Data, &AdcToCurrentParams[CurrentRange]);
-	Current = Uadc / AdcToCurrentParams[CurrentRange].Kamp / DataTable[REG_SHUNT_RESISTANCE] * 1000;
+	if (DataTable[REG_PCB_VERSION] == 0)
+	{
+		Current = Uadc / AdcToCurrentParams[CurrentRange].Kamp / DataTable[REG_SHUNT_RESISTANCE] * 1000;
+	}
+	else
+	{
+		Current = Uadc / DataTable[REG_SHUNT_RESISTANCE] * 1000;
+	}
 	return (Current * Current * AdcToCurrentParams[CurrentRange].P2 + Current * AdcToCurrentParams[CurrentRange].P1 + AdcToCurrentParams[CurrentRange].P0);
 }
 //-----------------------------
