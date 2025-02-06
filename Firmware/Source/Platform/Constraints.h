@@ -108,14 +108,17 @@
 #define REGULATOR_DELAY_MIN			0			// тактов
 #define REGULATOR_DELAY_MAX			10			// тактов
 #define REGULATOR_DELAY_DEF			4			// тактов
-
+//
 #define ALLOWED_ERR_MIN				0			// %
 #define ALLOWED_ERR_MAX				15			// %
 #define ALLOWED_ERR_DEF				10			// %
-
+//
 #define FOLLOWING_ERR_CNT_MIN		0
 #define FOLLOWING_ERR_CNT_MAX		30
 #define FOLLOWING_ERR_CNT_DEF		10
+//
+#define	PCB_VERSION_10				0
+#define PCB_VERSION_11				1
 
 // Types
 typedef struct __TableItemConstraint

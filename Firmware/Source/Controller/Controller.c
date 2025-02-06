@@ -15,6 +15,8 @@
 #include "math.h"
 #include "ConvertUtils.h"
 #include "SaveToFlash.h"
+#include "Constraints.h"
+
 
 
 // Variables
@@ -87,7 +89,7 @@ void CONTROL_Init()
 	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
 	DEVPROFILE_InitFEPService(FEPIndexes, FEPSized, FEPCounters, FEPDatas);
 	// Первоначальная настройка под версию платы
-	//CONTROL_VersionSwitch();
+	CONTROL_VersionSwitch();
 	// Сброс значений
 	DEVPROFILE_ResetControlSection();
 	CONTROL_ResetToDefaultState();
@@ -214,7 +216,7 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			break;
 
 		case ACT_SWITCH_VERSION:
-			//CONTROL_VersionSwitch();
+			CONTROL_VersionSwitch();
 			break;
 
 		case ACT_FLASH_TEST_TEMPORARY:
@@ -623,13 +625,13 @@ void CONTROL_SetDeviceState(DeviceState NewState, DeviceSubState NewSubState)
 //------------------------------------------
 void CONTROL_VersionSwitch()
 {
-	if(DataTable[REG_VERSION_SWITCH] == 0)
+	if(DataTable[REG_VERSION_SWITCH] == PCB_VERSION_10)
 	{
-		DataTable[REG_VERSION_SWITCH] = 1;
+		DataTable[REG_VERSION_SWITCH] = PCB_VERSION_11;
 	}
 	else
 	{
-		DataTable[REG_VERSION_SWITCH] = 0;
+		DataTable[REG_VERSION_SWITCH] = PCB_VERSION_10;
 	}
 }
 //------------------------------------------

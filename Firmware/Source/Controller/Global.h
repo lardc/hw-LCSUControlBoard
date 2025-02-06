@@ -23,12 +23,15 @@
 #define CURRENT_RANGE_0							0
 #define CURRENT_RANGE_1							1
 //
-#define REFERENCE_VOLTAGE						3.3
+#define ADC_REF_VOLTAGE_PCB10					3300.0f	// Опорное напряжение (в мВ)
+#define ADC_REF_VOLTAGE_PCB11					3000.0f	// Опорное напряжение (в мВ)
+#define ADC_RESOLUTION							4095	// Разрешение АЦП
 //
 #define SINE_SHAPE								0
 #define MOD_SINE_SHAPE							1
 #define TRAPEZE_SHAPE							2
 //
+
 
 // Размер массивов EP
 #define VALUES_x_SIZE	((SINE_PULSE_DURATION + LINEAR_FRAGMENT_DURATION) / TIMER15_uS)

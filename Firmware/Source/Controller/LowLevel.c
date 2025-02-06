@@ -6,6 +6,8 @@
 #include "Global.h"
 #include "InitConfig.h"
 #include "DataTable.h"
+#include "Constraints.h"
+
 
 // Functions
 //
@@ -37,11 +39,11 @@ void LL_SetCurrentRange0()
 {
 	switch((Int16U)DataTable[REG_VERSION_SWITCH])
 	{
-		case 0:
+		case PCB_VERSION_10:
 			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
 			break;
 
-		case 1:
+		case PCB_VERSION_11:
 			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
 			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, false);
 			break;
@@ -52,17 +54,17 @@ void LL_SetCurrentRange0()
 
 void LL_SetCurrentRange1()
 {
-	switch((Int16U)(DataTable[REG_VERSION_SWITCH]))
-		{
-			case 0:
-				INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R1);
-				break;
+	switch((Int16U)DataTable[REG_VERSION_SWITCH])
+	{
+		case PCB_VERSION_10:
+			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R1);
+			break;
 
-			case 1:
-				INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
-				GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, true);
-				break;
-		}
+		case PCB_VERSION_11:
+			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, true);
+			break;
+	}
 	GPIO_SetState(GPIO_CURRENT_RANGE, true);
 }
 //-----------------------------
