@@ -30,8 +30,6 @@
 #define ACT_FLASH_DIAG_SAVE				332	// Сохранение блока отладочной информации во флэш
 #define ACT_FLASH_DIAG_ERASE			333	// Стирание области отладочной информации
 
-#define ACT_FLASH_TEST_TEMPORARY		335 // Временная команда для проверки работоспособности флэш
-
 #define ACT_FLASH_DIAG_TO_EP			340	// Выполнить чтение массива из памяти отладочной информации в EP
 // -----------------------------
 
@@ -146,7 +144,6 @@
 
 //  Warning
 #define WARNING_NONE					0
-#define WARNING_TEST					1	// тестовый warning
 
 //  User Errors
 #define ERR_NONE						0
