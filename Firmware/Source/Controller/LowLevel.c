@@ -5,6 +5,7 @@
 #include "Delay.h"
 #include "Global.h"
 #include "InitConfig.h"
+#include "DataTable.h"
 
 // Functions
 //
@@ -34,14 +35,34 @@ void LL_PowerSupplyEnable(bool State)
 
 void LL_SetCurrentRange0()
 {
-	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+	switch((Int16U)DataTable[REG_VERSION_SWITCH])
+	{
+		case 0:
+			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+			break;
+
+		case 1:
+			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH, false);
+			break;
+	}
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
 }
 //-----------------------------
 
 void LL_SetCurrentRange1()
 {
-	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R1);
+	switch((Int16U)(DataTable[REG_VERSION_SWITCH]))
+		{
+			case 0:
+				INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R1);
+				break;
+
+			case 1:
+				INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+				GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH, true);
+				break;
+		}
 	GPIO_SetState(GPIO_CURRENT_RANGE, true);
 }
 //-----------------------------

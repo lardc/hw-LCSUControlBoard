@@ -56,6 +56,7 @@ void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_FlashTest();
+void CONTROL_VersionSwitch();
 
 // Functions
 //
@@ -85,6 +86,8 @@ void CONTROL_Init()
 	// Инициализация device profile
 	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
 	DEVPROFILE_InitFEPService(FEPIndexes, FEPSized, FEPCounters, FEPDatas);
+	// Первоначальная настройка под версию платы
+	//CONTROL_VersionSwitch();
 	// Сброс значений
 	DEVPROFILE_ResetControlSection();
 	CONTROL_ResetToDefaultState();
@@ -208,6 +211,10 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 		case ACT_CLR_WARNING:
 			DataTable[REG_WARNING] = WARNING_NONE;
+			break;
+
+		case ACT_SWITCH_VERSION:
+			//CONTROL_VersionSwitch();
 			break;
 
 		case ACT_FLASH_TEST_TEMPORARY:
@@ -613,6 +620,20 @@ void CONTROL_SetDeviceState(DeviceState NewState, DeviceSubState NewSubState)
 	DataTable[REG_DEV_STATE] = NewState;
 	DataTable[REG_SUB_STATE] = NewSubState;
 }
+//------------------------------------------
+/*void CONTROL_VersionSwitch()
+{
+	switch((Int16U)DataTable[REG_VERSION_SWITCH])
+	{
+		case 0:
+			GPIO_PortPinSettingMacro GPIO_CURRENT_RANGE_SWITCH	= {GPIOA, Pin_0}; //установка на неактивную ножку
+			break;
+
+		case 1:
+			GPIO_PortPinSettingMacro GPIO_CURRENT_RANGE_SWITCH	= {GPIOB, Pin_0};
+			break;
+	}
+}*/
 //------------------------------------------
 
 void CONTROL_UpdateWatchDog()

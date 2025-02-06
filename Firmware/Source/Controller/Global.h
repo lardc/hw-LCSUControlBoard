@@ -23,6 +23,8 @@
 #define CURRENT_RANGE_0							0
 #define CURRENT_RANGE_1							1
 //
+#define REFERENCE_VOLTAGE						3.3
+//
 #define SINE_SHAPE								0
 #define MOD_SINE_SHAPE							1
 #define TRAPEZE_SHAPE							2

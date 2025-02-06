@@ -6,6 +6,7 @@
 #define ACT_DISABLE_POWER				2	// Выключение блока
 #define ACT_CLR_FAULT					3	// Очистка всех fault
 #define ACT_CLR_WARNING					4	// Очистка всех warning
+#define ACT_SWITCH_VERSION				5	// Переключение версий прошивки
 
 #define ACT_DBG_POWER_SUPPLY_CTRL		50	// Проверка работы SCRelayBoard
 #define ACT_DBG_PULSE					51	// Формирование управляющего импульса на затворах транзисторов
@@ -99,6 +100,9 @@
 #define REG_REGULATOR_ALLOWED_ERR		51	// Максимально допустимая ошибка регулятора
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
+
+#define REG_VERSION_SWITCH				120	// 0 - версия платы 1.0
+											// 1 - версия  1.1
 
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)
