@@ -621,19 +621,17 @@ void CONTROL_SetDeviceState(DeviceState NewState, DeviceSubState NewSubState)
 	DataTable[REG_SUB_STATE] = NewSubState;
 }
 //------------------------------------------
-/*void CONTROL_VersionSwitch()
+void CONTROL_VersionSwitch()
 {
-	switch((Int16U)DataTable[REG_VERSION_SWITCH])
+	if(DataTable[REG_VERSION_SWITCH] == 0)
 	{
-		case 0:
-			GPIO_PortPinSettingMacro GPIO_CURRENT_RANGE_SWITCH	= {GPIOA, Pin_0}; //установка на неактивную ножку
-			break;
-
-		case 1:
-			GPIO_PortPinSettingMacro GPIO_CURRENT_RANGE_SWITCH	= {GPIOB, Pin_0};
-			break;
+		DataTable[REG_VERSION_SWITCH] = 1;
 	}
-}*/
+	else
+	{
+		DataTable[REG_VERSION_SWITCH] = 0;
+	}
+}
 //------------------------------------------
 
 void CONTROL_UpdateWatchDog()

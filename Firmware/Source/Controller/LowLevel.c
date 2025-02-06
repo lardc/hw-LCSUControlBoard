@@ -43,7 +43,7 @@ void LL_SetCurrentRange0()
 
 		case 1:
 			INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
-			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH, false);
+			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, false);
 			break;
 	}
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
@@ -60,7 +60,7 @@ void LL_SetCurrentRange1()
 
 			case 1:
 				INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
-				GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH, true);
+				GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, true);
 				break;
 		}
 	GPIO_SetState(GPIO_CURRENT_RANGE, true);
