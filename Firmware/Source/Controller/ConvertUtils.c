@@ -55,7 +55,8 @@ float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients)
 	switch((Int16U)DataTable[REG_PCB_VERSION])
 	{
 		case PCB_VERSION_10:
-			return (Data * Coefficients->K + Coefficients->B);
+			Uadc = Data * ADC_REF_VOLTAGE_PCB10 / ADC_RESOLUTION;
+			return (Uadc * Coefficients->K + Coefficients->B);
 			break;
 
 		case PCB_VERSION_11:
