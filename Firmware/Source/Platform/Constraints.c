@@ -62,7 +62,7 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{ALLOWED_ERR_MIN, ALLOWED_ERR_MAX, ALLOWED_ERR_DEF},						// 51
 		{FOLLOWING_ERR_CNT_MIN,FOLLOWING_ERR_CNT_MAX,FOLLOWING_ERR_CNT_DEF},		// 52
 		{NO, YES, NO},																// 53
-		{0, 0, 0},																	// 54
+		{REF_VOLTAGE_MIN, REF_VOLTAGE_MAX, REF_VOLTAGE_DEF},						// 54
 		{0, 0, 0},																	// 55
 		{0, 0, 0},																	// 56
 		{0, 0, 0},																	// 57

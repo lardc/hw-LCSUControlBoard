@@ -119,6 +119,10 @@
 //
 #define	PCB_VERSION_10				0
 #define PCB_VERSION_11				1
+//
+#define REF_VOLTAGE_MIN				0			// мВ
+#define REF_VOLTAGE_MAX				4000		// мВ
+#define REF_VOLTAGE_DEF				0			// мВ
 
 // Types
 typedef struct __TableItemConstraint

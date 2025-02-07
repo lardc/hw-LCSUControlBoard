@@ -57,12 +57,10 @@ float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients)
 		case PCB_VERSION_10:
 			Uadc = Data * ADC_REF_VOLTAGE_PCB10 / ADC_RESOLUTION;
 			return (Uadc * Coefficients->K + Coefficients->B);
-			break;
 
 		case PCB_VERSION_11:
-			Uadc = Data * ADC_REF_VOLTAGE_PCB11 / ADC_RESOLUTION;
+			Uadc = Data * (DataTable[REG_REF_VOLTAGE_VARIABLE] == 0 ? ADC_REF_VOLTAGE_PCB11 : DataTable[REG_REF_VOLTAGE_VARIABLE])/ ADC_RESOLUTION;
 			return (Uadc * Coefficients->K + Coefficients->B);
-			break;
 	}
 }
 //-----------------------------
@@ -72,7 +70,7 @@ float CU_ADCtoI(Int16U Data, Int16U CurrentRange)
 	float Uadc, Current;
 
 	Uadc = CU_ADCtoX(Data, &AdcToCurrentParams[CurrentRange]);
-	if (DataTable[REG_PCB_VERSION] == 0)
+	if (DataTable[REG_PCB_VERSION] == PCB_VERSION_10)
 	{
 		Current = Uadc / AdcToCurrentParams[CurrentRange].Kamp / DataTable[REG_SHUNT_RESISTANCE] * 1000;
 	}

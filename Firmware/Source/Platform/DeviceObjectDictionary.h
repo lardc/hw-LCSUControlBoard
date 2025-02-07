@@ -99,6 +99,8 @@
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
 
+#define REG_REF_VOLTAGE_VARIABLE		54	// Переменное значение опорного напряжения на платах версии 1.1
+
 #define REG_PCB_VERSION					120	// 0 - версия платы 1.0
 											// 1 - версия  1.1
 
@@ -124,8 +126,6 @@
 // 258 - 259
 #define REG_FWINFO_STR_LEN				260	// Length of the information string record
 #define REG_FWINFO_STR_BEGIN			261	// Begining of the information string record
-//
-#define REG_MEM_SYMBOL					299	// Считанный по адресу памяти символ
 
 
 // Operation results
