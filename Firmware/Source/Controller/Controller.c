@@ -16,6 +16,7 @@
 #include "ConvertUtils.h"
 #include "SaveToFlash.h"
 #include "Constraints.h"
+#include "InitConfig.h"
 
 
 
@@ -78,14 +79,18 @@ void CONTROL_Init()
 			(pFloat32)&CONTROL_RegulatorOutput, (pFloat32)&CONTROL_RegulatorErr, (pFloat32)&CONTROL_CurentTable,
 			(pFloat32)&CONTROL_DACRawData, (pFloat32)&CONTROL_DiagData};
 
-	// Конфигурация сервиса работы Data-table и EPROM
+	// Конфигурация сервиса работы DataTable и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
-	// Инициализация data table
+	// Инициализация DataTable
 	DT_Init(EPROMService, false);
-	DT_SaveFirmwareInfo(CAN_SLAVE_NID, 0);
+
+	// Инициализация функций связанных с CAN NodeID
+	Int16U NodeID = DataTable[REG_CFG_NODE_ID] ? DataTable[REG_CFG_NODE_ID] : CAN_SLAVE_NID;
+	DT_SaveFirmwareInfo(NodeID, 0);
+	INITCFG_ConfigCANFilters(NodeID);
 
 	// Инициализация device profile
-	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive);
+	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
 	DEVPROFILE_InitFEPService(FEPIndexes, FEPSized, FEPCounters, FEPDatas);
 	// Первоначальная настройка под версию платы
 	CONTROL_VersionSwitch();

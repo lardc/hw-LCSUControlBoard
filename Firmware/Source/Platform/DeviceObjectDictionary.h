@@ -98,12 +98,13 @@
 #define REG_REGULATOR_ALLOWED_ERR		51	// Максимально допустимая ошибка регулятора
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
-
+//
 #define REG_REF_VOLTAGE_VARIABLE		54	// Переменное значение опорного напряжения на платах версии 1.1
-
+//
+#define REG_CFG_NODE_ID					60	// Настройка CAN NodeID
+//
 #define REG_PCB_VERSION					120	// 0 - версия платы 1.0
 											// 1 - версия  1.1
-
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)
 //

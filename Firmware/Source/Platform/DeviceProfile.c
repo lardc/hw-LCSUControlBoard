@@ -69,7 +69,7 @@ static void DEVPROFILE_FillWRPartDefault();
 
 // Functions
 //
-void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean* MaskChanges)
+void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean* MaskChanges, Int16U NodeID)
 {
 	// Save values
 	ControllerDispatchFunction = SpecializedDispatch;
@@ -101,7 +101,8 @@ void DEVPROFILE_Init(xCCI_FUNC_CallbackAction SpecializedDispatch, Boolean* Mask
 	// Init interface driver
 	SCCI_Init(&DEVICE_RS232_Interface, &RS232_IOConfig, &X_ServiceConfig, (pInt16U)DataTable, DATA_TABLE_SIZE,
 			SCCI_TIMEOUT_TICKS, &RS232_EPState);
-	BCCI_Init(&DEVICE_CAN_Interface, &CAN_IOConfig, &X_ServiceConfig, (pInt16U)DataTable, DATA_TABLE_SIZE, &CAN_EPState);
+	BCCI_InitWithNodeID(&DEVICE_CAN_Interface, &CAN_IOConfig, &X_ServiceConfig, (pInt16U)DataTable, DATA_TABLE_SIZE,
+			&CAN_EPState, NodeID);
 
 	// Set write protection
 	SCCI_AddProtectedArea(&DEVICE_RS232_Interface, DATA_TABLE_WP_START, DATA_TABLE_SIZE - 1);

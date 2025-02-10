@@ -57,15 +57,19 @@ void INITCFG_ConfigIO()
 	GPIO_InitAltFunction(GPIO_ALT_UART1_RX, AltFn_7);
 	GPIO_InitAltFunction(GPIO_ALT_UART1_TX, AltFn_7);
 }
-
 //------------------------------------------------
+
 void INITCFG_ConfigCAN()
 {
 	RCC_CAN_Clk_EN(CAN_1_ClkEN);
-	NCAN_Init(SYSCLK, CAN_BAUDRATE, FALSE);
-	NCAN_FIFOInterrupt(TRUE);
-	NCAN_FilterInit(0, CAN_SLAVE_FILTER_ID, CAN_SLAVE_FILTER_ID);
-	NCAN_InterruptSetPriority(0);
+	NCAN_Init(SYSCLK, CAN_BAUDRATE, false);
+	NCAN_FIFOInterrupt(true);
+}
+//------------------------------------------------
+
+void INITCFG_ConfigCANFilters(Int16U NodeID)
+{
+	NCAN_FilterInit(0, (Int32U)NodeID << CAN_SLAVE_NID_MPY, CAN_SLAVE_NID_MASK);
 }
 //------------------------------------------------
 
