@@ -11,9 +11,9 @@ Int16U MEASURE_ADC_CurrentRaw[ADC_DMA_BUFF_SIZE];
 Int16U MEASURE_ADC_BatteryVoltageRaw[ADC_DMA_BUFF_SIZE];
 
 // Functions prototypes
-Int16U MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize);
-Int16U MEASURE_DMAExtractCurrent();
-Int16U MEASURE_DMAExtractVolatge();
+float MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize);
+float MEASURE_DMAExtractCurrent();
+float MEASURE_DMAExtractVolatge();
 void MEASURE_StartNewSampling();
 
 // Functions
@@ -36,24 +36,24 @@ void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator)
 }
 //-----------------------------------------------
 
-Int16U MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize)
+float MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize)
 {
-	Int32U AverageData = 0;
+	float AverageData = 0;
 
 	for(int i = 0; i < ArraySize; i++)
 		AverageData += *(InputArray + i);
 
-	return (Int16U)((float)AverageData / ArraySize);
+	return (AverageData / ArraySize);
 }
 //-----------------------------------------------
-Int16U MEASURE_DMAExtractCurrent()
+float MEASURE_DMAExtractCurrent()
 
 {
 	return MEASURE_DMAExtractX(&MEASURE_ADC_CurrentRaw[1], ADC_DMA_BUFF_SIZE - 1);
 }
 //-----------------------------------------------
 
-Int16U MEASURE_DMAExtractVolatge()
+float MEASURE_DMAExtractVolatge()
 {
 	return MEASURE_DMAExtractX(&MEASURE_ADC_BatteryVoltageRaw[1], ADC_DMA_BUFF_SIZE - 1);
 }

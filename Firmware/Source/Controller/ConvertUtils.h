@@ -6,9 +6,9 @@
 
 // Functions
 float CU_ItoDAC(float Current, Int16U CurrentRange);
-float CU_ADCtoI(Int16U Data, Int16U CurrentRange);
+float CU_ADCtoI(float Data, Int16U CurrentRange);
 float CU_ItoIcorrect(float Current, Int16U CurrentRange);
-float CU_ADCtoV(Int16U Data);
+float CU_ADCtoV(float Data);
 void CU_LoadConvertParams();
 
 #endif /* CONVERTUTILS_H_ */

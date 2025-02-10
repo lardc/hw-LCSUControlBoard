@@ -23,7 +23,7 @@ ConvertParams AdcToCurrentParams[CURRENT_RANGES];
 ConvertParams CurrentToDacParams[CURRENT_RANGES];
 
 // Functions prototypes
-float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients);
+float CU_ADCtoX(float Data, ConvertParams* Coefficients);
 
 // Functions
 //
@@ -49,7 +49,7 @@ float CU_ItoIcorrect(float Current, Int16U CurrentRange)
 }
 //-----------------------------
 
-float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients)
+float CU_ADCtoX(float Data, ConvertParams* Coefficients)
 {
 	float Uadc;
 	switch((Int16U)DataTable[REG_PCB_VERSION])
@@ -65,7 +65,7 @@ float CU_ADCtoX(Int16U Data, ConvertParams* Coefficients)
 }
 //-----------------------------
 
-float CU_ADCtoI(Int16U Data, Int16U CurrentRange)
+float CU_ADCtoI(float Data, Int16U CurrentRange)
 {
 	float Uadc, Current;
 
@@ -82,7 +82,7 @@ float CU_ADCtoI(Int16U Data, Int16U CurrentRange)
 }
 //-----------------------------
 
-float CU_ADCtoV(Int16U Data)
+float CU_ADCtoV(float Data)
 {
 	return CU_ADCtoX(Data, &AdcToVoltageParams);
 }

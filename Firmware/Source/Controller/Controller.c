@@ -357,8 +357,8 @@ void CONTROL_SineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
-		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
+		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
+		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
 	}
 }
 //-----------------------------------------------
@@ -375,8 +375,8 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
-		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sin(PI * i / (Regulator->PulseCounterMax - 1));
+		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
+		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
 		if((i > Regulator->PulseCounterMax / 2) && (Regulator->CurrentTable[i] <= LinearCurrent))
 		{
 			LinearStartIndex = i;

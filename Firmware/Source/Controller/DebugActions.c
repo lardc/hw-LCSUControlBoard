@@ -37,7 +37,7 @@ void DBGACT_ExtIndication(bool State)
 }
 //-----------------------------
 
-void DBGACT_PulseProcess(Int16U DACValue)
+void DBGACT_PulseProcess(float DACValue)
 {
 	if(DACValue > DAC_MAX_VAL)
 		DACValue = DAC_MAX_VAL;

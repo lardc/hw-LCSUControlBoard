@@ -17,7 +17,6 @@
 #define LINEAR_FRAGMENT_DURATION				5000	// Длительность линейной части мод. полусинуса (мкс)
 #define LINEAR_FRAGMENT_AMPLITUDE				30.0f	// Амплитуда тока для начала формирования хвоста (А)
 //
-#define PI										3.1416f	// Значение числа Пи
 #define DAC_MAX_VAL								0x0FFF	// Максимальное значение ЦАП
 #define	CURRENT_RANGES							2		// Количество диапазонов измерения тока
 #define CURRENT_RANGE_0							0
