@@ -6,7 +6,6 @@
 #define ACT_DISABLE_POWER				2	// Выключение блока
 #define ACT_CLR_FAULT					3	// Очистка всех fault
 #define ACT_CLR_WARNING					4	// Очистка всех warning
-#define ACT_SWITCH_VERSION				5	// Переключение версий прошивки
 
 #define ACT_DBG_POWER_SUPPLY_CTRL		50	// Проверка работы SCRelayBoard
 #define ACT_DBG_PULSE					51	// Формирование управляющего импульса на затворах транзисторов

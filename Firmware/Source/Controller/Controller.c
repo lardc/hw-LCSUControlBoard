@@ -58,7 +58,6 @@ void CONTROL_StartPrepare();
 void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
-void CONTROL_VersionSwitch();
 
 // Functions
 //
