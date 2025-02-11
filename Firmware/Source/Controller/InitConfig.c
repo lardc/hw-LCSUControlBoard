@@ -4,6 +4,9 @@
 #include "BCCIxParams.h"
 #include "Measurement.h"
 
+// Forward functions
+void INITCFG_ADCConfigTemplate(ADC_TypeDef* ADCx);
+
 // Functions
 //
 Boolean INITCFG_ConfigSystemClock()
@@ -118,23 +121,29 @@ void INITCFG_ConfigADC()
 	RCC_ADC_Clk_EN(ADC_12_ClkEN);
 	RCC_ADC_Clk_EN(ADC_34_ClkEN);
 
+	INITCFG_ADCConfigTemplate(ADC1);
+	INITCFG_ADCConfigTemplate(ADC3);
+
 	INITCFG_ADCConfigChannel(ADC1, ADC1_V_BAT_CHANNEL);
 	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
 }
 //------------------------------------------------
 
-void INITCFG_ADCConfigChannel(ADC_TypeDef* ADCx, Int16U Channel)
+void INITCFG_ADCConfigTemplate(ADC_TypeDef* ADCx)
 {
 	ADC_Calibration(ADCx);
 	ADC_SoftTrigConfig(ADCx);
 	ADC_ChannelSeqReset(ADCx);
-
-	for (uint8_t i = 1; i <= ADC_DMA_BUFF_SIZE; ++i)
-		ADC_ChannelSet_Sequence(ADCx, Channel, i);
-
 	ADC_ChannelSeqLen(ADCx, ADC_DMA_BUFF_SIZE);
 	ADC_DMAConfig(ADCx);
 	ADC_Enable(ADCx);
+}
+//------------------------------------------------
+
+void INITCFG_ADCConfigChannel(ADC_TypeDef* ADCx, Int16U Channel)
+{
+	for (uint8_t i = 1; i <= ADC_DMA_BUFF_SIZE; ++i)
+		ADC_ChannelSet_Sequence(ADCx, Channel, i);
 }
 //------------------------------------------------
 
