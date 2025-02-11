@@ -46,8 +46,8 @@ float MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize)
 	return (AverageData / ArraySize);
 }
 //-----------------------------------------------
-float MEASURE_DMAExtractCurrent()
 
+float MEASURE_DMAExtractCurrent()
 {
 	return MEASURE_DMAExtractX(&MEASURE_ADC_CurrentRaw[1], ADC_DMA_BUFF_SIZE - 1);
 }

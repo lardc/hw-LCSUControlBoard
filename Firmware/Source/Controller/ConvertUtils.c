@@ -36,9 +36,7 @@ float CU_ItoDAC(float Current, Int16U CurrentRange)
 
 	// Пересчет амплитуды тока в расчете на одну CurrentBoard
 	if(CurrentRange)
-	{
 		Current = Current / DataTable[REG_CURBOARDS];
-	}
 
 	return Current * K + B;
 }
@@ -68,7 +66,7 @@ float CU_ADCtoX(float Data, ConvertParams* Coefficients)
 			break;
 
 		default:
-		   return 0;
+			return 0;
 	}
 }
 //-----------------------------

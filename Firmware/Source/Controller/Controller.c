@@ -331,17 +331,17 @@ void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
 	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
 	{
-	case SINE_SHAPE:
-		CONTROL_SineShapeConfig(Regulator);
-		break;
+		case SINE_SHAPE:
+			CONTROL_SineShapeConfig(Regulator);
+			break;
 
-	case MOD_SINE_SHAPE:
-		CONTROL_ModSineShapeConfig(Regulator);
-		break;
+		case MOD_SINE_SHAPE:
+			CONTROL_ModSineShapeConfig(Regulator);
+			break;
 
-	case TRAPEZE_SHAPE:
-		CONTROL_TrapezeShapeConfig(Regulator);
-		break;
+		case TRAPEZE_SHAPE:
+			CONTROL_TrapezeShapeConfig(Regulator);
+			break;
 	}
 }
 //-----------------------------------------------
@@ -407,7 +407,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		//запись заданного значения
+		// Запись заданного значения
 		if(Setpoint < Regulator->CurrentTarget && EdgeIndex==0)
 		{
 			Regulator->CurrentTable[i] = Setpoint;
@@ -425,24 +425,24 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 				Regulator->CurrentTable[i] = Setpoint;
 			}
 		}
-		//запись скорректированного значения
-		if(SetpointCorrect < CorrectionTarget && EdgeIndex==0)
-			{
-				Regulator->CurrentCorrectionTable[i] = SetpointCorrect;
-				SetpointCorrect += dI;
-			}
+		// Запись скорректированного значения
+		if(SetpointCorrect < CorrectionTarget && EdgeIndex == 0)
+		{
+			Regulator->CurrentCorrectionTable[i] = SetpointCorrect;
+			SetpointCorrect += dI;
+		}
 		else
+		{
+			if(!EdgeIndex)
+				EdgeIndex = i;
+			if(i < (Regulator->PulseCounterMax - EdgeIndex))
+				Regulator->CurrentCorrectionTable[i] = CorrectionTarget;
+			else
 			{
-				if(!EdgeIndex)
-					EdgeIndex = i;
-				if(i < (Regulator->PulseCounterMax - EdgeIndex))
-					Regulator->CurrentCorrectionTable[i] = CorrectionTarget;
-				else
-					{
-						SetpointCorrect -= dI;
-						Regulator->CurrentCorrectionTable[i] = SetpointCorrect;
-					}
+				SetpointCorrect -= dI;
+				Regulator->CurrentCorrectionTable[i] = SetpointCorrect;
 			}
+		}
 	}
 }
 //-----------------------------------------------
@@ -542,18 +542,18 @@ void CONTROL_HandleExternalLamp(bool IsImpulse)
 			}
 		}
 		else
+		{
+			if(IsImpulse)
 			{
-				if(IsImpulse)
-				{
-					LL_ExtIndication(true);
-					ExternalLampCounter = CONTROL_TimeCounter + EXT_LAMP_ON_STATE_TIME;
-				}
-				else
-				{
-					if(CONTROL_TimeCounter >= ExternalLampCounter)
-						LL_ExtIndication(false);
-				}
+				LL_ExtIndication(true);
+				ExternalLampCounter = CONTROL_TimeCounter + EXT_LAMP_ON_STATE_TIME;
 			}
+			else
+			{
+				if(CONTROL_TimeCounter >= ExternalLampCounter)
+					LL_ExtIndication(false);
+			}
+		}
 	}
 }
 //-----------------------------------------------
