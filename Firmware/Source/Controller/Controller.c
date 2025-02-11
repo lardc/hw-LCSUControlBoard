@@ -92,8 +92,6 @@ void CONTROL_Init()
 	// Инициализация device profile
 	DEVPROFILE_Init(&CONTROL_DispatchAction, &CycleActive, NodeID);
 	DEVPROFILE_InitFEPService(FEPIndexes, FEPSized, FEPCounters, FEPDatas);
-	// Первоначальная настройка под версию платы
-	CONTROL_VersionSwitch();
 	// Сброс значений
 	DEVPROFILE_ResetControlSection();
 	CONTROL_ResetToDefaultState();
@@ -217,10 +215,6 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 		case ACT_CLR_WARNING:
 			DataTable[REG_WARNING] = WARNING_NONE;
-			break;
-
-		case ACT_SWITCH_VERSION:
-			CONTROL_VersionSwitch();
 			break;
 
 		default:
@@ -578,18 +572,6 @@ void CONTROL_SetDeviceState(DeviceState NewState, DeviceSubState NewSubState)
 	CONTROL_SubState = NewSubState;
 	DataTable[REG_DEV_STATE] = NewState;
 	DataTable[REG_SUB_STATE] = NewSubState;
-}
-//------------------------------------------
-void CONTROL_VersionSwitch()
-{
-	if(DataTable[REG_PCB_VERSION] == PCB_VERSION_10)
-	{
-		DataTable[REG_PCB_VERSION] = PCB_VERSION_11;
-	}
-	else
-	{
-		DataTable[REG_PCB_VERSION] = PCB_VERSION_10;
-	}
 }
 //------------------------------------------
 

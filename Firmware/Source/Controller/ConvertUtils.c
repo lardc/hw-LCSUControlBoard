@@ -59,8 +59,16 @@ float CU_ADCtoX(float Data, ConvertParams* Coefficients)
 			return (Uadc * Coefficients->K + Coefficients->B);
 
 		case PCB_VERSION_11:
-			Uadc = Data * (DataTable[REG_REF_VOLTAGE_VARIABLE] == 0 ? ADC_REF_VOLTAGE_PCB11 : DataTable[REG_REF_VOLTAGE_VARIABLE])/ ADC_RESOLUTION;
-			return (Uadc * Coefficients->K + Coefficients->B);
+			{
+				float Uref;
+				Uref = DataTable[REG_REF_VOLTAGE_VARIABLE] == 0 ? ADC_REF_VOLTAGE_PCB11 : DataTable[REG_REF_VOLTAGE_VARIABLE];
+				Uadc = Data * Uref / ADC_RESOLUTION;
+				return (Uadc * Coefficients->K + Coefficients->B);
+			}
+			break;
+
+		default:
+		   return 0;
 	}
 }
 //-----------------------------
