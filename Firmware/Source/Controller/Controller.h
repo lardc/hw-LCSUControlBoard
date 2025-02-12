@@ -35,7 +35,7 @@ extern volatile Int64U CONTROL_TimeCounter;
 extern Int64U CONTROL_LEDTimeout;
 extern volatile Int16U CONTROL_Values_Counter;
 extern volatile Int16U CONTROL_RegulatorErr_Counter;
-extern volatile Int16U CONTROL_DiagCounter;
+extern volatile Int16U CONTROL_ExtInfoCounter;
 extern volatile float  CONTROL_ValuesCurrent[VALUES_x_SIZE];
 extern volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
 extern volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
@@ -44,7 +44,7 @@ extern volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 //
 extern volatile RegulatorParamsStruct RegulatorParams;
 //
-extern volatile float CONTROL_DiagData[VALUES_DIAG_SIZE];
+extern volatile float CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 
 
 
@@ -65,5 +65,6 @@ void CONTROL_StartProcess();
 void CONTROL_StopProcess();
 void CONTROL_HandleFanLogic(bool IsImpulse);
 void CONTROL_HandleExternalLamp(bool IsImpulse);
+void CONTROL_InitJSONPointers();
 
 #endif // __CONTROLLER_H

@@ -17,6 +17,7 @@
 #include "SaveToFlash.h"
 #include "Constraints.h"
 #include "InitConfig.h"
+#include "JSONDescription.h"
 
 
 
@@ -32,14 +33,14 @@ volatile Int64U	CONTROL_AfterPulsePause = 0;
 volatile Int64U	CONTROL_BatteryChargeTimeCounter = 0;
 volatile Int64U CONTROL_ConfigStateCounter = 0;
 volatile Int16U CONTROL_Values_Counter = 0;
-volatile Int16U CONTROL_DiagCounter = 0;
+volatile Int16U CONTROL_ExtInfoCounter = 0;
 volatile float 	CONTROL_ValuesCurrent[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
 volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
 volatile float  CONTROL_CurentTable[VALUES_x_SIZE];
 volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
-volatile float  CONTROL_DiagData[VALUES_DIAG_SIZE];
+volatile float  CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 //
 float CONTROL_CurrentMaxValue = 0;
 //
@@ -65,18 +66,18 @@ void CONTROL_Init()
 {
 	// Переменные для конфигурации EndPoint
 	Int16U FEPIndexes[FEP_COUNT] = {EP_CURRENT, EP_BATTERY_VOLTAGE, EP_REGULATOR_OUTPUT, EP_REGULATOR_ERR, EP_CUR_TABLE,
-			EP_DAC_RAW_DATA, EP_DiagData};
+			EP_DAC_RAW_DATA, EP_ExtInfoData};
 
 	Int16U FEPSized[FEP_COUNT] =
-			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_DIAG_SIZE};
+			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_EXT_INFO_SIZE};
 
 	pInt16U FEPCounters[FEP_COUNT] = {(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
-			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_DiagCounter};
+			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_ExtInfoCounter};
 
 	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)&CONTROL_ValuesCurrent, (pFloat32)&CONTROL_ValuesBatteryVoltage,
 			(pFloat32)&CONTROL_RegulatorOutput, (pFloat32)&CONTROL_RegulatorErr, (pFloat32)&CONTROL_CurentTable,
-			(pFloat32)&CONTROL_DACRawData, (pFloat32)&CONTROL_DiagData};
+			(pFloat32)&CONTROL_DACRawData, (pFloat32)&CONTROL_ExtInfoData};
 
 	// Конфигурация сервиса работы DataTable и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
@@ -603,5 +604,21 @@ void CONTROL_InitStoragePointers()
 	STF_AssignPointer(14, (Int32U)CONTROL_CurentTable);
 	STF_AssignPointer(15, (Int32U)CONTROL_DACRawData);
 	STF_AssignPointer(16, (Int32U)&CONTROL_Values_Counter);
+}
+//------------------------------------------
+
+void CONTROL_InitJSONPointers()
+{
+	Itm1Min = DataTable[REG_LOW_ITM_LIMIT] == 0 ? CURRENT_SETPOINT_MIN : DataTable[REG_LOW_ITM_LIMIT];
+	Itm1Max = DataTable[REG_CURRENT_THRESHOLD];
+
+	Itm2Min = DataTable[REG_CURRENT_THRESHOLD];
+	Itm2Max = DataTable[REG_HIGH_ITM_LIMIT] == 0 ? CURRENT_SETPOINT_MAX : DataTable[REG_HIGH_ITM_LIMIT];
+
+	JSON_AssignPointer(0, (Int32U)&Itm1Min);
+	JSON_AssignPointer(1, (Int32U)&Itm1Max);
+
+	JSON_AssignPointer(2, (Int32U)&Itm2Min);
+	JSON_AssignPointer(3, (Int32U)&Itm2Max);
 }
 //------------------------------------------

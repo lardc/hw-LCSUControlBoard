@@ -15,6 +15,7 @@
 #include "ZwSCI.h"
 #include "BCCIMHighLevel.h"
 #include "SaveToFlash.h"
+#include "FormatOutputJSON.h"
 
 // Types
 //
@@ -202,11 +203,25 @@ static Boolean DEVPROFILE_DispatchAction(Int16U ActionID, pInt16U UserError)
 				DEVPROFILE_ResetEPReadState();
 				DEVPROFILE_ResetScopes(0);
 
-				for(CONTROL_DiagCounter = 0; CONTROL_DiagCounter < VALUES_DIAG_SIZE && MemoryPointer <= FLASH_DIAG_END_ADDR;)
+				for(CONTROL_ExtInfoCounter = 0; CONTROL_ExtInfoCounter < VALUES_EXT_INFO_SIZE && MemoryPointer <= FLASH_DIAG_END_ADDR;)
 				{
-					CONTROL_DiagData[CONTROL_DiagCounter++] = NFLASH_ReadWord16(MemoryPointer);
+					CONTROL_ExtInfoData[CONTROL_ExtInfoCounter++] = NFLASH_ReadWord16(MemoryPointer);
 					MemoryPointer += 2;
 				}
+			}
+			break;
+
+		case ACT_JSON_INIT_READ:
+			CONTROL_InitJSONPointers();
+			JSON_ResetStateMachine();
+			break;
+
+		case ACT_JSON_TO_EP:
+			{
+				DEVPROFILE_ResetEPReadState();
+				DEVPROFILE_ResetScopes(0);
+				for(CONTROL_ExtInfoCounter = 0; CONTROL_ExtInfoCounter < VALUES_EXT_INFO_SIZE;)
+					CONTROL_ExtInfoData[CONTROL_ExtInfoCounter++] = JSON_ReadSymbol();
 			}
 			break;
 

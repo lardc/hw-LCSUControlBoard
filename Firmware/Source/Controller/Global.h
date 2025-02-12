@@ -2,6 +2,7 @@
 #define __GLOBAL_H
 
 #include "SysConfig.h"
+#include "stdinc.h"
 
 // Definitions
 // 
@@ -34,7 +35,7 @@
 
 // Размер массивов EP
 #define VALUES_x_SIZE	((SINE_PULSE_DURATION + LINEAR_FRAGMENT_DURATION) / TIMER15_uS)
-#define VALUES_DIAG_SIZE						300
+#define VALUES_EXT_INFO_SIZE						300
 
 // Временные параметры
 #define TIME_LED_BLINK							500		// Мигание светодиодом (в мс)

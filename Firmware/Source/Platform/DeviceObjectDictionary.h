@@ -30,6 +30,9 @@
 #define ACT_FLASH_DIAG_ERASE			333	// Стирание области отладочной информации
 
 #define ACT_FLASH_DIAG_TO_EP			340	// Выполнить чтение массива из памяти отладочной информации в EP
+#define ACT_JSON_INIT_READ				341	// Инициализация начала считывания JSON
+#define ACT_JSON_TO_EP					342	// Выполнить чтение шаблона JSON в EP
+
 // -----------------------------
 
 // Регистры
@@ -102,6 +105,9 @@
 //
 #define REG_CFG_NODE_ID					60	// Настройка CAN NodeID
 //
+#define REG_LOW_ITM_LIMIT				61	// Минимальное допустимое значение по Itm
+#define REG_HIGH_ITM_LIMIT				62	// Максимальное допустимое значение по Itm
+//
 #define REG_PCB_VERSION					120	// 0 - версия платы 1.0
 											// 1 - версия  1.1
 // Несохраняемые регистры чтения-записи
@@ -160,6 +166,6 @@
 #define EP_CUR_TABLE					5
 #define EP_DAC_RAW_DATA					6
 
-#define EP_DiagData						20	// Diag data drom flash
+#define EP_ExtInfoData					20	// External information from flash
 
 #endif //  __DEV_OBJ_DIC_H
