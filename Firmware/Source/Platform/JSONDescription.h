@@ -7,7 +7,7 @@
 
 extern float Itm1Min, Itm1Max, Itm2Min, Itm2Max;
 
-extern pFloat32 JSONPointers[JSON_POINTERS_SIZE];
+extern void* JSONPointers[JSON_POINTERS_SIZE];
 
 void JSON_AssignPointer(Int16U Index, pFloat32 Pointer);
 

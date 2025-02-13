@@ -23,7 +23,7 @@ const char TemplateJSON[] = "[{\n"
 
 float Itm1Min, Itm1Max, Itm2Min, Itm2Max;
 
-pFloat32 JSONPointers[JSON_POINTERS_SIZE] = {0};
+void* JSONPointers[JSON_POINTERS_SIZE] = {0};
 
 void JSON_AssignPointer(Int16U Index, pFloat32 Pointer)
 {
