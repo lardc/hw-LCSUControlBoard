@@ -21,11 +21,11 @@ const char TemplateJSON[] = "[{\n"
 "		}]\n"
 "}]";
 
-Int16U Itm1Min, Itm1Max, Itm2Min, Itm2Max;
+float Itm1Min, Itm1Max, Itm2Min, Itm2Max;
 
-Int16U JSONPointers[JSON_POINTERS_SIZE] = {0};
+pFloat32 JSONPointers[JSON_POINTERS_SIZE] = {0};
 
-void JSON_AssignPointer(Int16U Index, Int32U Pointer)
+void JSON_AssignPointer(Int16U Index, pFloat32 Pointer)
 {
 	if (Index < JSON_POINTERS_SIZE)
 		JSONPointers[Index] = Pointer;

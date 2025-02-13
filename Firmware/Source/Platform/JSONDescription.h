@@ -5,10 +5,10 @@
 
 #define JSON_POINTERS_SIZE 32
 
-extern Int16U Itm1Min, Itm1Max, Itm2Min, Itm2Max;
+extern float Itm1Min, Itm1Max, Itm2Min, Itm2Max;
 
-extern Int16U JSONPointers[JSON_POINTERS_SIZE];
+extern pFloat32 JSONPointers[JSON_POINTERS_SIZE];
 
-void JSON_AssignPointer(Int16U Index, Int32U Pointer);
+void JSON_AssignPointer(Int16U Index, pFloat32 Pointer);
 
 #endif // __JSON_DESCRIPTION_H
