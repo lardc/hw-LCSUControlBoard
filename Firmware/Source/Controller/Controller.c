@@ -75,9 +75,9 @@ void CONTROL_Init()
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_ExtInfoCounter};
 
-	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)&CONTROL_ValuesCurrent, (pFloat32)&CONTROL_ValuesBatteryVoltage,
-			(pFloat32)&CONTROL_RegulatorOutput, (pFloat32)&CONTROL_RegulatorErr, (pFloat32)&CONTROL_CurentTable,
-			(pFloat32)&CONTROL_DACRawData, (pFloat32)&CONTROL_ExtInfoData};
+	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)CONTROL_ValuesCurrent, (pFloat32)CONTROL_ValuesBatteryVoltage,
+			(pFloat32)CONTROL_RegulatorOutput, (pFloat32)CONTROL_RegulatorErr, (pFloat32)CONTROL_CurentTable,
+			(pFloat32)CONTROL_DACRawData, (pFloat32)CONTROL_ExtInfoData};
 
 	// Конфигурация сервиса работы DataTable и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
