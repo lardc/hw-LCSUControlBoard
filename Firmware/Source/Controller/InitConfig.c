@@ -37,6 +37,7 @@ void INITCFG_ConfigIO()
 	GPIO_InitPushPullOutput(GPIO_LED);
 	GPIO_InitPushPullOutput(GPIO_IND_CTRL);
 	GPIO_InitPushPullOutput(GPIO_CURRENT_RANGE);
+	GPIO_InitPushPullOutput(GPIO_CURRENT_RANGE_SWITCH_PCB11);
 
 	// Выходы OpenDrain
 	GPIO_InitOpenDrainOutput(GPIO_OUT_LOCK, NoPull);
@@ -53,6 +54,7 @@ void INITCFG_ConfigIO()
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
 	GPIO_SetState(GPIO_OUT_LOCK, true);
 	GPIO_SetState(GPIO_OFFSET_CTRL, true);
+	GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, false);
 
 	// Альтернативные функции
 	GPIO_InitAltFunction(GPIO_ALT_CAN_RX, AltFn_9);
