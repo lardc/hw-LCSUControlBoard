@@ -384,7 +384,7 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	}
 
 	// Дописываем плавно спадающий хвост
-	float dI = LinearCurrent / (SINE_PULSE_DURATION + LINEAR_FRAGMENT_DURATION - LinearStartIndex);
+	float dI = 2 * LinearCurrent / (PULSE_BUFFER_SIZE - LinearStartIndex);
 	for (int i = LinearStartIndex; i < PULSE_BUFFER_SIZE; ++i)
 	{
 		LinearCurrent -= dI;
