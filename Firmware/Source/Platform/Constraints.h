@@ -11,8 +11,8 @@
 #define YES		1
 //
 #define CURRENT_THRESHOLD_MIN		0			// A
-#define CURRENT_THRESHOLD_MAX		1000		// A
-#define CURRENT_THRESHOLD_DEF		1000		// A
+#define CURRENT_THRESHOLD_MAX_HIGH	1100		// A
+#define CURRENT_THRESHOLD_DEF_HIGH	1100		// A
 //
 #define V_BAT_THRESHOLD_MIN			10			// В
 #define V_BAT_THRESHOLD_MAX			50			// В
@@ -123,6 +123,9 @@
 #define REF_VOLTAGE_MIN				0			// мВ
 #define REF_VOLTAGE_MAX				4000		// мВ
 #define REF_VOLTAGE_DEF				0			// мВ
+//
+#define CURRENT_THRESHOLD_MAX_LOW	400		// A
+#define CURRENT_THRESHOLD_DEF_LOW	350		// A
 
 // Types
 typedef struct __TableItemConstraint

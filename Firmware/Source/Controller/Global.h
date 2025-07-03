@@ -19,9 +19,10 @@
 #define LINEAR_FRAGMENT_AMPLITUDE				30.0f	// Амплитуда тока для начала формирования хвоста (А)
 //
 #define DAC_MAX_VAL								0x0FFF	// Максимальное значение ЦАП
-#define	CURRENT_RANGES							2		// Количество диапазонов измерения тока
+#define	CURRENT_RANGES							3		// Количество диапазонов измерения тока
 #define CURRENT_RANGE_0							0
 #define CURRENT_RANGE_1							1
+#define CURRENT_RANGE_2							2
 //
 #define ADC_REF_VOLTAGE_PCB10					3300.0f	// Опорное напряжение (в мВ)
 #define ADC_REF_VOLTAGE_PCB11					3000.0f	// Опорное напряжение (в мВ)

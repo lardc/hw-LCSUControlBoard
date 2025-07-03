@@ -125,6 +125,13 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 	// Кеширование коэффициентов регулятора
 	for(int i = 0; i < CURRENT_RANGES; i++)
 	{
+		if(i == 2)
+		{
+			Regulator->Kp[i] = DataTable[REG_REGULATOR_RANGE2_Kp];
+			Regulator->Ki[i] = DataTable[REG_REGULATOR_RANGE2_Ki];
+			Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG2];
+			break;
+		}
 		Regulator->Kp[i] = DataTable[REG_REGULATOR_RANGE0_Kp + i * 2];
 		Regulator->Ki[i] = DataTable[REG_REGULATOR_RANGE0_Ki + i * 2];
 		Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + i];

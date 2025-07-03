@@ -37,7 +37,7 @@
 
 // Регистры
 // Сохраняемые регистры
-#define REG_CURRENT_THRESHOLD			0	// Значение тока переключения диапазонов (А)
+#define REG_CURRENT_THRESHOLD_HIGH		0	// Значение тока переключения диапазонов (между 1 и 2 диапазонами) (А)
 #define REG_BATTERY_VOLTAGE_THRESHOLD	1	// Порог заряда батареи конденсаторов (В)
 #define REG_DAC_OUTPUT_LIMIT_VALUE		2	// Ограничение выхода ЦАП (0 - 4095)
 #define REG_BATTERY_FULL_CHRAGE_TIMEOUT	3	// Время таймаута полного заряда конденсаторов (мс)
@@ -107,6 +107,18 @@
 //
 #define REG_LOW_ITM_LIMIT				61	// Минимальное допустимое значение по Itm
 #define REG_HIGH_ITM_LIMIT				62	// Максимальное допустимое значение по Itm
+//
+#define REG_CURRENT_THRESHOLD_LOW		63	// Значение тока переключения диапазонов (между 0 и 1 диапазонами) (А)
+//
+#define REG_DAC_I_RANGE2_P2				64	// Диапазон 2 - Коэффициент тонкой подстройки Р2
+#define REG_DAC_I_RANGE2_P1				65	// Диапазон 2 - Коэффициент тонкой подстройки Р1
+#define REG_DAC_I_RANGE2_P0				66	// Диапазон 2 - Коэффициент тонкой подстройки Р0
+#define REG_DAC_I_RANGE2_K				67	// Диапазон 2 - Коэффициент пересчета в значение ЦАП
+#define REG_DAC_I_RANGE2_B				68	// Диапазон 2 - Смещение пересчета в значение ЦАП
+//
+#define REG_REGULATOR_TF_Ki_RANG2		69	// Диапазон 2 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
+#define REG_REGULATOR_RANGE2_Kp			70	// Диапазон 2 - Пропорциональный коэффициент регулятора
+#define REG_REGULATOR_RANGE2_Ki			71	// Диапазон 2 - Интегральный коэффициент регулятора
 //
 #define REG_PCB_VERSION					120	// 0 - версия платы 1.0
 											// 1 - версия  1.1

@@ -610,9 +610,9 @@ void CONTROL_InitStoragePointers()
 void CONTROL_InitJSONPointers()
 {
 	Itm1Min = DataTable[REG_LOW_ITM_LIMIT] ? DataTable[REG_LOW_ITM_LIMIT] : CURRENT_SETPOINT_MIN;
-	Itm1Max = DataTable[REG_CURRENT_THRESHOLD];
+	Itm1Max = DataTable[REG_CURRENT_THRESHOLD_HIGH];
 
-	Itm2Min = DataTable[REG_CURRENT_THRESHOLD];
+	Itm2Min = DataTable[REG_CURRENT_THRESHOLD_HIGH];
 	Itm2Max = DataTable[REG_HIGH_ITM_LIMIT] ? DataTable[REG_HIGH_ITM_LIMIT] : CURRENT_SETPOINT_MAX;
 
 	JSON_AssignPointer(0, &Itm1Min);

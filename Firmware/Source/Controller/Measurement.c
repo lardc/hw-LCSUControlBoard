@@ -77,14 +77,17 @@ void MEASURE_StartNewSampling()
 
 void MEASURE_SetCurrentRange(volatile RegulatorParamsStruct* Regulator)
 {
-	if(Regulator->CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD])
+	if(Regulator->CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_HIGH])
 	{
-		Regulator->CurrentRange = CURRENT_RANGE_0;
 		LL_SetCurrentRange0();
+		if(Regulator->CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_LOW])
+			Regulator->CurrentRange = CURRENT_RANGE_0;
+		else
+			Regulator->CurrentRange = CURRENT_RANGE_1;
 	}
 	else
 	{
-		Regulator->CurrentRange = CURRENT_RANGE_1;
+		Regulator->CurrentRange = CURRENT_RANGE_2;
 		LL_SetCurrentRange1();
 	}
 }
