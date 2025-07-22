@@ -106,11 +106,11 @@ void CU_LoadConvertParams()
 		switch(i)
 		{
 			case CURRENT_RANGE_0:
-				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_P2];
-				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_P1];
-				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_P0];
-				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_K];
-				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_B];
+				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_1_P2];
+				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_1_P1];
+				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_1_P0];
+				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_1_K];
+				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_1_B];
 				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE0];
 
 				CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE0_P2];
@@ -121,11 +121,11 @@ void CU_LoadConvertParams()
 				break;
 
 			case CURRENT_RANGE_1:
-				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_P2];
-				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_P1];
-				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_P0];
-				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_K];
-				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_B];
+				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_1_P2];
+				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_1_P1];
+				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_1_P0];
+				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_1_K];
+				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_1_B];
 				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE0];
 
 				CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE1_P2];
