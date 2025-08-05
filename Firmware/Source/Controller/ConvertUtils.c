@@ -121,12 +121,12 @@ void CU_LoadConvertParams()
 				break;
 
 			case CURRENT_RANGE_1:
-				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_1_P2];
-				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_1_P1];
-				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_1_P0];
-				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_1_K];
-				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_1_B];
-				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE0];
+				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE1_P2];
+				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE1_P1];
+				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE1_P0];
+				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE1_K];
+				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE1_B];
+				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE1];
 
 				CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE1_P2];
 				CurrentToDacParams[i].P1 = DataTable[REG_DAC_I_RANGE1_P1];
