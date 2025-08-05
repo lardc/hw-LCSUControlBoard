@@ -14,8 +14,8 @@
 #define FEP_COUNT								7		// Количество массивов для чтения типа float
 #define ENABLE_LOCKING							FALSE	// Защита NV регистров паролем
 //
-#define SINE_PULSE_DURATION						30000	// Длительность импульса тока (мкс)
-#define LINEAR_FRAGMENT_DURATION				5000	// Длительность линейной части мод. полусинуса (мкс)
+#define SINE_PULSE_DURATION						10000	// Длительность импульса тока (мкс)
+#define LINEAR_FRAGMENT_DURATION				20000	// Длительность линейной части мод. полусинуса (мкс)
 #define LINEAR_FRAGMENT_AMPLITUDE				30.0f	// Амплитуда тока для начала формирования хвоста (А)
 //
 #define DAC_MAX_VAL								0x0FFF	// Максимальное значение ЦАП

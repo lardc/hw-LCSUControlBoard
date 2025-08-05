@@ -367,16 +367,18 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	float LinearCurrent = LINEAR_FRAGMENT_AMPLITUDE;
 	Int16U LinearStartIndex = 0;
 
-	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
+	Regulator->PulseCounterMax = PULSE_BUFFER_SIZE;
+
+	Int16U SinePulsePoints = SINE_PULSE_DURATION / TIMER15_uS;
 
 	float CorrectionTarget;
 	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget, Regulator->CurrentRange);
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (Regulator->PulseCounterMax/3 - 1));
-		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (Regulator->PulseCounterMax/3 - 1));
-		if((i > Regulator->PulseCounterMax / 3) && (Regulator->CurrentTable[i] < LinearCurrent))
+		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (SinePulsePoints - 1));
+		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (SinePulsePoints - 1));
+		if((i > SinePulsePoints) && (Regulator->CurrentTable[i] < LinearCurrent))
 		{
 			LinearStartIndex = i;
 			break;
@@ -384,7 +386,7 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	}
 
 	// Дописываем плавно спадающий хвост
-	float dI = 2 * LinearCurrent / (PULSE_BUFFER_SIZE - LinearStartIndex);
+	float dI = 2 * LinearCurrent / (PULSE_BUFFER_SIZE  - LinearStartIndex);
 	for (int i = LinearStartIndex; i < PULSE_BUFFER_SIZE; ++i)
 	{
 		LinearCurrent -= dI;
