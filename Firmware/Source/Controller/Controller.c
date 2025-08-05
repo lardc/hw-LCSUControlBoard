@@ -374,8 +374,8 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
-		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
-		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
+		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (Regulator->PulseCounterMax/3 - 1));
+		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (Regulator->PulseCounterMax/3 - 1));
 		if((i > Regulator->PulseCounterMax / 3) && (Regulator->CurrentTable[i] < LinearCurrent))
 		{
 			LinearStartIndex = i;
