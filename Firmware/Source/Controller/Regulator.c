@@ -56,6 +56,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 
 	if (Regulator->PulseCounter == Regulator->PulseCounterMax/2)
 		DataTable[REG_RESULT_CURRENT] = Regulator->MeasuredCurrent;
+
 	REGULATOR_LoggingData(Regulator);
 	Regulator->PulseCounter++;
 	if(Regulator->PulseCounter >= Regulator->PulseCounterMax || DataTable[REG_PROBLEM] == PROBLEM_FOLLOWING_ERROR)
