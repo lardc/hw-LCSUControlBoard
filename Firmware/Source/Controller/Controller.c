@@ -366,11 +366,8 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
 	float LinearCurrent = LINEAR_FRAGMENT_AMPLITUDE;
 	Int16U LinearStartIndex = 0;
-
-	Regulator->PulseCounterMax = PULSE_BUFFER_SIZE;
-
 	Int16U SinePulsePoints = SINE_PULSE_DURATION / TIMER15_uS;
-
+	Regulator->PulseCounterMax = PULSE_BUFFER_SIZE;
 	float CorrectionTarget;
 	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget, Regulator->CurrentRange);
 
