@@ -20,5 +20,6 @@ float MEASURE_SingleSampleBatteryVoltage();
 void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator);
 void MEASURE_DMABufferClear();
 void MEASURE_SetCurrentRange(volatile RegulatorParamsStruct* Regulator);
+int MEASURE_SortCondition(const void *A, const void *B); // добавила
 
 #endif /* MEASUREMENT_H_ */

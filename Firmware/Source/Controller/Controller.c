@@ -18,7 +18,7 @@
 #include "Constraints.h"
 #include "InitConfig.h"
 #include "JSONDescription.h"
-
+#include "stdlib.h"
 
 
 // Variables
@@ -59,6 +59,8 @@ void CONTROL_StartPrepare();
 void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
+void CONTROL_GetMaxCurrent();
+int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator);
 
 // Functions
 //
@@ -294,9 +296,79 @@ void CONTROL_HighPriorityProcess()
 		{
 			CONTROL_StopProcess();
 			CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
+			CONTROL_GetMaxCurrent();
 			DataTable[REG_OP_RESULT] = OPRESULT_OK;
 		}
 	}
+}
+//-----------------------------------------------
+
+int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
+{
+	int MaxDACIndex = 0;
+	int EndTrapeze = 0;
+	int PlateauDurationTicks = 0;
+	int FrontRiseTicks = 0;
+	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
+	{
+		case SINE_SHAPE:
+			PlateauDurationTicks = SINE_PULSE_DURATION / TIMER15_uS;
+			MaxDACIndex = PlateauDurationTicks/2;
+			break;
+
+		case MOD_SINE_SHAPE:
+			PlateauDurationTicks = SINE_PULSE_DURATION / TIMER15_uS;
+			MaxDACIndex = PlateauDurationTicks/2;
+			break;
+
+		case TRAPEZE_SHAPE:
+			PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
+			FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
+			EndTrapeze = PlateauDurationTicks + FrontRiseTicks;
+			MaxDACIndex = EndTrapeze - 10;
+			break;
+	}
+
+	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
+	return MaxDACIndex;
+}
+//-----------------------------------------------
+
+void CONTROL_GetMaxCurrent()
+{
+    float MaxCurrent = 0;
+    int MaxDACIndex = GetAveragingIndexForShape(&RegulatorParams);
+    float CurrentAveragingWindow[SIZE_INDEX];
+    float CurrentWindowTrimmed[SIZE_WINDOW];
+    Int16U CurrentCounter = 0, SearchZone = 5;
+    int PointsCounter = 0;
+    int i = 0, Counter = 0;
+    for(i = (MaxDACIndex > SearchZone) ? (MaxDACIndex - SearchZone) : 0; i < (MaxDACIndex + SearchZone) && i < VALUES_x_SIZE; i++)
+    {
+    	CurrentAveragingWindow[PointsCounter] = CONTROL_ValuesCurrent[i];
+        PointsCounter++;
+    }
+
+    qsort(CurrentAveragingWindow, SIZE_INDEX, sizeof(*CurrentAveragingWindow), MEASURE_SortCondition);
+
+    for(i = 2; i < PointsCounter - 2; i++)
+    {
+    	CurrentWindowTrimmed[Counter] = CurrentAveragingWindow[i];
+    	Counter++;
+    }
+
+    for(i = 0; i < Counter; i++)
+    {
+        MaxCurrent += CurrentWindowTrimmed[i];
+        CurrentCounter++;
+    }
+
+    if(CurrentCounter != 0)
+    {
+    	MaxCurrent /= CurrentCounter;
+    }
+
+    DataTable[REG_RESULT_CURRENT] = MaxCurrent;
 }
 //-----------------------------------------------
 

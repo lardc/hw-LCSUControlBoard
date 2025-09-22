@@ -32,7 +32,9 @@
 #define MOD_SINE_SHAPE							1
 #define TRAPEZE_SHAPE							2
 //
-
+#define SIZE_INDEX								10 // Размер массива для определения максимального тока
+#define SIZE_WINDOW								6 // Размер массива после сортировки и отбрасывания крайних точек
+//
 
 // Размер массивов EP
 #define VALUES_x_SIZE	((SINE_PULSE_DURATION + LINEAR_FRAGMENT_DURATION) / TIMER15_uS)
