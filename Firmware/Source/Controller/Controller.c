@@ -61,6 +61,7 @@ bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_GetMaxCurrent();
 int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator);
+int GetAveragingIndexForTrapeze(volatile RegulatorParamsStruct* Regulator);
 
 // Functions
 //
@@ -303,12 +304,26 @@ void CONTROL_HighPriorityProcess()
 }
 //-----------------------------------------------
 
+int GetAveragingIndexForTrapeze(volatile RegulatorParamsStruct* Regulator)
+{
+	int MaxDACIndex = 0, EndTrapeze = 0;
+	int FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
+	int Indent = 10; // отступ от конца трапеции в тактах регулятора
+	int PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
+	EndTrapeze = PlateauDurationTicks - FrontRiseTicks;
+
+	MaxDACIndex = EndTrapeze - Indent;
+
+	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
+	return MaxDACIndex;
+}
+//-----------------------------------------------
+
 int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 {
 	int MaxDACIndex = 0;
-	int EndTrapeze = 0;
 	int PlateauDurationTicks = 0;
-	int FrontRiseTicks = 0;
+
 	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
 	{
 		case SINE_SHAPE:
@@ -322,12 +337,9 @@ int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 			break;
 
 		case TRAPEZE_SHAPE:
-			PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
-			FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
-			EndTrapeze = PlateauDurationTicks + FrontRiseTicks;
-			MaxDACIndex = EndTrapeze - 10;
+			MaxDACIndex = GetAveragingIndexForTrapeze(&RegulatorParams);
 			break;
-	}
+		}
 
 	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
 	return MaxDACIndex;
@@ -341,8 +353,8 @@ void CONTROL_GetMaxCurrent()
     float CurrentAveragingWindow[SIZE_INDEX];
     float CurrentWindowTrimmed[SIZE_WINDOW];
     Int16U CurrentCounter = 0, SearchZone = 5;
-    int PointsCounter = 0;
-    int i = 0, Counter = 0;
+    int i = 0, PointsCounter = 0, Counter = 0;
+
     for(i = (MaxDACIndex > SearchZone) ? (MaxDACIndex - SearchZone) : 0; i < (MaxDACIndex + SearchZone) && i < VALUES_x_SIZE; i++)
     {
     	CurrentAveragingWindow[PointsCounter] = CONTROL_ValuesCurrent[i];
