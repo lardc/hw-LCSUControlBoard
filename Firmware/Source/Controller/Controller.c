@@ -115,6 +115,7 @@ void CONTROL_ResetOutputRegisters()
 	DataTable[REG_OP_RESULT] = OPRESULT_NONE;
 
 	DataTable[REG_RESULT_CURRENT] = 0;
+	DataTable[REG_RESULT_MAX_DAC] = 0;
 
 	DEVPROFILE_ResetScopes(0);
 	DEVPROFILE_ResetEPReadState();
@@ -304,25 +305,9 @@ void CONTROL_HighPriorityProcess()
 }
 //-----------------------------------------------
 
-int GetAveragingIndexForTrapeze(volatile RegulatorParamsStruct* Regulator)
-{
-	int MaxDACIndex = 0, EndTrapeze = 0;
-	int FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
-	int Indent = 10; // отступ от конца трапеции в тактах регулятора
-	int PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
-	EndTrapeze = PlateauDurationTicks - FrontRiseTicks;
-
-	MaxDACIndex = EndTrapeze - Indent;
-
-	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
-	return MaxDACIndex;
-}
-//-----------------------------------------------
-
 int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 {
-	int MaxDACIndex = 0;
-	int PlateauDurationTicks = 0;
+	int MaxDACIndex = 0, EndTrapeze = 0, FrontRiseTicks = 0, PlateauDurationTicks = 0;
 
 	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
 	{
@@ -337,11 +322,18 @@ int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 			break;
 
 		case TRAPEZE_SHAPE:
-			MaxDACIndex = GetAveragingIndexForTrapeze(&RegulatorParams);
+			PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000; // расчет в тактах регулятора общей длительности трапеции
+			FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS); // расчет в тактах регулятора времени нарастания трапеции
+			EndTrapeze = PlateauDurationTicks - FrontRiseTicks; // расчет тактов регулятора, которые приходятся на конец полки трапеции
+			MaxDACIndex = EndTrapeze;
 			break;
 		}
 
-	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
+	if(MaxDACIndex < VALUES_x_SIZE)
+	{
+		DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
+	}
+
 	return MaxDACIndex;
 }
 //-----------------------------------------------
@@ -349,29 +341,26 @@ int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 void CONTROL_GetMaxCurrent()
 {
     float MaxCurrent = 0;
-    int MaxDACIndex = GetAveragingIndexForShape(&RegulatorParams);
+    int MaxDACIndex = GetAveragingIndexForShape(&RegulatorParams); // рассчет максимального индекса ЦАПа в зависимости от формы сигнала
     float CurrentAveragingWindow[SIZE_INDEX];
     float CurrentWindowTrimmed[SIZE_WINDOW];
-    Int16U CurrentCounter = 0, SearchZone = 5;
-    int i = 0, PointsCounter = 0, Counter = 0;
+    int i = 0, PointsCounter = 0, CurrentCounter = 0;
 
-    for(i = (MaxDACIndex > SearchZone) ? (MaxDACIndex - SearchZone) : 0; i < (MaxDACIndex + SearchZone) && i < VALUES_x_SIZE; i++)
+    // цикл, в котором выделяется 10 точек, находящихся около точки с максимальным индексом ЦАПа
+    for(i = (MaxDACIndex > SIZE_INDEX/2) ? (MaxDACIndex - SIZE_INDEX/2) : 0; i < (MaxDACIndex + SIZE_INDEX/2) && i < VALUES_x_SIZE; i++)
     {
     	CurrentAveragingWindow[PointsCounter] = CONTROL_ValuesCurrent[i];
         PointsCounter++;
     }
 
-    qsort(CurrentAveragingWindow, SIZE_INDEX, sizeof(*CurrentAveragingWindow), MEASURE_SortCondition);
+    // сортировка 10 точек по возрастанию
+    qsort(CurrentAveragingWindow, PointsCounter, sizeof(*CurrentAveragingWindow), MEASURE_SortCondition);
 
-    for(i = 2; i < PointsCounter - 2; i++)
+    // отсечение выбросов и подсчет суммы токов для поиска среднего значения тока
+    for(i = INDENT_ZONE; i < PointsCounter - INDENT_ZONE && CurrentCounter < SIZE_WINDOW; i++)
     {
-    	CurrentWindowTrimmed[Counter] = CurrentAveragingWindow[i];
-    	Counter++;
-    }
-
-    for(i = 0; i < Counter; i++)
-    {
-        MaxCurrent += CurrentWindowTrimmed[i];
+        CurrentWindowTrimmed[CurrentCounter] = CurrentAveragingWindow[i];
+        MaxCurrent += CurrentWindowTrimmed[CurrentCounter];
         CurrentCounter++;
     }
 
