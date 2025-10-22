@@ -98,8 +98,13 @@ void MEASURE_SetCurrentRange(volatile RegulatorParamsStruct* Regulator)
 int MEASURE_SortCondition(const void *A, const void *B)
 {
     float a = *(float*)A, b = *(float*)B;
-    if (a > b) return 1;
-    if (a < b) return -1;
+
+    if(a > b)
+    	return 1;
+
+    if(a < b)
+    	return -1;
+
     return 0;
 }
 //-----------------------------------------------

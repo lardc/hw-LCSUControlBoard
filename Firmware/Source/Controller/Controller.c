@@ -307,27 +307,31 @@ void CONTROL_HighPriorityProcess()
 
 int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 {
-	int MaxDACIndex = 0, EndTrapeze = 0, FrontRiseTicks = 0, PlateauDurationTicks = 0;
+	int MaxDACIndex = 0, EndTrapeze = 0, FrontRiseTicks = 0;
+	int PlateauDurationTicks = 0;
 
 	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
 	{
 		case SINE_SHAPE:
 			PlateauDurationTicks = SINE_PULSE_DURATION / TIMER15_uS;
-			MaxDACIndex = PlateauDurationTicks/2;
+			MaxDACIndex = PlateauDurationTicks / 2;
 			break;
 
 		case MOD_SINE_SHAPE:
 			PlateauDurationTicks = SINE_PULSE_DURATION / TIMER15_uS;
-			MaxDACIndex = PlateauDurationTicks/2;
+			MaxDACIndex = PlateauDurationTicks / 2;
 			break;
 
 		case TRAPEZE_SHAPE:
-			PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000; // расчет в тактах регулятора общей длительности трапеции
-			FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS); // расчет в тактах регулятора времени нарастания трапеции
-			EndTrapeze = PlateauDurationTicks - FrontRiseTicks; // расчет тактов регулятора, которые приходятся на конец полки трапеции
+			// расчет в тактах регулятора общей длительности трапеции (фронты + полка)
+			PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
+			// расчет в тактах регулятора времени нарастания трапеции
+			FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget / (DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
+			// расчет тактов регулятора, которые приходятся на конец полки трапеции
+			EndTrapeze = PlateauDurationTicks - FrontRiseTicks;
 			MaxDACIndex = EndTrapeze;
 			break;
-		}
+	}
 
 	if(MaxDACIndex < VALUES_x_SIZE)
 	{
@@ -340,36 +344,41 @@ int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
 
 void CONTROL_GetMaxCurrent()
 {
-    float MaxCurrent = 0;
-    int MaxDACIndex = GetAveragingIndexForShape(&RegulatorParams); // рассчет максимального индекса ЦАПа в зависимости от формы сигнала
-    float CurrentAveragingWindow[SIZE_INDEX];
-    float CurrentWindowTrimmed[SIZE_WINDOW];
-    int i = 0, PointsCounter = 0, CurrentCounter = 0;
+	float MaxCurrent = 0;
+	// расчет максимального индекса ЦАПа в зависимости от формы сигнала
+	int MaxDACIndex = GetAveragingIndexForShape(&RegulatorParams);
+	// размер усеченного массива (после отсечения выбросов)
+	int SizeWindow = SIZE_INDEX - 2 * INDENT_ZONE;
+	float CurrentAveragingWindow[SIZE_INDEX];
+	float CurrentWindowTrimmed[SizeWindow];
+	int i = 0, PointsCounter = 0, CurrentCounter = 0;
+	// область точек вокруг максимального индекса ЦАП
+	int SearchZone = SIZE_INDEX / 2;
 
-    // цикл, в котором выделяется 10 точек, находящихся около точки с максимальным индексом ЦАПа
-    for(i = (MaxDACIndex > SIZE_INDEX/2) ? (MaxDACIndex - SIZE_INDEX/2) : 0; i < (MaxDACIndex + SIZE_INDEX/2) && i < VALUES_x_SIZE; i++)
-    {
-    	CurrentAveragingWindow[PointsCounter] = CONTROL_ValuesCurrent[i];
-        PointsCounter++;
-    }
+	// цикл, в котором выделяется 10 точек, находящихся около точки с максимальным индексом ЦАПа
+	for(i = (MaxDACIndex > SearchZone) ? (MaxDACIndex - SearchZone) : 0; i < (MaxDACIndex + SearchZone) && i < VALUES_x_SIZE; i++)
+	{
+		CurrentAveragingWindow[PointsCounter] = CONTROL_ValuesCurrent[i];
+		PointsCounter++;
+	}
 
-    // сортировка 10 точек по возрастанию
-    qsort(CurrentAveragingWindow, PointsCounter, sizeof(*CurrentAveragingWindow), MEASURE_SortCondition);
+	// сортировка 10 точек по возрастанию
+	qsort(CurrentAveragingWindow, PointsCounter, sizeof(*CurrentAveragingWindow), MEASURE_SortCondition);
 
-    // отсечение выбросов и подсчет суммы токов для поиска среднего значения тока
-    for(i = INDENT_ZONE; i < PointsCounter - INDENT_ZONE && CurrentCounter < SIZE_WINDOW; i++)
-    {
-        CurrentWindowTrimmed[CurrentCounter] = CurrentAveragingWindow[i];
-        MaxCurrent += CurrentWindowTrimmed[CurrentCounter];
-        CurrentCounter++;
-    }
+	// отсечение выбросов и подсчет суммы токов для поиска среднего значения тока
+	for(i = INDENT_ZONE; i < PointsCounter - INDENT_ZONE && CurrentCounter < SizeWindow; i++)
+	{
+		CurrentWindowTrimmed[CurrentCounter] = CurrentAveragingWindow[i];
+		MaxCurrent += CurrentWindowTrimmed[CurrentCounter];
+		CurrentCounter++;
+	}
 
-    if(CurrentCounter != 0)
-    {
-    	MaxCurrent /= CurrentCounter;
-    }
+	if(CurrentCounter != 0)
+	{
+		MaxCurrent /= CurrentCounter;
+	}
 
-    DataTable[REG_RESULT_CURRENT] = MaxCurrent;
+	DataTable[REG_RESULT_CURRENT] = MaxCurrent;
 }
 //-----------------------------------------------
 
