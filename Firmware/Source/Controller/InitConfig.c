@@ -1,11 +1,11 @@
-﻿#include "InitConfig.h"
+#include "InitConfig.h"
 #include "Board.h"
 #include "SysConfig.h"
 #include "BCCIxParams.h"
 #include "Measurement.h"
 
 // Forward functions
-void INITCFG_ADCConfigTemplate(ADC_TypeDef* ADCx);
+void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, Int32U Trigger);
 
 // Functions
 //
@@ -107,7 +107,7 @@ void INITCFG_ConfigTimer15()
 {
 	TIM_Clock_En(TIM_15);
 	TIM_Config(TIM15, SYSCLK, TIMER15_uS);
-	TIM_Interupt(TIM15, 1, true);
+	TIM_MasterMode(TIM15, MMS_UPDATE);
 }
 //------------------------------------------------
 
@@ -123,22 +123,21 @@ void INITCFG_ConfigADC()
 	RCC_ADC_Clk_EN(ADC_12_ClkEN);
 	RCC_ADC_Clk_EN(ADC_34_ClkEN);
 
-	INITCFG_ADCConfigTemplate(ADC1);
-	INITCFG_ADCConfigTemplate(ADC3);
-
-	INITCFG_ADCConfigChannel(ADC1, ADC1_V_BAT_CHANNEL);
-	INITCFG_ADCConfigChannel(ADC3, ADC3_CURRENT_CHANNEL_R0);
+	INITCFG_GeneralADC(ADC1, ADC1_V_BAT_CHANNEL,      ADC12_TIM15_TRGO);
+	INITCFG_GeneralADC(ADC3, ADC3_CURRENT_CHANNEL_R0, ADC34_TIM15_TRGO);
 }
 //------------------------------------------------
 
-void INITCFG_ADCConfigTemplate(ADC_TypeDef* ADCx)
+void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, Int32U Trigger)
 {
 	ADC_Calibration(ADCx);
-	ADC_SoftTrigConfig(ADCx);
+	ADC_TrigConfig(ADCx, Trigger, RISE);
 	ADC_ChannelSeqReset(ADCx);
 	ADC_ChannelSeqLen(ADCx, ADC_DMA_BUFF_SIZE);
 	ADC_DMAConfig(ADCx);
 	ADC_Enable(ADCx);
+	INITCFG_ADCConfigChannel(ADCx, Channel);
+	ADC_SamplingStart(ADCx);
 }
 //------------------------------------------------
 
@@ -157,16 +156,21 @@ void INITCFG_ConfigDMA()
 	// DMA для АЦП напряжения батареи
 	DMA_Reset(DMA_ADC_V_BAT_CHANNEL);
 	DMAChannelX_Config(DMA_ADC_V_BAT_CHANNEL, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
-							DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_EN, DMA_READ_FROM_PERIPH);
+						DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_EN, DMA_READ_FROM_PERIPH);
 	DMAChannelX_DataConfig(DMA_ADC_V_BAT_CHANNEL, (uint32_t)(&MEASURE_ADC_BatteryVoltageRaw[0]), (uint32_t)(&ADC1->DR), ADC_DMA_BUFF_SIZE);
+	DMA_Interrupt(DMA_ADC_V_BAT_CHANNEL, DMA_TRANSFER_COMPLETE, 1, true);
 	DMA_ChannelEnable(DMA_ADC_V_BAT_CHANNEL, true);
 
 	// DMA для АЦП тока
 	DMA_Reset(DMA_ADC_CURRENT_CHANNEL);
 	DMAChannelX_Config(DMA_ADC_CURRENT_CHANNEL, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
-							DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_EN, DMA_READ_FROM_PERIPH);
+						DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_EN, DMA_READ_FROM_PERIPH);
 	DMAChannelX_DataConfig(DMA_ADC_CURRENT_CHANNEL, (uint32_t)(&MEASURE_ADC_CurrentRaw[0]), (uint32_t)(&ADC3->DR), ADC_DMA_BUFF_SIZE);
+	DMA_Interrupt(DMA_ADC_CURRENT_CHANNEL, DMA_TRANSFER_COMPLETE, 1, true);
 	DMA_ChannelEnable(DMA_ADC_CURRENT_CHANNEL, true);
+
+	NVIC_SetPriority(DMA1_Channel1_IRQn, 1);
+	NVIC_SetPriority(DMA2_Channel5_IRQn, 1);
 }
 //------------------------------------------------
 

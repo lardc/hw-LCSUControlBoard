@@ -1,4 +1,4 @@
-﻿// Includes
+// Includes
 #include "Measurement.h"
 #include "Board.h"
 #include "LowLevel.h"
@@ -14,16 +14,11 @@ Int16U MEASURE_ADC_BatteryVoltageRaw[ADC_DMA_BUFF_SIZE];
 float MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize);
 float MEASURE_DMAExtractCurrent();
 float MEASURE_DMAExtractVolatge();
-void MEASURE_StartNewSampling();
 
 // Functions
 //
 float MEASURE_SingleSampleBatteryVoltage()
 {
-	DMA_TransferCompleteReset(DMA1, DMA_TRANSFER_COMPLETE);
-	ADC_SamplingStart(ADC1);
-	while(!DMA_IsTransferComplete(DMA1, DMA_TRANSFER_COMPLETE)){}
-
 	return CU_ADCtoV(MEASURE_DMAExtractVolatge());
 }
 //-----------------------------------------------
@@ -32,7 +27,6 @@ void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator)
 {
 	Regulator->MeasuredCurrent = CU_ADCtoI(MEASURE_DMAExtractCurrent(), Regulator->CurrentRange);
 	Regulator->MeasuredBatteryVoltage = CU_ADCtoV(MEASURE_DMAExtractVolatge());
-	MEASURE_StartNewSampling();
 }
 //-----------------------------------------------
 
@@ -63,15 +57,6 @@ void MEASURE_DMABufferClear()
 {
 	for(int i = 0; i < ADC_DMA_BUFF_SIZE; i++)
 		MEASURE_ADC_CurrentRaw[i] = 0;
-}
-//-----------------------------------------------
-
-void MEASURE_StartNewSampling()
-{
-	DMA_TransferCompleteReset(DMA1, DMA_TRANSFER_COMPLETE);
-	DMA_TransferCompleteReset(DMA2, DMA_TRANSFER_COMPLETE);
-	ADC_SamplingStart(ADC1);
-	ADC_SamplingStart(ADC3);
 }
 //-----------------------------------------------
 
