@@ -134,7 +134,7 @@ void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, Int32U Trigger)
 	ADC_TrigConfig(ADCx, Trigger, RISE);
 	ADC_ChannelSeqReset(ADCx);
 	ADC_ChannelSeqLen(ADCx, ADC_DMA_BUFF_SIZE);
-	ADC_DMAConfig(ADCx);
+	ADC_DMAEnable(ADCx, true);
 	ADC_Enable(ADCx);
 	INITCFG_ADCConfigChannel(ADCx, Channel);
 	ADC_SamplingStart(ADCx);

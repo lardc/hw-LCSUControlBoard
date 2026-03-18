@@ -1,4 +1,4 @@
-﻿#include "Controller.h"
+#include "Controller.h"
 #include "InitConfig.h"
 #include "SysConfig.h"
 
@@ -32,11 +32,11 @@ int main()
 	// Настройка DAC
 	INITCFG_ConfigDAC();
 
-	// Настройка АЦП
-	INITCFG_ConfigADC();
-
 	// Настройка DMA
 	INITCFG_ConfigDMA();
+
+	// Настройка АЦП
+	INITCFG_ConfigADC();
 
 	// Настройка сторожевого таймера
 	INITCFG_ConfigWatchDog();

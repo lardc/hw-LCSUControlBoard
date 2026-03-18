@@ -65,9 +65,6 @@ void INT_GeneralDMAHandler(DMA_TypeDef* DMAx, uint32_t Channel, volatile bool* F
 void DMA1_Channel1_IRQHandler()
 {
 	INT_GeneralDMAHandler(DMA1, DMA_ISR_TCIF1, &INT_VBatReady);
-	// Сброс флага OVR у ADC3 для непрерывной работы DMA2_Ch5
-	if(ADC3->ISR & OVR)
-		ADC3->ISR |= OVR;
 }
 //-----------------------------------------
 

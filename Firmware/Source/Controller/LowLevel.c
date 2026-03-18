@@ -1,4 +1,4 @@
-﻿// Header
+// Header
 #include "LowLevel.h"
 // Include
 #include "Board.h"
@@ -48,6 +48,7 @@ void LL_SetCurrentRange0()
 			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, true);
 			break;
 	}
+	ADC_SamplingStart(ADC3);
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
 }
 //-----------------------------
@@ -65,6 +66,7 @@ void LL_SetCurrentRange1()
 			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, false);
 			break;
 	}
+	ADC_SamplingStart(ADC3);
 	GPIO_SetState(GPIO_CURRENT_RANGE, true);
 }
 //-----------------------------
