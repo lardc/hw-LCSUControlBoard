@@ -3,4 +3,6 @@
 
 #include "stdinc.h"
 
+extern volatile bool INT_VBatReady;
+
 #endif // __INTERRUPTS_H

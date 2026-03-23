@@ -5,7 +5,7 @@
 #include "Measurement.h"
 
 // Forward functions
-void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, Int32U Trigger);
+void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, bool VoltageChannel);
 
 // Functions
 //
@@ -123,26 +123,41 @@ void INITCFG_ConfigADC()
 	RCC_ADC_Clk_EN(ADC_12_ClkEN);
 	RCC_ADC_Clk_EN(ADC_34_ClkEN);
 
-	INITCFG_GeneralADC(ADC1, ADC1_V_BAT_CHANNEL,      ADC12_TIM15_TRGO);
-	INITCFG_GeneralADC(ADC3, ADC3_CURRENT_CHANNEL_R0, ADC34_TIM15_TRGO);
+	INITCFG_GeneralADC(ADC1, ADC1_V_BAT_CHANNEL, true);
+	INITCFG_GeneralADC(ADC3, ADC3_CURRENT_CHANNEL_R0, false);
 }
 //------------------------------------------------
 
-void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, Int32U Trigger)
+void INITCFG_GeneralADC(ADC_TypeDef* ADCx, Int16U Channel, bool VoltageChannel)
 {
 	ADC_Calibration(ADCx);
-	ADC_TrigConfig(ADCx, Trigger, RISE);
+	if(VoltageChannel)
+		ADC_SoftTrigConfig(ADCx);
+	else
+		ADC_TrigConfig(ADCx, ADC34_TIM15_TRGO, RISE);
 	ADC_ChannelSeqReset(ADCx);
 	ADC_ChannelSeqLen(ADCx, ADC_DMA_BUFF_SIZE);
-	ADC_DMAEnable(ADCx, true);
+	ADC_DMAConfigWithAutDLY(ADCx);
 	ADC_Enable(ADCx);
 	INITCFG_ADCConfigChannel(ADCx, Channel);
 	ADC_SamplingStart(ADCx);
 }
 //------------------------------------------------
 
+void INITCFG_ADC1SoftTrig(bool Enable)
+{
+	ADC_SamplingStop(ADC1);
+	if(Enable)
+		ADC_SoftTrigConfig(ADC1);
+	else
+		ADC_TrigConfig(ADC1, ADC12_TIM15_TRGO, RISE);
+	ADC_SamplingStart(ADC1);
+}
+//------------------------------------------------
+
 void INITCFG_ADCConfigChannel(ADC_TypeDef* ADCx, Int16U Channel)
 {
+	ADC_SamplingStop(ADCx);
 	for (uint8_t i = 1; i <= ADC_DMA_BUFF_SIZE; ++i)
 		ADC_ChannelSet_Sequence(ADCx, Channel, i);
 }
@@ -157,7 +172,7 @@ void INITCFG_ConfigDMA()
 	DMA_Reset(DMA_ADC_V_BAT_CHANNEL);
 	DMAChannelX_Config(DMA_ADC_V_BAT_CHANNEL, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
 						DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_EN, DMA_READ_FROM_PERIPH);
-	DMAChannelX_DataConfig(DMA_ADC_V_BAT_CHANNEL, (uint32_t)(&MEASURE_ADC_BatteryVoltageRaw[0]), (uint32_t)(&ADC1->DR), ADC_DMA_BUFF_SIZE);
+	DMAChannelX_DataConfig(DMA_ADC_V_BAT_CHANNEL, (uint32_t)MEASURE_ADC_BatteryVoltageRaw, (uint32_t)(&ADC1->DR), ADC_DMA_BUFF_SIZE);
 	DMA_Interrupt(DMA_ADC_V_BAT_CHANNEL, DMA_TRANSFER_COMPLETE, 1, true);
 	DMA_ChannelEnable(DMA_ADC_V_BAT_CHANNEL, true);
 
@@ -165,7 +180,7 @@ void INITCFG_ConfigDMA()
 	DMA_Reset(DMA_ADC_CURRENT_CHANNEL);
 	DMAChannelX_Config(DMA_ADC_CURRENT_CHANNEL, DMA_MEM2MEM_DIS, DMA_LvlPriority_LOW, DMA_MSIZE_16BIT, DMA_PSIZE_16BIT,
 						DMA_MINC_EN, DMA_PINC_DIS, DMA_CIRCMODE_EN, DMA_READ_FROM_PERIPH);
-	DMAChannelX_DataConfig(DMA_ADC_CURRENT_CHANNEL, (uint32_t)(&MEASURE_ADC_CurrentRaw[0]), (uint32_t)(&ADC3->DR), ADC_DMA_BUFF_SIZE);
+	DMAChannelX_DataConfig(DMA_ADC_CURRENT_CHANNEL, (uint32_t)MEASURE_ADC_CurrentRaw, (uint32_t)(&ADC3->DR), ADC_DMA_BUFF_SIZE);
 	DMA_Interrupt(DMA_ADC_CURRENT_CHANNEL, DMA_TRANSFER_COMPLETE, 1, true);
 	DMA_ChannelEnable(DMA_ADC_CURRENT_CHANNEL, true);
 

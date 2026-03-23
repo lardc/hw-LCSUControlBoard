@@ -278,12 +278,11 @@ void CONTROL_LogicProcess()
 
 bool CONTROL_BatteryVoltageCheck()
 {
-	DataTable[REG_BATTERY_VOLTAGE] = MEASURE_SingleSampleBatteryVoltage();
-
-	if(DataTable[REG_BATTERY_VOLTAGE] < DataTable[REG_BATTERY_VOLTAGE_THRESHOLD])
+	if(CONTROL_SubState == SS_Pulse)
 		return false;
-	else
-		return true;
+
+	DataTable[REG_BATTERY_VOLTAGE] = MEASURE_SingleSampleBatteryVoltage();
+	return (DataTable[REG_BATTERY_VOLTAGE] >= DataTable[REG_BATTERY_VOLTAGE_THRESHOLD]);
 }
 //-----------------------------------------------
 
@@ -546,6 +545,7 @@ void CONTROL_StopProcess()
 	LL_WriteDAC(0);
 	LL_LSLCurrentBoardLock(true);
 	LL_OutputAmplifierOffset(true);
+	INITCFG_ADC1SoftTrig(true);
 
 	float AfterPulseCoefficient = RegulatorParams.CurrentTarget / CONTROL_CurrentMaxValue;
 	CONTROL_AfterPulsePause = CONTROL_TimeCounter + DataTable[REG_AFTER_PULSE_PAUSE] * AfterPulseCoefficient;
@@ -577,6 +577,8 @@ void CONTROL_StartProcess()
 
 	LL_OutputAmplifierOffset(false);
 	LL_LSLCurrentBoardLock(false);
+
+	INITCFG_ADC1SoftTrig(false);
 	TIM_Reset(TIM15);
 	TIM_Start(TIM15);
 }

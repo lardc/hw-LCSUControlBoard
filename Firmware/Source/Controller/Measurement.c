@@ -4,6 +4,7 @@
 #include "LowLevel.h"
 #include "DataTable.h"
 #include "Global.h"
+#include "Interrupts.h"
 
 // Variables
 //
@@ -19,6 +20,10 @@ float MEASURE_DMAExtractVolatge();
 //
 float MEASURE_SingleSampleBatteryVoltage()
 {
+	INT_VBatReady = false;
+	ADC_SamplingStart(ADC1);
+	while(!INT_VBatReady){}
+
 	return CU_ADCtoV(MEASURE_DMAExtractVolatge());
 }
 //-----------------------------------------------

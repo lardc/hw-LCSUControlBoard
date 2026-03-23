@@ -15,6 +15,7 @@ void INITCFG_ConfigTimer7();
 void INITCFG_ConfigTimer6();
 void INITCFG_ConfigWatchDog();
 void INITCFG_ConfigADC();
+void INITCFG_ADC1SoftTrig(bool Enable);
 void INITCFG_ConfigDAC();
 void INITCFG_ConfigDMA();
 void INITCFG_ConfigExtInterrupt();
