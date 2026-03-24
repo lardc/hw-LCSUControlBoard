@@ -10,7 +10,7 @@
 // Functions prototypes
 //
 void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator);
-Int16U REGULATOR_DACApplyLimits(float Value, Int16U Offset, Int16U LimitValue);
+Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue);
 
 // Functions
 //
@@ -47,7 +47,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	float ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput, Regulator->CurrentRange);
 
 	// Проверка границ диапазона ЦАП
-	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACOffset, Regulator->DACLimitValue);
+	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACLimitValue);
 	LL_WriteDAC(Regulator->DACSetpoint);
 
 	// Нахождение максимума измереного тока.
@@ -70,15 +70,14 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 }
 //-----------------------------------------------
 
-Int16U REGULATOR_DACApplyLimits(float Value, Int16U Offset, Int16U LimitValue)
+Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue)
 {
-	Int16S Result = (Int16S)(Value + Offset);
-	if (Result < 0)
+	if (Value < 0)
 		return 0;
-	else if (Result > LimitValue)
+	else if (Value > LimitValue)
 		return LimitValue;
 	else
-		return Result;
+		return Value;
 }
 //-----------------------------------------------
 
@@ -135,7 +134,6 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 		Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + i];
 	}
 
-	Regulator->DACOffset = DataTable[REG_DAC_OFFSET];
 	Regulator->DACLimitValue = (DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? \
 			DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
 	Regulator->PulseCounter = 0;

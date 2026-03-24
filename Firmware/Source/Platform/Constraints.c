@@ -23,7 +23,7 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, INT16U_MAX, 0},																		// 12
 		{FAN_PERIOD_MIN, FAN_PERIOD_MAX, FAN_PERIOD_DEF},										// 13
 		{FAN_TIME_MIN, FAN_TIME_MAX, FAN_TIME_DEF},												// 14
-		{DAC_OFFSET_MIN, DAC_OFFSET_MAX, DAC_OFFSET_DEF},										// 15
+		{0, 0, 0},																				// 15
 		{CONF_STATE_TIMEOUT_MIN, CONF_STATE_TIMEOUT_MAX, CONF_STATE_TIMEOUT_DEF},				// 16
 		{TRAPEZE_CUR_RATE_MIN, TRAPEZE_CUR_RATE_MAX, TRAPEZE_CUR_RATE_DEF},						// 17
 		{0, 0, 0},																				// 18

@@ -52,7 +52,7 @@
 #define REG_SCOPE_STEP					12	// Шаг сохранения оцифрованных значений
 #define REG_FAN_OPERATE_PERIOD			13	// Период работы вентилятора (сек)
 #define REG_FAN_OPERATE_TIME			14	// Время включенного состояния вентилятора (сек)
-#define REG_DAC_OFFSET					15	// Смещение сигнала с ЦАП
+//
 #define REG_CONFIG_READY_STATE_TIMEOUT	16	// Таймаут нахождения блока в состоянии DS_ConfigReady
 #define REG_TRAPEZE_CURRENT_RATE		17	// dI/dt фронтов трапецеидального импульса тока (А/мкс)
 
