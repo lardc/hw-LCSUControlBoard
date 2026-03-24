@@ -34,10 +34,6 @@ float CU_ItoDAC(float Current, Int16U CurrentRange)
 	K = CurrentToDacParams[CurrentRange].K;
 	B = CurrentToDacParams[CurrentRange].B;
 
-	// Пересчет амплитуды тока в расчете на одну CurrentBoard
-	if(CurrentRange)
-		Current = Current / DataTable[REG_CURBOARDS];
-
 	return Current * K + B;
 }
 //-----------------------------
