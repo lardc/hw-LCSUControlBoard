@@ -127,6 +127,7 @@
 #define REG_TRAPEZE_DURATION			129	// Длительность импульса тока (мс)
 //
 #define REG_DBG							150	// Регистр режима Отладки
+#define REG_DBG_DISABLE_REGLTR			151	// Отключение коэффициентов регулятора
 
 // Регистры только чтение
 #define REG_DEV_STATE					192	// Регистр состояния

@@ -18,7 +18,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
 	static float Qi = 0, Qp;
 	static Int16U  FollowingErrorCounter = 0;
-	Regulator->RegulatorError = (Regulator->PulseCounter <= Regulator->PlateIndex) ? 0 : (Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent);
+	Regulator->RegulatorError = Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent;
 
 	if(fabsf(Regulator->RegulatorError / Regulator->CurrentTarget * 100) < Regulator->RegulatorAlowedError)
 		FollowingErrorCounter = 0;
@@ -41,7 +41,8 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	else if (Qi < -DataTable[REG_REGULATOR_QI_MAX])
 		Qi = -DataTable[REG_REGULATOR_QI_MAX];
 
-	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter] + Qp + Qi;
+	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter]
+			+ (Regulator->DisableRegulator ? 0 : (Qp + Qi));
 
 	// Выбор источника данных для записи в ЦАП
 	float ValueToDAC;
@@ -147,5 +148,6 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 	Regulator->PulseCounter = 0;
 	Regulator->RegulatorAlowedError = DataTable[REG_REGULATOR_ALLOWED_ERR];
 	Regulator->FollowingErrorCounterMax = DataTable[REG_FOLLOWING_ERR_CNT];
+	Regulator->DisableRegulator = DataTable[REG_DBG_DISABLE_REGLTR];
 }
 //-----------------------------------------------
