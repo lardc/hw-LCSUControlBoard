@@ -25,6 +25,7 @@ typedef struct __RegulatorParams
 	float Ki[CURRENT_RANGES];
 	float KiTune[CURRENT_RANGES];
 	float RegulatorError;
+	float RegulatorRelativeError;
 	Int16U PulseCounter;
 	Int16U PulseCounterMax;
 	Int16U PlateIndex;

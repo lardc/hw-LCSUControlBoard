@@ -16,24 +16,43 @@ Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue);
 //
 bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
-	static float Qi = 0, Qp;
+	static float Qi = 0;
 	static Int16U FollowingErrorCounter = 0;
-	Regulator->RegulatorError = Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent;
 
-	if(fabsf(Regulator->RegulatorError / Regulator->CurrentTarget * 100) < Regulator->RegulatorAlowedError)
-		FollowingErrorCounter = 0;
-	else
-		FollowingErrorCounter++;
-
-	if(FollowingErrorCounter >= Regulator->FollowingErrorCounterMax && !DataTable[REG_FOLLOWING_ERR_MUTE])
+	// На нулевом тике ошибку не из чего рассчитать
+	// Так же сбрасываются статические переменные
+	if(Regulator->PulseCounter == 0)
 	{
+		Regulator->RegulatorError = 0;
+		Regulator->RegulatorRelativeError = 0;
+
+		Qi = 0;
 		FollowingErrorCounter = 0;
-		CONTROL_StopProcess();
-		CONTROL_SetDeviceState(DS_Ready, SS_None);
-		DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
+	}
+	else
+	{
+		// Для ошибки берётся предыдущее задание
+		Regulator->RegulatorError = Regulator->CurrentTable[Regulator->PulseCounter - 1] - Regulator->MeasuredCurrent;
+		Regulator->RegulatorRelativeError = Regulator->RegulatorError / Regulator->CurrentTable[Regulator->PulseCounter - 1];
 	}
 
-	Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
+	// Проверка Following Error
+	if(!DataTable[REG_FOLLOWING_ERR_MUTE] && !Regulator->DisableRegulator)
+	{
+		if(fabsf(Regulator->RegulatorRelativeError * 100) < Regulator->RegulatorAlowedError)
+			FollowingErrorCounter = 0;
+		else
+			FollowingErrorCounter++;
+
+		if(FollowingErrorCounter >= Regulator->FollowingErrorCounterMax)
+		{
+			DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
+			return true;
+		}
+	}
+
+	// Расчёт корректировок
+	float Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
 	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
 
 	if(Qi > DataTable[REG_REGULATOR_QI_MAX])
@@ -41,32 +60,19 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	else if (Qi < -DataTable[REG_REGULATOR_QI_MAX])
 		Qi = -DataTable[REG_REGULATOR_QI_MAX];
 
+	// Скорректированное значение
 	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter]
 			+ (Regulator->DisableRegulator ? 0 : (Qp + Qi));
 
+	// Пересчёт в ЦАП
 	float ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput, Regulator->CurrentRange);
-
-	// Проверка границ диапазона ЦАП
 	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACLimitValue);
 	LL_WriteDAC(Regulator->DACSetpoint);
 
-	// Нахождение максимума измереного тока.
-	// Сделана только проверка первой половины всех значений для избегания лишних проверок
-	if((DataTable[REG_RESULT_CURRENT] < Regulator->MeasuredCurrent) && (Regulator->PulseCounter <= Regulator->PulseCounterMax/2))
-		DataTable[REG_RESULT_CURRENT] = Regulator->MeasuredCurrent;
-
 	REGULATOR_LoggingData(Regulator);
 	Regulator->PulseCounter++;
-	if(Regulator->PulseCounter >= Regulator->PulseCounterMax || DataTable[REG_PROBLEM] == PROBLEM_FOLLOWING_ERROR)
-	{
-		Regulator->RegulatorError = 0;
-		Regulator->PulseCounter = 0;
-		Qi = 0;
-		FollowingErrorCounter = 0;
-		return true;
-	}
-	else
-		return false;
+
+	return (Regulator->PulseCounter >= Regulator->PulseCounterMax);
 }
 //-----------------------------------------------
 
