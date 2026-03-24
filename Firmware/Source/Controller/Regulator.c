@@ -17,7 +17,7 @@ Int16U REGULATOR_DACApplyLimits(float Value, Int16U Offset, Int16U LimitValue);
 bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 {
 	static float Qi = 0, Qp;
-	static Int16U  FollowingErrorCounter = 0;
+	static Int16U FollowingErrorCounter = 0;
 	Regulator->RegulatorError = Regulator->CurrentTable[Regulator->PulseCounter] - Regulator->MeasuredCurrent;
 
 	if(fabsf(Regulator->RegulatorError / Regulator->CurrentTarget * 100) < Regulator->RegulatorAlowedError)
@@ -44,12 +44,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter]
 			+ (Regulator->DisableRegulator ? 0 : (Qp + Qi));
 
-	// Выбор источника данных для записи в ЦАП
-	float ValueToDAC;
-	if(Regulator->DebugMode)
-		ValueToDAC = Regulator->CurrentTable[Regulator->PulseCounter];
-	else
-		ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput, Regulator->CurrentRange);
+	float ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput, Regulator->CurrentRange);
 
 	// Проверка границ диапазона ЦАП
 	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACOffset, Regulator->DACLimitValue);
@@ -65,7 +60,6 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	if(Regulator->PulseCounter >= Regulator->PulseCounterMax || DataTable[REG_PROBLEM] == PROBLEM_FOLLOWING_ERROR)
 	{
 		Regulator->RegulatorError = 0;
-		Regulator->DebugMode = false;
 		Regulator->PulseCounter = 0;
 		Qi = 0;
 		FollowingErrorCounter = 0;
@@ -141,7 +135,6 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 		Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + i];
 	}
 
-	Regulator->DebugMode = false;
 	Regulator->DACOffset = DataTable[REG_DAC_OFFSET];
 	Regulator->DACLimitValue = (DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? \
 			DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
