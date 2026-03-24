@@ -8,7 +8,7 @@
 #define ACT_CLR_WARNING					4	// Очистка всех warning
 
 #define ACT_DBG_POWER_SUPPLY_CTRL		50	// Проверка работы SCRelayBoard
-#define ACT_DBG_PULSE					51	// Формирование управляющего импульса на затворах транзисторов
+//
 #define ACT_DBG_SET_CURRENT_RANGE		52	// Установка диапазона по току (0, 1)
 #define ACT_DBG_FAN_CTRL				53	// Проверка работы вентилятора
 #define ACT_DBG_IND_CTRL				54	// Проверка работы внешнего индикатора

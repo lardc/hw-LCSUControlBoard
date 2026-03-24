@@ -21,15 +21,6 @@ bool DIAG_HandleDiagnosticAction(uint16_t ActionID, uint16_t *pUserError)
 			}
 			break;
 
-		case ACT_DBG_PULSE:
-			{
-				if(CONTROL_State == DS_None)
-					DBGACT_PulseProcess(DataTable[REG_DBG]);
-				else
-					*pUserError = ERR_OPERATION_BLOCKED;
-			}
-			break;
-
 		case ACT_DBG_SET_CURRENT_RANGE:
 			{
 				if(CONTROL_State == DS_None)
