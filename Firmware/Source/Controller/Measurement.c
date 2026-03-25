@@ -30,7 +30,7 @@ float MEASURE_SingleSampleBatteryVoltage()
 
 void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator)
 {
-	Regulator->MeasuredCurrent = CU_ADCtoI(MEASURE_DMAExtractCurrent(), Regulator->CurrentRange);
+	Regulator->MeasuredCurrent = CU_ADCtoI(MEASURE_DMAExtractCurrent());
 	Regulator->MeasuredBatteryVoltage = CU_ADCtoV(MEASURE_DMAExtractVolatge());
 }
 //-----------------------------------------------

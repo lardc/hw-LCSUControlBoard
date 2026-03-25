@@ -441,7 +441,7 @@ void CONTROL_SineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
 
 	float CorrectionTarget;
-	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget, Regulator->CurrentRange);
+	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget);
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
@@ -458,7 +458,7 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
 	Int16U SinePulsePoints = SINE_PULSE_DURATION / TIMER15_uS;
 	Regulator->PulseCounterMax = PULSE_BUFFER_SIZE;
 	float CorrectionTarget;
-	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget, Regulator->CurrentRange);
+	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget);
 
 	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
 	{
@@ -488,7 +488,7 @@ void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
 {
 	float dI = 0, Setpoint = 0, SetpointCorrect = 0, CorrectionTarget=0;
 	Int16U EdgeIndex = 0;
-	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget, Regulator->CurrentRange);
+	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget);
 	Regulator->PulseCounterMax = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
 	Regulator->PlateIndex = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
 	dI = DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS;

@@ -65,7 +65,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 			+ (Regulator->DisableRegulator ? 0 : (Qp + Qi));
 
 	// Пересчёт в ЦАП
-	float ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput, Regulator->CurrentRange);
+	float ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput);
 	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACLimitValue);
 	LL_WriteDAC(Regulator->DACSetpoint);
 

@@ -19,27 +19,27 @@ typedef struct __ConvertParams
 
 // Variables
 ConvertParams AdcToVoltageParams;
-ConvertParams AdcToCurrentParams[CURRENT_RANGES];
-ConvertParams CurrentToDacParams[CURRENT_RANGES];
+ConvertParams AdcToCurrentParams;
+ConvertParams CurrentToDacParams;
 
 // Functions prototypes
 float CU_ADCtoX(float Data, ConvertParams* Coefficients);
 
 // Functions
-//
-float CU_ItoDAC(float Current, Int16U CurrentRange)
+float CU_ItoDAC(float Current)
 {
 	float K, B;
 
-	K = CurrentToDacParams[CurrentRange].K;
-	B = CurrentToDacParams[CurrentRange].B;
+	K = CurrentToDacParams.K;
+	B = CurrentToDacParams.B;
 
 	return Current * K + B;
 }
 //-----------------------------
-float CU_ItoIcorrect(float Current, Int16U CurrentRange)
+
+float CU_ItoIcorrect(float Current)
 {
-	return Current * Current * CurrentToDacParams[CurrentRange].P2 + Current * CurrentToDacParams[CurrentRange].P1 + CurrentToDacParams[CurrentRange].P0;
+	return Current * Current * CurrentToDacParams.P2 + Current * CurrentToDacParams.P1 + CurrentToDacParams.P0;
 }
 //-----------------------------
 
@@ -55,7 +55,7 @@ float CU_ADCtoX(float Data, ConvertParams* Coefficients)
 		case PCB_VERSION_11:
 			{
 				float Uref;
-				Uref = DataTable[REG_REF_VOLTAGE_VARIABLE] == 0 ? ADC_REF_VOLTAGE_PCB11 : DataTable[REG_REF_VOLTAGE_VARIABLE];
+				Uref = (DataTable[REG_REF_VOLTAGE_VARIABLE] == 0) ? ADC_REF_VOLTAGE_PCB11 : DataTable[REG_REF_VOLTAGE_VARIABLE];
 				Uadc = Data * Uref / ADC_RESOLUTION;
 				return (Uadc * Coefficients->K + Coefficients->B);
 			}
@@ -67,20 +67,20 @@ float CU_ADCtoX(float Data, ConvertParams* Coefficients)
 }
 //-----------------------------
 
-float CU_ADCtoI(float Data, Int16U CurrentRange)
+float CU_ADCtoI(float Data)
 {
 	float Uadc, Current;
 
-	Uadc = CU_ADCtoX(Data, &AdcToCurrentParams[CurrentRange]);
+	Uadc = CU_ADCtoX(Data, &AdcToCurrentParams);
 	if (DataTable[REG_PCB_VERSION] == PCB_VERSION_10)
 	{
-		Current = Uadc / AdcToCurrentParams[CurrentRange].Kamp / DataTable[REG_SHUNT_RESISTANCE] * 1000;
+		Current = Uadc / AdcToCurrentParams.Kamp / DataTable[REG_SHUNT_RESISTANCE] * 1000;
 	}
 	else
 	{
 		Current = Uadc / DataTable[REG_SHUNT_RESISTANCE] * 1000;
 	}
-	return (Current * Current * AdcToCurrentParams[CurrentRange].P2 + Current * AdcToCurrentParams[CurrentRange].P1 + AdcToCurrentParams[CurrentRange].P0);
+	return (Current * Current * AdcToCurrentParams.P2 + Current * AdcToCurrentParams.P1 + AdcToCurrentParams.P0);
 }
 //-----------------------------
 
@@ -97,55 +97,52 @@ void CU_LoadConvertParams()
 	AdcToVoltageParams.B = DataTable[REG_ADC_VOLTAGE_B];
 
 	// Параметры преобразования значения АЦП в ток и тока в ЦАП
-	for(int i = 0; i < CURRENT_RANGES; i++)
+	switch(CONTROL_GetCurrentRange())
 	{
-		switch(i)
-		{
-			case CURRENT_RANGE_0:
-				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE0_1_P2];
-				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE0_1_P1];
-				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE0_1_P0];
-				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE0_1_K];
-				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE0_1_B];
-				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE0];
+		case CURRENT_RANGE_0:
+			AdcToCurrentParams.P2 = DataTable[REG_ADC_I_RANGE0_1_P2];
+			AdcToCurrentParams.P1 = DataTable[REG_ADC_I_RANGE0_1_P1];
+			AdcToCurrentParams.P0 = DataTable[REG_ADC_I_RANGE0_1_P0];
+			AdcToCurrentParams.K = DataTable[REG_ADC_I_RANGE0_1_K];
+			AdcToCurrentParams.B = DataTable[REG_ADC_I_RANGE0_1_B];
+			AdcToCurrentParams.Kamp = DataTable[REG_K_AMP_RANGE0];
 
-				CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE0_P2];
-				CurrentToDacParams[i].P1 = DataTable[REG_DAC_I_RANGE0_P1];
-				CurrentToDacParams[i].P0 = DataTable[REG_DAC_I_RANGE0_P0];
-				CurrentToDacParams[i].K = DataTable[REG_DAC_I_RANGE0_K];
-				CurrentToDacParams[i].B = DataTable[REG_DAC_I_RANGE0_B];
-				break;
+			CurrentToDacParams.P2 = DataTable[REG_DAC_I_RANGE0_P2];
+			CurrentToDacParams.P1 = DataTable[REG_DAC_I_RANGE0_P1];
+			CurrentToDacParams.P0 = DataTable[REG_DAC_I_RANGE0_P0];
+			CurrentToDacParams.K = DataTable[REG_DAC_I_RANGE0_K];
+			CurrentToDacParams.B = DataTable[REG_DAC_I_RANGE0_B];
+			break;
 
-			case CURRENT_RANGE_1:
-				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE1_P2];
-				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE1_P1];
-				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE1_P0];
-				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE1_K];
-				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE1_B];
-				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE1];
+		case CURRENT_RANGE_1:
+			AdcToCurrentParams.P2 = DataTable[REG_ADC_I_RANGE1_P2];
+			AdcToCurrentParams.P1 = DataTable[REG_ADC_I_RANGE1_P1];
+			AdcToCurrentParams.P0 = DataTable[REG_ADC_I_RANGE1_P0];
+			AdcToCurrentParams.K = DataTable[REG_ADC_I_RANGE1_K];
+			AdcToCurrentParams.B = DataTable[REG_ADC_I_RANGE1_B];
+			AdcToCurrentParams.Kamp = DataTable[REG_K_AMP_RANGE1];
 
-				CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE1_P2];
-				CurrentToDacParams[i].P1 = DataTable[REG_DAC_I_RANGE1_P1];
-				CurrentToDacParams[i].P0 = DataTable[REG_DAC_I_RANGE1_P0];
-				CurrentToDacParams[i].K = DataTable[REG_DAC_I_RANGE1_K];
-				CurrentToDacParams[i].B = DataTable[REG_DAC_I_RANGE1_B];
-				break;
+			CurrentToDacParams.P2 = DataTable[REG_DAC_I_RANGE1_P2];
+			CurrentToDacParams.P1 = DataTable[REG_DAC_I_RANGE1_P1];
+			CurrentToDacParams.P0 = DataTable[REG_DAC_I_RANGE1_P0];
+			CurrentToDacParams.K = DataTable[REG_DAC_I_RANGE1_K];
+			CurrentToDacParams.B = DataTable[REG_DAC_I_RANGE1_B];
+			break;
 
-			case CURRENT_RANGE_2:
-				AdcToCurrentParams[i].P2 = DataTable[REG_ADC_I_RANGE1_P2];
-				AdcToCurrentParams[i].P1 = DataTable[REG_ADC_I_RANGE1_P1];
-				AdcToCurrentParams[i].P0 = DataTable[REG_ADC_I_RANGE1_P0];
-				AdcToCurrentParams[i].K = DataTable[REG_ADC_I_RANGE1_K];
-				AdcToCurrentParams[i].B = DataTable[REG_ADC_I_RANGE1_B];
-				AdcToCurrentParams[i].Kamp = DataTable[REG_K_AMP_RANGE1];
+		case CURRENT_RANGE_2:
+			AdcToCurrentParams.P2 = DataTable[REG_ADC_I_RANGE1_P2];
+			AdcToCurrentParams.P1 = DataTable[REG_ADC_I_RANGE1_P1];
+			AdcToCurrentParams.P0 = DataTable[REG_ADC_I_RANGE1_P0];
+			AdcToCurrentParams.K = DataTable[REG_ADC_I_RANGE1_K];
+			AdcToCurrentParams.B = DataTable[REG_ADC_I_RANGE1_B];
+			AdcToCurrentParams.Kamp = DataTable[REG_K_AMP_RANGE1];
 
-				CurrentToDacParams[i].P2 = DataTable[REG_DAC_I_RANGE2_P2];
-				CurrentToDacParams[i].P1 = DataTable[REG_DAC_I_RANGE2_P1];
-				CurrentToDacParams[i].P0 = DataTable[REG_DAC_I_RANGE2_P0];
-				CurrentToDacParams[i].K = DataTable[REG_DAC_I_RANGE2_K];
-				CurrentToDacParams[i].B = DataTable[REG_DAC_I_RANGE2_B];
-				break;
-		}
+			CurrentToDacParams.P2 = DataTable[REG_DAC_I_RANGE2_P2];
+			CurrentToDacParams.P1 = DataTable[REG_DAC_I_RANGE2_P1];
+			CurrentToDacParams.P0 = DataTable[REG_DAC_I_RANGE2_P0];
+			CurrentToDacParams.K = DataTable[REG_DAC_I_RANGE2_K];
+			CurrentToDacParams.B = DataTable[REG_DAC_I_RANGE2_B];
+			break;
 	}
 }
 //-----------------------------
