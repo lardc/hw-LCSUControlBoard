@@ -20,7 +20,6 @@
 #include "JSONDescription.h"
 #include "stdlib.h"
 
-
 // Variables
 //
 volatile DeviceState CONTROL_State = DS_None;
@@ -43,10 +42,8 @@ volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 volatile float  CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 //
 float CONTROL_CurrentTarget;
-//
-volatile RegulatorParamsStruct RegulatorParams;
 
-/// Forward functions
+// Forward functions
 //
 static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError);
 void CONTROL_SwitchToFault(Int16U Reason);
@@ -54,14 +51,10 @@ void CONTROL_UpdateWatchDog();
 void CONTROL_ResetToDefaultState();
 void CONTROL_LogicProcess();
 void CONTROL_ResetOutputRegisters();
-bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
 void CONTROL_SwitchCurrentRangeRelay();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
-void CONTROL_GetMaxCurrent();
-int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator);
-int GetAveragingIndexForTrapeze(volatile RegulatorParamsStruct* Regulator);
 
 // Functions
 //
@@ -290,102 +283,13 @@ void CONTROL_HighPriorityProcess()
 {
 	if(CONTROL_SubState == SS_Pulse)
 	{
-		MEASURE_SampleParams(&RegulatorParams);
-
-		if(CONTROL_RegulatorCycle(&RegulatorParams))
+		if(REGULATOR_Process())
 		{
 			CONTROL_StopProcess();
 			CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
-			CONTROL_GetMaxCurrent();
 			DataTable[REG_OP_RESULT] = OPRESULT_OK;
 		}
 	}
-}
-//-----------------------------------------------
-
-int GetAveragingIndexForTrapeze(volatile RegulatorParamsStruct* Regulator)
-{
-	int MaxDACIndex = 0, EndTrapeze = 0;
-	int FrontRiseTicks = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
-	int Indent = 10; // отступ от конца трапеции в тактах регулятора
-	int PlateauDurationTicks = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
-	EndTrapeze = PlateauDurationTicks - FrontRiseTicks;
-
-	MaxDACIndex = EndTrapeze - Indent;
-
-	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
-	return MaxDACIndex;
-}
-//-----------------------------------------------
-
-int GetAveragingIndexForShape(volatile RegulatorParamsStruct* Regulator)
-{
-	int MaxDACIndex = 0;
-	int PlateauDurationTicks = 0;
-
-	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
-	{
-		case SINE_SHAPE:
-			PlateauDurationTicks = SINE_PULSE_DURATION / TIMER15_uS;
-			MaxDACIndex = PlateauDurationTicks/2;
-			break;
-
-		case MOD_SINE_SHAPE:
-			PlateauDurationTicks = SINE_PULSE_DURATION / TIMER15_uS;
-			MaxDACIndex = PlateauDurationTicks/2;
-			break;
-
-		case TRAPEZE_SHAPE:
-			MaxDACIndex = GetAveragingIndexForTrapeze(&RegulatorParams);
-			break;
-		}
-
-	DataTable[REG_RESULT_MAX_DAC] = CONTROL_DACRawData[MaxDACIndex];
-	return MaxDACIndex;
-}
-//-----------------------------------------------
-
-void CONTROL_GetMaxCurrent()
-{
-    float MaxCurrent = 0;
-    int MaxDACIndex = GetAveragingIndexForShape(&RegulatorParams);
-    float CurrentAveragingWindow[SIZE_INDEX];
-    float CurrentWindowTrimmed[SIZE_WINDOW];
-    Int16U CurrentCounter = 0, SearchZone = 5;
-    int i = 0, PointsCounter = 0, Counter = 0;
-
-    for(i = (MaxDACIndex > SearchZone) ? (MaxDACIndex - SearchZone) : 0; i < (MaxDACIndex + SearchZone) && i < VALUES_x_SIZE; i++)
-    {
-    	CurrentAveragingWindow[PointsCounter] = CONTROL_ValuesCurrent[i];
-        PointsCounter++;
-    }
-
-    qsort(CurrentAveragingWindow, SIZE_INDEX, sizeof(*CurrentAveragingWindow), MEASURE_SortCondition);
-
-    for(i = 2; i < PointsCounter - 2; i++)
-    {
-    	CurrentWindowTrimmed[Counter] = CurrentAveragingWindow[i];
-    	Counter++;
-    }
-
-    for(i = 0; i < Counter; i++)
-    {
-        MaxCurrent += CurrentWindowTrimmed[i];
-        CurrentCounter++;
-    }
-
-    if(CurrentCounter != 0)
-    {
-    	MaxCurrent /= CurrentCounter;
-    }
-
-    DataTable[REG_RESULT_CURRENT] = MaxCurrent;
-}
-//-----------------------------------------------
-
-bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator)
-{
-	return REGULATOR_Process(Regulator);
 }
 //-----------------------------------------------
 
@@ -394,10 +298,8 @@ void CONTROL_StartPrepare()
 	CONTROL_CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	CU_LoadConvertParams();
-	REGULATOR_CashVariables(&RegulatorParams);
+	REGULATOR_CashVariables();
 	CONTROL_SwitchCurrentRangeRelay();
-	CONTROL_PulseShapeConfig(&RegulatorParams);
-	CONTROL_CopyCurrentToEP(&RegulatorParams);
 }
 //-----------------------------------------------
 
@@ -427,134 +329,6 @@ void CONTROL_SwitchCurrentRangeRelay()
 }
 //-----------------------------------------------
 
-void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator)
-{
-	switch((Int16U)(DataTable[REG_PULSE_SHAPE]))
-	{
-		case SINE_SHAPE:
-			CONTROL_SineShapeConfig(Regulator);
-			break;
-
-		case MOD_SINE_SHAPE:
-			CONTROL_ModSineShapeConfig(Regulator);
-			break;
-
-		case TRAPEZE_SHAPE:
-			CONTROL_TrapezeShapeConfig(Regulator);
-			break;
-	}
-}
-//-----------------------------------------------
-
-void CONTROL_SineShapeConfig(volatile RegulatorParamsStruct* Regulator)
-{
-	Regulator->PulseCounterMax = SINE_PULSE_DURATION / TIMER15_uS;
-
-	float CorrectionTarget;
-	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget);
-
-	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
-	{
-		Regulator->CurrentTable[i] = Regulator->CurrentTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
-		Regulator->CurrentCorrectionTable[i] = CorrectionTarget * sinf(M_PI * i / (Regulator->PulseCounterMax - 1));
-	}
-}
-//-----------------------------------------------
-
-void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator)
-{
-	float LinearCurrent = LINEAR_FRAGMENT_AMPLITUDE;
-	Int16U LinearStartIndex = 0;
-	Int16U SinePulsePoints = SINE_PULSE_DURATION / TIMER15_uS;
-	Regulator->PulseCounterMax = PULSE_BUFFER_SIZE;
-	float CorrectionTarget;
-	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget);
-
-	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
-	{
-		Regulator->CurrentTable[i] = (Regulator->CurrentTarget - 0.5 * LINEAR_FRAGMENT_AMPLITUDE) * sinf(M_PI * i / (SinePulsePoints - 1)) +
-				LINEAR_FRAGMENT_AMPLITUDE * ((float)i / (SinePulsePoints - 1));
-		Regulator->CurrentCorrectionTable[i] = (CorrectionTarget -0.5 * LINEAR_FRAGMENT_AMPLITUDE) * sinf(M_PI * i / (SinePulsePoints - 1)) +
-				LINEAR_FRAGMENT_AMPLITUDE * ((float)i / (SinePulsePoints - 1));
-		if((i > SinePulsePoints) && (Regulator->CurrentTable[i] < LinearCurrent))
-		{
-			LinearStartIndex = i;
-			break;
-		}
-	}
-
-	// Дописываем плавно спадающий хвост
-	float dI = LinearCurrent / (PULSE_BUFFER_SIZE  - LinearStartIndex);
-	for (int i = LinearStartIndex; i < PULSE_BUFFER_SIZE; ++i)
-	{
-		LinearCurrent -= dI;
-		Regulator->CurrentTable[i] = LinearCurrent;
-		Regulator->CurrentCorrectionTable[i] = LinearCurrent;
-	}
-}
-//-----------------------------------------------
-
-void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator)
-{
-	float dI = 0, Setpoint = 0, SetpointCorrect = 0, CorrectionTarget=0;
-	Int16U EdgeIndex = 0;
-	CorrectionTarget = CU_ItoIcorrect(Regulator->CurrentTarget);
-	Regulator->PulseCounterMax = DataTable[REG_TRAPEZE_DURATION] / TIMER15_uS * 1000;
-	Regulator->PlateIndex = DataTable[REG_REGULATOR_DELAY] + Regulator->CurrentTarget/(DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS);
-	dI = DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS;
-
-	if(dI > DataTable[REG_CURRENT_PULSE_VALUE])
-	dI = DataTable[REG_CURRENT_PULSE_VALUE];
-
-	for(int i = 0; i < Regulator->PulseCounterMax; ++i)
-	{
-		// Запись заданного значения
-		if(Setpoint < Regulator->CurrentTarget && EdgeIndex==0)
-		{
-			Regulator->CurrentTable[i] = Setpoint;
-			Setpoint += dI;
-		}
-		else
-		{
-			if(!EdgeIndex)
-				EdgeIndex = i;
-			if(i < (Regulator->PulseCounterMax - EdgeIndex))
-				Regulator->CurrentTable[i] = Regulator->CurrentTarget;
-			else
-			{
-				Setpoint -= dI;
-				Regulator->CurrentTable[i] = Setpoint;
-			}
-		}
-		// Запись скорректированного значения
-		if(SetpointCorrect < CorrectionTarget && EdgeIndex == 0)
-		{
-			Regulator->CurrentCorrectionTable[i] = SetpointCorrect;
-			SetpointCorrect += dI;
-		}
-		else
-		{
-			if(!EdgeIndex)
-				EdgeIndex = i;
-			if(i < (Regulator->PulseCounterMax - EdgeIndex))
-				Regulator->CurrentCorrectionTable[i] = CorrectionTarget;
-			else
-			{
-				SetpointCorrect -= dI;
-				Regulator->CurrentCorrectionTable[i] = SetpointCorrect;
-			}
-		}
-	}
-}
-//-----------------------------------------------
-
-void CONTROL_CopyCurrentToEP(volatile RegulatorParamsStruct* Regulator)
-{
-	for(int i = 0; i < PULSE_BUFFER_SIZE; ++i)
-		CONTROL_CurentTable[i] = (Int16S)Regulator->CurrentTable[i];
-}
-//-----------------------------------------------
-
 void CONTROL_StopProcess()
 {
 	TIM_Stop(TIM15);
@@ -563,7 +337,7 @@ void CONTROL_StopProcess()
 	LL_OutputAmplifierOffset(true);
 	INITCFG_ADC1SoftTrig(true);
 
-	float AfterPulseCoefficient = RegulatorParams.CurrentTarget
+	float AfterPulseCoefficient = CONTROL_CurrentTarget
 			/ (DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS]);
 	CONTROL_AfterPulsePause = CONTROL_TimeCounter + DataTable[REG_AFTER_PULSE_PAUSE] * AfterPulseCoefficient;
 	CONTROL_BatteryChargeTimeCounter = CONTROL_TimeCounter + DataTable[REG_BATTERY_RECHARGE_TIMEOUT];

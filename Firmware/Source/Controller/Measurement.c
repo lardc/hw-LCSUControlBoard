@@ -5,6 +5,7 @@
 #include "DataTable.h"
 #include "Global.h"
 #include "Interrupts.h"
+#include "ConvertUtils.h"
 
 // Variables
 //
@@ -28,10 +29,10 @@ float MEASURE_SingleSampleBatteryVoltage()
 }
 //-----------------------------------------------
 
-void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator)
+void MEASURE_SampleParams(float *Current, float *BatteryVoltage)
 {
-	Regulator->MeasuredCurrent = CU_ADCtoI(MEASURE_DMAExtractCurrent());
-	Regulator->MeasuredBatteryVoltage = CU_ADCtoV(MEASURE_DMAExtractVolatge());
+	*Current = CU_ADCtoI(MEASURE_DMAExtractCurrent());
+	*BatteryVoltage = CU_ADCtoV(MEASURE_DMAExtractVolatge());
 }
 //-----------------------------------------------
 

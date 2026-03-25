@@ -13,7 +13,7 @@ extern Int16U MEASURE_ADC_BatteryVoltageRaw[ADC_DMA_BUFF_SIZE];
 
 // Functions
 float MEASURE_SingleSampleBatteryVoltage();
-void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator);
+void MEASURE_SampleParams(float *Current, float *BatteryVoltage);
 int MEASURE_SortCondition(const void *A, const void *B);
 
 #endif /* MEASUREMENT_H_ */

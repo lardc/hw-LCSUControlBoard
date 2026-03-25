@@ -6,15 +6,16 @@
 #include "ConvertUtils.h"
 #include "Controller.h"
 #include "Math.h"
+#include "Measurement.h"
 
 // Variabls
 //
 Int16U CurrentRange;
 float CurrentTarget;
-float MeasuredCurrent;
-float MeasuredBatteryVoltage;
-float CurrentTable[PULSE_BUFFER_SIZE];
-float CurrentCorrectionTable[PULSE_BUFFER_SIZE];
+float _MeasuredCurrent;
+float _MeasuredBatteryVoltage;
+float CurrentTable[VALUES_x_SIZE];
+float CurrentCorrectionTable[VALUES_x_SIZE];
 float Kp;
 float Ki;
 float KiTune;
@@ -32,15 +33,19 @@ bool DisableRegulator;
 
 // Functions prototypes
 //
-void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator);
+void REGULATOR_LoggingData();
 Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue);
 
 // Functions
 //
-bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
+bool REGULATOR_Process()
 {
 	static float Qi = 0;
 	static Int16U FollowingErrorCounter = 0;
+
+	// Получение измеренных значений
+	float MeasuredCurrent, MeasuredBatteryVoltage;
+	MEASURE_SampleParams(&MeasuredCurrent, &MeasuredBatteryVoltage);
 
 	// На нулевом тике ошибку не из чего рассчитать
 	// Так же сбрасываются статические переменные
@@ -92,7 +97,7 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, DACLimitValue);
 	LL_WriteDAC(DACSetpoint);
 
-	REGULATOR_LoggingData(Regulator);
+	REGULATOR_LoggingData();
 	PulseCounter++;
 
 	return (PulseCounter >= PulseCounterMax);
@@ -110,7 +115,7 @@ Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue)
 }
 //-----------------------------------------------
 
-void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
+void REGULATOR_LoggingData()
 {
 	static Int16U ScopeLogStep = 0, LocalCounter = 0;
 
@@ -122,10 +127,10 @@ void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
 	{
 		ScopeLogStep = 0;
 
-		CONTROL_ValuesCurrent[LocalCounter] = MeasuredCurrent;
+		CONTROL_ValuesCurrent[LocalCounter] = _MeasuredCurrent;
 		CONTROL_RegulatorErr[LocalCounter] = RegulatorError;
 		CONTROL_RegulatorOutput[LocalCounter] = RegulatorOutput;
-		CONTROL_ValuesBatteryVoltage[LocalCounter] = MeasuredBatteryVoltage;
+		CONTROL_ValuesBatteryVoltage[LocalCounter] = _MeasuredBatteryVoltage;
 		CONTROL_DACRawData[LocalCounter] = DACSetpoint;
 
 		CONTROL_Values_Counter = LocalCounter;
@@ -143,7 +148,7 @@ void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
 }
 //-----------------------------------------------
 
-void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
+void REGULATOR_CashVariables()
 {
 	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	float CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];

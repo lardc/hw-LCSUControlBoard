@@ -42,11 +42,7 @@ extern volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
 extern volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
 extern volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 //
-extern volatile RegulatorParamsStruct RegulatorParams;
-//
 extern volatile float CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
-
-
 
 // Functions
 //
@@ -56,11 +52,6 @@ void CONTROL_SetDeviceState(DeviceState NewState, DeviceSubState NewSubState);
 void CONTROL_DelayMs(uint32_t Delay);
 void CONTROL_HighPriorityProcess();
 void CONTROL_ExternalInterruptProcess();
-void CONTROL_SineShapeConfig(volatile RegulatorParamsStruct* Regulator);
-void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator);
-void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator);
-void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator);
-void CONTROL_CopyCurrentToEP(volatile RegulatorParamsStruct* Regulator);
 Int16U CONTROL_GetCurrentRange();
 void CONTROL_StartProcess();
 void CONTROL_StopProcess();

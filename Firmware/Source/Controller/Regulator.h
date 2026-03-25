@@ -7,40 +7,9 @@
 #include "Global.h"
 #include "SysConfig.h"
 
-// Definitions
-//
-#define PULSE_BUFFER_SIZE	VALUES_x_SIZE
-
-// Structs
-//
-typedef struct __RegulatorParams
-{
-	Int16U CurrentRange;
-	float CurrentTarget;
-	float MeasuredCurrent;
-	float MeasuredBatteryVoltage;
-	float CurrentTable[PULSE_BUFFER_SIZE];
-	float CurrentCorrectionTable[PULSE_BUFFER_SIZE];
-	float Kp[CURRENT_RANGES];
-	float Ki[CURRENT_RANGES];
-	float KiTune[CURRENT_RANGES];
-	float RegulatorError;
-	float RegulatorRelativeError;
-	Int16U PulseCounter;
-	Int16U PulseCounterMax;
-	Int16U PlateIndex;
-	float RegulatorOutput;
-	Int16U DACLimitValue;
-	Int16U DACSetpoint;
-	float RegulatorAlowedError;
-	Int16U FollowingErrorCounterMax;
-	bool DisableRegulator;
-}RegulatorParamsStruct;
-
 // Functions
 //
-bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator);
-void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator);
-//
+bool REGULATOR_Process();
+void REGULATOR_CashVariables();
 
 #endif /* REGULATOR_H_ */
