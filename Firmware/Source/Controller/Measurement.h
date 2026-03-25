@@ -7,10 +7,6 @@
 #include "ConvertUtils.h"
 #include "Regulator.h"
 
-// Definitions
-#define PULSE_ARR_MAX_LENGTH					300				// Количество точек оцифровки
-//
-
 // Variables
 extern Int16U MEASURE_ADC_CurrentRaw[ADC_DMA_BUFF_SIZE];
 extern Int16U MEASURE_ADC_BatteryVoltageRaw[ADC_DMA_BUFF_SIZE];
@@ -18,7 +14,6 @@ extern Int16U MEASURE_ADC_BatteryVoltageRaw[ADC_DMA_BUFF_SIZE];
 // Functions
 float MEASURE_SingleSampleBatteryVoltage();
 void MEASURE_SampleParams(volatile RegulatorParamsStruct* Regulator);
-void MEASURE_SetCurrentRange(volatile RegulatorParamsStruct* Regulator);
-int MEASURE_SortCondition(const void *A, const void *B); // добавила
+int MEASURE_SortCondition(const void *A, const void *B);
 
 #endif /* MEASUREMENT_H_ */

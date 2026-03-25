@@ -58,26 +58,6 @@ float MEASURE_DMAExtractVolatge()
 }
 //-----------------------------------------------
 
-void MEASURE_SetCurrentRange(volatile RegulatorParamsStruct* Regulator)
-{
-	if (Regulator->CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_LOW])
-	{
-		Regulator->CurrentRange = CURRENT_RANGE_0;
-		LL_SetCurrentRange0();
-	}
-	else if (Regulator->CurrentTarget <=  DataTable[REG_CURRENT_THRESHOLD_HIGH])
-	{
-		Regulator->CurrentRange = CURRENT_RANGE_1;
-		LL_SetCurrentRange1();
-	}
-	else
-	{
-		Regulator->CurrentRange = CURRENT_RANGE_2;
-		LL_SetCurrentRange1();
-	}
-}
-//-----------------------------------------------
-
 int MEASURE_SortCondition(const void *A, const void *B) {
     float a = *(float*)A, b = *(float*)B;
     if (a > b) return 1;

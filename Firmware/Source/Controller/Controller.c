@@ -56,6 +56,7 @@ void CONTROL_LogicProcess();
 void CONTROL_ResetOutputRegisters();
 bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
+void CONTROL_SwitchCurrentRangeRelay();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_GetMaxCurrent();
@@ -394,7 +395,7 @@ void CONTROL_StartPrepare()
 
 	CU_LoadConvertParams();
 	REGULATOR_CashVariables(&RegulatorParams);
-	MEASURE_SetCurrentRange(&RegulatorParams);
+	CONTROL_SwitchCurrentRangeRelay();
 	CONTROL_PulseShapeConfig(&RegulatorParams);
 	CONTROL_CopyCurrentToEP(&RegulatorParams);
 }
@@ -414,6 +415,15 @@ Int16U CONTROL_GetCurrentRange()
 	{
 		return CURRENT_RANGE_2;
 	}
+}
+//-----------------------------------------------
+
+void CONTROL_SwitchCurrentRangeRelay()
+{
+	if(CONTROL_GetCurrentRange() == CURRENT_RANGE_0)
+		LL_SetCurrentRange0();
+	else
+		LL_SetCurrentRange1();
 }
 //-----------------------------------------------
 
