@@ -58,13 +58,6 @@ float MEASURE_DMAExtractVolatge()
 }
 //-----------------------------------------------
 
-void MEASURE_DMABufferClear()
-{
-	for(int i = 0; i < ADC_DMA_BUFF_SIZE; i++)
-		MEASURE_ADC_CurrentRaw[i] = 0;
-}
-//-----------------------------------------------
-
 void MEASURE_SetCurrentRange(volatile RegulatorParamsStruct* Regulator)
 {
 	if (Regulator->CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_LOW])

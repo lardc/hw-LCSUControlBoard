@@ -61,6 +61,7 @@ void CONTROL_ModSineShapeConfig(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_TrapezeShapeConfig(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_PulseShapeConfig(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_CopyCurrentToEP(volatile RegulatorParamsStruct* Regulator);
+Int16U CONTROL_GetCurrentRange();
 void CONTROL_StartProcess();
 void CONTROL_StopProcess();
 void CONTROL_HandleFanLogic(bool IsImpulse);

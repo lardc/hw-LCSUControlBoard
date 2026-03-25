@@ -160,7 +160,12 @@ static Boolean DEVPROFILE_ValidateFloat(Int16U Address, float Data, float* LowLi
 		return TRUE;
 	}
 	else if(Address < DATA_TABLE_WP_START)
-		return (Constraint[Address].Min <= Data) && (Data <= Constraint[Address].Max);
+	{
+		float Max =
+				(Address == REG_CURRENT_PULSE_VALUE) ?
+						(DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS]) : Constraint[Address].Max;
+		return (Constraint[Address].Min <= Data) && (Data <= Max);
+	}
 	else
 		return FALSE;
 }

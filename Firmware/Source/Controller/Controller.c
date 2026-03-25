@@ -42,7 +42,7 @@ volatile float  CONTROL_CurentTable[VALUES_x_SIZE];
 volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
 volatile float  CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 //
-float CONTROL_CurrentMaxValue = 0;
+float CONTROL_CurrentTarget;
 //
 volatile RegulatorParamsStruct RegulatorParams;
 
@@ -56,7 +56,6 @@ void CONTROL_LogicProcess();
 void CONTROL_ResetOutputRegisters();
 bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator);
 void CONTROL_StartPrepare();
-void CONTROL_CashVariables();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_GetMaxCurrent();
@@ -391,23 +390,30 @@ bool CONTROL_RegulatorCycle(volatile RegulatorParamsStruct* Regulator)
 
 void CONTROL_StartPrepare()
 {
-	MEASURE_DMABufferClear();
+	CONTROL_CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
+
 	CU_LoadConvertParams();
 	REGULATOR_CashVariables(&RegulatorParams);
-	CONTROL_CashVariables();
 	MEASURE_SetCurrentRange(&RegulatorParams);
 	CONTROL_PulseShapeConfig(&RegulatorParams);
 	CONTROL_CopyCurrentToEP(&RegulatorParams);
 }
 //-----------------------------------------------
 
-void CONTROL_CashVariables()
+Int16U CONTROL_GetCurrentRange()
 {
-	RegulatorParams.CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
-
-	CONTROL_CurrentMaxValue = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
-	if(RegulatorParams.CurrentTarget > CONTROL_CurrentMaxValue)
-		RegulatorParams.CurrentTarget = CONTROL_CurrentMaxValue;
+	if(CONTROL_CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_LOW])
+	{
+		return CURRENT_RANGE_0;
+	}
+	else if(CONTROL_CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_HIGH])
+	{
+		return CURRENT_RANGE_1;
+	}
+	else
+	{
+		return CURRENT_RANGE_2;
+	}
 }
 //-----------------------------------------------
 
@@ -547,7 +553,8 @@ void CONTROL_StopProcess()
 	LL_OutputAmplifierOffset(true);
 	INITCFG_ADC1SoftTrig(true);
 
-	float AfterPulseCoefficient = RegulatorParams.CurrentTarget / CONTROL_CurrentMaxValue;
+	float AfterPulseCoefficient = RegulatorParams.CurrentTarget
+			/ (DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS]);
 	CONTROL_AfterPulsePause = CONTROL_TimeCounter + DataTable[REG_AFTER_PULSE_PAUSE] * AfterPulseCoefficient;
 	CONTROL_BatteryChargeTimeCounter = CONTROL_TimeCounter + DataTable[REG_BATTERY_RECHARGE_TIMEOUT];
 }
