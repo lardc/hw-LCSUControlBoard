@@ -7,6 +7,29 @@
 #include "Controller.h"
 #include "Math.h"
 
+// Variabls
+//
+Int16U CurrentRange;
+float CurrentTarget;
+float MeasuredCurrent;
+float MeasuredBatteryVoltage;
+float CurrentTable[PULSE_BUFFER_SIZE];
+float CurrentCorrectionTable[PULSE_BUFFER_SIZE];
+float Kp;
+float Ki;
+float KiTune;
+float RegulatorError;
+float RegulatorRelativeError;
+Int16U PulseCounter;
+Int16U PulseCounterMax;
+Int16U PlateIndex;
+float RegulatorOutput;
+Int16U DACLimitValue;
+Int16U DACSetpoint;
+float RegulatorAlowedError;
+Int16U FollowingErrorCounterMax;
+bool DisableRegulator;
+
 // Functions prototypes
 //
 void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator);
@@ -21,10 +44,10 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 
 	// На нулевом тике ошибку не из чего рассчитать
 	// Так же сбрасываются статические переменные
-	if(Regulator->PulseCounter == 0)
+	if(PulseCounter == 0)
 	{
-		Regulator->RegulatorError = 0;
-		Regulator->RegulatorRelativeError = 0;
+		RegulatorError = 0;
+		RegulatorRelativeError = 0;
 
 		Qi = 0;
 		FollowingErrorCounter = 0;
@@ -32,19 +55,19 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	else
 	{
 		// Для ошибки берётся предыдущее задание
-		Regulator->RegulatorError = Regulator->CurrentTable[Regulator->PulseCounter - 1] - Regulator->MeasuredCurrent;
-		Regulator->RegulatorRelativeError = Regulator->RegulatorError / Regulator->CurrentTable[Regulator->PulseCounter - 1];
+		RegulatorError = CurrentTable[PulseCounter - 1] - MeasuredCurrent;
+		RegulatorRelativeError = RegulatorError / CurrentTable[PulseCounter - 1];
 	}
 
 	// Проверка Following Error
-	if(!DataTable[REG_FOLLOWING_ERR_MUTE] && !Regulator->DisableRegulator)
+	if(!DataTable[REG_FOLLOWING_ERR_MUTE] && !DisableRegulator)
 	{
-		if(fabsf(Regulator->RegulatorRelativeError * 100) < Regulator->RegulatorAlowedError)
+		if(fabsf(RegulatorRelativeError * 100) < RegulatorAlowedError)
 			FollowingErrorCounter = 0;
 		else
 			FollowingErrorCounter++;
 
-		if(FollowingErrorCounter >= Regulator->FollowingErrorCounterMax)
+		if(FollowingErrorCounter >= FollowingErrorCounterMax)
 		{
 			DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
 			return true;
@@ -52,8 +75,8 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 	}
 
 	// Расчёт корректировок
-	float Qp = Regulator->RegulatorError * Regulator->Kp[Regulator->CurrentRange];
-	Qi += Regulator->RegulatorError * (Regulator->Ki[Regulator->CurrentRange] + Regulator->KiTune[Regulator->CurrentRange]);
+	float Qp = RegulatorError * Kp;
+	Qi += RegulatorError * (Ki + KiTune);
 
 	if(Qi > DataTable[REG_REGULATOR_QI_MAX])
 		Qi = DataTable[REG_REGULATOR_QI_MAX];
@@ -61,18 +84,18 @@ bool REGULATOR_Process(volatile RegulatorParamsStruct* Regulator)
 		Qi = -DataTable[REG_REGULATOR_QI_MAX];
 
 	// Скорректированное значение
-	Regulator->RegulatorOutput = Regulator->CurrentCorrectionTable[Regulator->PulseCounter]
-			+ (Regulator->DisableRegulator ? 0 : (Qp + Qi));
+	RegulatorOutput = CurrentCorrectionTable[PulseCounter]
+			+ (DisableRegulator ? 0 : (Qp + Qi));
 
 	// Пересчёт в ЦАП
-	float ValueToDAC = CU_ItoDAC(Regulator->RegulatorOutput);
-	Regulator->DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, Regulator->DACLimitValue);
-	LL_WriteDAC(Regulator->DACSetpoint);
+	float ValueToDAC = CU_ItoDAC(RegulatorOutput);
+	DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, DACLimitValue);
+	LL_WriteDAC(DACSetpoint);
 
 	REGULATOR_LoggingData(Regulator);
-	Regulator->PulseCounter++;
+	PulseCounter++;
 
-	return (Regulator->PulseCounter >= Regulator->PulseCounterMax);
+	return (PulseCounter >= PulseCounterMax);
 }
 //-----------------------------------------------
 
@@ -99,11 +122,11 @@ void REGULATOR_LoggingData(volatile RegulatorParamsStruct* Regulator)
 	{
 		ScopeLogStep = 0;
 
-		CONTROL_ValuesCurrent[LocalCounter] = Regulator->MeasuredCurrent;
-		CONTROL_RegulatorErr[LocalCounter] = Regulator->RegulatorError;
-		CONTROL_RegulatorOutput[LocalCounter] = Regulator->RegulatorOutput;
-		CONTROL_ValuesBatteryVoltage[LocalCounter] = Regulator->MeasuredBatteryVoltage;
-		CONTROL_DACRawData[LocalCounter] = Regulator->DACSetpoint;
+		CONTROL_ValuesCurrent[LocalCounter] = MeasuredCurrent;
+		CONTROL_RegulatorErr[LocalCounter] = RegulatorError;
+		CONTROL_RegulatorOutput[LocalCounter] = RegulatorOutput;
+		CONTROL_ValuesBatteryVoltage[LocalCounter] = MeasuredBatteryVoltage;
+		CONTROL_DACRawData[LocalCounter] = DACSetpoint;
 
 		CONTROL_Values_Counter = LocalCounter;
 
@@ -126,25 +149,25 @@ void REGULATOR_CashVariables(volatile RegulatorParamsStruct* Regulator)
 	float CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	// Кеширование коэффициентов регулятора
-	for(int i = 0; i < CURRENT_RANGES; i++)
+	Int16U CurrentRange = CONTROL_GetCurrentRange();
+	if(CURRENT_RANGE_2 == CurrentRange)
 	{
-		if(i == 2)
-		{
-			Regulator->Kp[i] = DataTable[REG_REGULATOR_RANGE2_Kp];
-			Regulator->Ki[i] = DataTable[REG_REGULATOR_RANGE2_Ki];
-			Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG2];
-			break;
-		}
-		Regulator->Kp[i] = DataTable[REG_REGULATOR_RANGE0_Kp + i * 2];
-		Regulator->Ki[i] = DataTable[REG_REGULATOR_RANGE0_Ki + i * 2];
-		Regulator->KiTune[i] = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + i];
+		Kp = DataTable[REG_REGULATOR_RANGE2_Kp];
+		Ki = DataTable[REG_REGULATOR_RANGE2_Ki];
+		KiTune = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG2];
+	}
+	else
+	{
+		Kp = DataTable[REG_REGULATOR_RANGE0_Kp + CurrentRange * 2];
+		Ki = DataTable[REG_REGULATOR_RANGE0_Ki + CurrentRange * 2];
+		KiTune = (CurrentMax - CurrentTarget) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + CurrentRange];
 	}
 
-	Regulator->DACLimitValue = (DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? \
-			DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
-	Regulator->PulseCounter = 0;
-	Regulator->RegulatorAlowedError = DataTable[REG_REGULATOR_ALLOWED_ERR];
-	Regulator->FollowingErrorCounterMax = DataTable[REG_FOLLOWING_ERR_CNT];
-	Regulator->DisableRegulator = DataTable[REG_DBG_DISABLE_REGLTR];
+	PulseCounter = 0;
+	DACLimitValue =
+			(DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
+	RegulatorAlowedError = DataTable[REG_REGULATOR_ALLOWED_ERR];
+	FollowingErrorCounterMax = DataTable[REG_FOLLOWING_ERR_CNT];
+	DisableRegulator = DataTable[REG_DBG_DISABLE_REGLTR];
 }
 //-----------------------------------------------
