@@ -31,7 +31,7 @@ typedef enum __PulseState
 // Variabls
 //
 static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter;
-static float RegulatorAlowedError, Kp, Ki, KiTune, PulseAmplitude, TrapezeRate;
+static float RegulatorAlowedError, Kp, Ki, KiTune, QiMax, PulseAmplitude, TrapezeRate;
 static bool DisableRegulator;
 static PulseShape PShape;
 static PulseState PState;
@@ -92,10 +92,10 @@ bool REGULATOR_Process()
 	float Qp = RegulatorError * Kp;
 	Qi += RegulatorError * (Ki + KiTune);
 
-	if(Qi > DataTable[REG_REGULATOR_QI_MAX])
-		Qi = DataTable[REG_REGULATOR_QI_MAX];
-	else if (Qi < -DataTable[REG_REGULATOR_QI_MAX])
-		Qi = -DataTable[REG_REGULATOR_QI_MAX];
+	if(Qi > QiMax)
+		Qi = QiMax;
+	else if (Qi < -QiMax)
+		Qi = -QiMax;
 
 	// Задание
 	float Current = REGULATOR_GetCurrent(PulseCounter);
@@ -247,6 +247,7 @@ void REGULATOR_CashVariables()
 		Ki = DataTable[REG_REGULATOR_RANGE0_Ki + CurrentRange * 2];
 		KiTune = (CurrentMax - PulseAmplitude) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + CurrentRange];
 	}
+	QiMax = DataTable[REG_REGULATOR_QI_MAX];
 
 	PulseCounter = 0;
 	PShape = DataTable[REG_PULSE_SHAPE];
