@@ -128,6 +128,7 @@
 //
 #define REG_DBG							150	// Регистр режима Отладки
 #define REG_DBG_DISABLE_REGLTR			151	// Отключение коэффициентов регулятора
+#define REG_DBG_DISABLE_DAC_OUTPUT		152	// Отключение выхода ЦАП
 
 // Регистры только чтение
 #define REG_DEV_STATE					192	// Регистр состояния

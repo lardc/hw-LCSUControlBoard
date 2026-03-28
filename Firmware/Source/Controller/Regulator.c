@@ -23,9 +23,9 @@ typedef enum __PulseState
 
 // Variabls
 //
-static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter;
+static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter, ScopeStep;
 static float RegulatorAlowedError, Kp, Ki, KiTune, QiMax, PulseAmplitude, TrapezeRate;
-static bool DisableRegulator;
+static bool DisableRegulator, DisableFollowingError, DisableDACOutput;
 static PulseShape PShape;
 static PulseState PState;
 
@@ -67,7 +67,7 @@ bool REGULATOR_Process(pInt16U Problem)
 	}
 
 	// Проверка Following Error
-	if(!DataTable[REG_FOLLOWING_ERR_MUTE] && !DisableRegulator)
+	if(!DisableFollowingError && !DisableRegulator)
 	{
 		if(fabsf(RegulatorRelativeError * 100) < RegulatorAlowedError)
 			FollowingErrorCounter = 0;
@@ -98,7 +98,7 @@ bool REGULATOR_Process(pInt16U Problem)
 	// Пересчёт в ЦАП
 	float ValueToDAC = CU_ItoDAC(RegulatorOutput);
 	Int16U DACSetpoint = REGULATOR_DACApplyLimits(ValueToDAC, DACLimitValue);
-	LL_WriteDAC(DACSetpoint);
+	LL_WriteDAC(DisableDACOutput ? 0 : DACSetpoint);
 
 	REGULATOR_LoggingData(MeasuredCurrent, MeasuredBatteryVoltage, RegulatorOutput,
 			RegulatorError, 0, DACSetpoint);
@@ -195,7 +195,7 @@ void REGULATOR_LoggingData(float MeasuredCurrent, float MeasuredBatteryVoltage, 
 	if (CONTROL_Values_Counter == 0)
 		LocalCounter = 0;
 
-	if (ScopeLogStep++ >= DataTable[REG_SCOPE_STEP])
+	if (ScopeLogStep++ >= ScopeStep)
 	{
 		ScopeLogStep = 0;
 
@@ -223,6 +223,8 @@ void REGULATOR_LoggingData(float MeasuredCurrent, float MeasuredBatteryVoltage, 
 
 void REGULATOR_CashVariables()
 {
+	ScopeStep = DataTable[REG_SCOPE_STEP];
+
 	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	PulseAmplitude = DataTable[REG_CURRENT_PULSE_VALUE];
 
@@ -266,6 +268,9 @@ void REGULATOR_CashVariables()
 			(DAC_MAX_VAL > DataTable[REG_DAC_OUTPUT_LIMIT_VALUE]) ? DataTable[REG_DAC_OUTPUT_LIMIT_VALUE] : DAC_MAX_VAL;
 	RegulatorAlowedError = DataTable[REG_REGULATOR_ALLOWED_ERR];
 	FollowingErrorCounterMax = DataTable[REG_FOLLOWING_ERR_CNT];
+
+	DisableFollowingError = DataTable[REG_FOLLOWING_ERR_MUTE];
 	DisableRegulator = DataTable[REG_DBG_DISABLE_REGLTR];
+	DisableDACOutput = DataTable[REG_DBG_DISABLE_DAC_OUTPUT];
 }
 //-----------------------------------------------
