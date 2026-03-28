@@ -10,13 +10,6 @@
 
 // Definitions
 //
-typedef enum __PulseShape
-{
-	PSH_Sine,
-	PSH_ModSine,
-	PSH_Trapeze
-} PulseShape;
-
 typedef enum __PulseState
 {
 	PST_Sine,
@@ -235,7 +228,7 @@ void REGULATOR_CashVariables()
 
 	// Кеширование коэффициентов регулятора
 	Int16U CurrentRange = CONTROL_GetCurrentRange();
-	if(CURRENT_RANGE_2 == CurrentRange)
+	if(CurrentRange2 == CurrentRange)
 	{
 		Kp = DataTable[REG_REGULATOR_RANGE2_Kp];
 		Ki = DataTable[REG_REGULATOR_RANGE2_Ki];

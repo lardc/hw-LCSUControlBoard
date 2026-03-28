@@ -311,22 +311,22 @@ Int16U CONTROL_GetCurrentRange()
 {
 	if(CONTROL_CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_LOW])
 	{
-		return CURRENT_RANGE_0;
+		return CurrentRange0;
 	}
 	else if(CONTROL_CurrentTarget <= DataTable[REG_CURRENT_THRESHOLD_HIGH])
 	{
-		return CURRENT_RANGE_1;
+		return CurrentRange1;
 	}
 	else
 	{
-		return CURRENT_RANGE_2;
+		return CurrentRange2;
 	}
 }
 //-----------------------------------------------
 
 void CONTROL_SwitchCurrentRangeRelay()
 {
-	if(CONTROL_GetCurrentRange() == CURRENT_RANGE_0)
+	if(CONTROL_GetCurrentRange() == CurrentRange0)
 		LL_SetCurrentRange0();
 	else
 		LL_SetCurrentRange1();

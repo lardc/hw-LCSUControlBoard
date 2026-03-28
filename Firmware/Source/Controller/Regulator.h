@@ -7,6 +7,15 @@
 #include "Global.h"
 #include "SysConfig.h"
 
+// Definitions
+//
+typedef enum __PulseShape
+{
+	PSH_Sine,
+	PSH_ModSine,
+	PSH_Trapeze
+} PulseShape;
+
 // Functions
 //
 bool REGULATOR_Process(pInt16U Problem);

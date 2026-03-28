@@ -19,18 +19,10 @@
 #define LINEAR_FRAGMENT_AMPLITUDE				30.0f	// Амплитуда тока для начала формирования хвоста (А)
 //
 #define DAC_MAX_VAL								0x0FFF	// Максимальное значение ЦАП
-#define	CURRENT_RANGES							3		// Количество диапазонов измерения тока
-#define CURRENT_RANGE_0							0
-#define CURRENT_RANGE_1							1
-#define CURRENT_RANGE_2							2
 //
 #define ADC_REF_VOLTAGE_PCB10					3300.0f	// Опорное напряжение (в мВ)
 #define ADC_REF_VOLTAGE_PCB11					3000.0f	// Опорное напряжение (в мВ)
 #define ADC_RESOLUTION							4095	// Разрешение АЦП
-//
-#define SINE_SHAPE								0
-#define MOD_SINE_SHAPE							1
-#define TRAPEZE_SHAPE							2
 //
 #define SIZE_INDEX								10 // Размер массива для определения максимального тока
 #define SIZE_WINDOW								6 // Размер массива после сортировки и отбрасывания крайних точек

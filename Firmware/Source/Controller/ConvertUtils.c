@@ -15,7 +15,7 @@ typedef struct __ConvertParams
 	float K;
 	float B;
 	float Kamp;
-}ConvertParams;
+} ConvertParams;
 
 // Variables
 ConvertParams AdcToVoltageParams;
@@ -99,7 +99,7 @@ void CU_LoadConvertParams()
 	// Параметры преобразования значения АЦП в ток и тока в ЦАП
 	switch(CONTROL_GetCurrentRange())
 	{
-		case CURRENT_RANGE_0:
+		case CurrentRange0:
 			AdcToCurrentParams.P2 = DataTable[REG_ADC_I_RANGE0_1_P2];
 			AdcToCurrentParams.P1 = DataTable[REG_ADC_I_RANGE0_1_P1];
 			AdcToCurrentParams.P0 = DataTable[REG_ADC_I_RANGE0_1_P0];
@@ -114,7 +114,7 @@ void CU_LoadConvertParams()
 			CurrentToDacParams.B = DataTable[REG_DAC_I_RANGE0_B];
 			break;
 
-		case CURRENT_RANGE_1:
+		case CurrentRange1:
 			AdcToCurrentParams.P2 = DataTable[REG_ADC_I_RANGE1_P2];
 			AdcToCurrentParams.P1 = DataTable[REG_ADC_I_RANGE1_P1];
 			AdcToCurrentParams.P0 = DataTable[REG_ADC_I_RANGE1_P0];
@@ -129,7 +129,7 @@ void CU_LoadConvertParams()
 			CurrentToDacParams.B = DataTable[REG_DAC_I_RANGE1_B];
 			break;
 
-		case CURRENT_RANGE_2:
+		case CurrentRange2:
 			AdcToCurrentParams.P2 = DataTable[REG_ADC_I_RANGE1_P2];
 			AdcToCurrentParams.P1 = DataTable[REG_ADC_I_RANGE1_P1];
 			AdcToCurrentParams.P0 = DataTable[REG_ADC_I_RANGE1_P0];

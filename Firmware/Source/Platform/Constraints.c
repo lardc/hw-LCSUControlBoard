@@ -5,6 +5,9 @@
 // Header
 #include "Constraints.h"
 
+// Includes
+#include "Regulator.h"
+
 // Constants
 //
 const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
@@ -27,7 +30,7 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{CONF_STATE_TIMEOUT_MIN, CONF_STATE_TIMEOUT_MAX, CONF_STATE_TIMEOUT_DEF},				// 16
 		{TRAPEZE_CUR_RATE_MIN, TRAPEZE_CUR_RATE_MAX, TRAPEZE_CUR_RATE_DEF},						// 17
 		{0, 0, 0},																				// 18
-		{SINE_SHAPE, TRAPEZE_SHAPE, SINE_SHAPE},												// 19
+		{PSH_Sine, PSH_Trapeze, PSH_Sine},														// 19
 		{COEF_P2_MIN, COEF_P2_MAX, COEF_P2_DEF},												// 20
 		{COEF_P1_MIN, COEF_P1_MAX, COEF_P1_DEF},												// 21
 		{COEF_P0_MIN, COEF_P0_MAX, COEF_P0_DEF},												// 22
