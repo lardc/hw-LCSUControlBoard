@@ -45,7 +45,7 @@ Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue);
 
 // Functions
 //
-bool REGULATOR_Process()
+bool REGULATOR_Process(pInt16U Problem)
 {
 	static float Qi = 0, PrevCurrent = 0;
 	static Int16U FollowingErrorCounter = 0;
@@ -83,7 +83,7 @@ bool REGULATOR_Process()
 
 		if(FollowingErrorCounter >= FollowingErrorCounterMax)
 		{
-			DataTable[REG_PROBLEM] = PROBLEM_FOLLOWING_ERROR;
+			*Problem = PROBLEM_FOLLOWING_ERROR;
 			return true;
 		}
 	}

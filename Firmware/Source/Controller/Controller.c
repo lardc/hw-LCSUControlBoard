@@ -198,6 +198,8 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			{
 				CONTROL_StopProcess();
 				CONTROL_SetDeviceState(DS_Ready, SS_None);
+				DataTable[REG_PROBLEM] = PROBLEM_MANUAL_STOP;
+				DataTable[REG_OP_RESULT] = OPRESULT_FAIL;
 			}
 			break;
 
@@ -283,11 +285,13 @@ void CONTROL_HighPriorityProcess()
 {
 	if(CONTROL_SubState == SS_Pulse)
 	{
-		if(REGULATOR_Process())
+		Int16U Problem = PROBLEM_NONE;
+		if(REGULATOR_Process(&Problem))
 		{
 			CONTROL_StopProcess();
 			CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
-			DataTable[REG_OP_RESULT] = OPRESULT_OK;
+			DataTable[REG_PROBLEM] = Problem;
+			DataTable[REG_OP_RESULT] = (Problem == PROBLEM_NONE) ? OPRESULT_OK : OPRESULT_FAIL;
 		}
 	}
 }
@@ -356,7 +360,8 @@ void CONTROL_ExternalInterruptProcess()
 	{
 		CONTROL_StopProcess();
 		CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
-		DataTable[REG_OP_RESULT] = OPRESULT_OK;
+		DataTable[REG_PROBLEM] = PROBLEM_SYNC_STOP;
+		DataTable[REG_OP_RESULT] = OPRESULT_FAIL;
 	}
 }
 //------------------------------------------

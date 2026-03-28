@@ -161,6 +161,8 @@
 // Problem
 #define PROBLEM_NONE					0
 #define PROBLEM_FOLLOWING_ERROR			1
+#define PROBLEM_SYNC_STOP				2
+#define PROBLEM_MANUAL_STOP				3
 
 
 //  Warning

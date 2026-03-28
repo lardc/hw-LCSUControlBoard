@@ -9,7 +9,7 @@
 
 // Functions
 //
-bool REGULATOR_Process();
+bool REGULATOR_Process(pInt16U Problem);
 void REGULATOR_CashVariables();
 
 #endif /* REGULATOR_H_ */
