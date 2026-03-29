@@ -58,11 +58,3 @@ float MEASURE_DMAExtractVolatge()
 	return MEASURE_DMAExtractX(&MEASURE_ADC_BatteryVoltageRaw[1], ADC_DMA_BUFF_SIZE - 1);
 }
 //-----------------------------------------------
-
-int MEASURE_SortCondition(const void *A, const void *B) {
-    float a = *(float*)A, b = *(float*)B;
-    if (a > b) return 1;
-    if (a < b) return -1;
-    return 0;
-}
-//-----------------------------------------------

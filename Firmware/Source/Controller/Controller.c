@@ -55,6 +55,8 @@ void CONTROL_StartPrepare();
 void CONTROL_SwitchCurrentRangeRelay();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
+void CONTROL_SetProblem(Int16U Problem);
+void CONTROL_ImpulseAmplitudeValues();
 
 // Functions
 //
@@ -108,6 +110,7 @@ void CONTROL_ResetOutputRegisters()
 	DataTable[REG_OP_RESULT] = OPRESULT_NONE;
 
 	DataTable[REG_RESULT_CURRENT] = 0;
+	DataTable[REG_RESULT_MAX_DAC] = 0;
 
 	DEVPROFILE_ResetScopes(0);
 	DEVPROFILE_ResetEPReadState();
@@ -198,8 +201,7 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 			{
 				CONTROL_StopProcess();
 				CONTROL_SetDeviceState(DS_Ready, SS_None);
-				DataTable[REG_PROBLEM] = PROBLEM_MANUAL_STOP;
-				DataTable[REG_OP_RESULT] = OPRESULT_FAIL;
+				CONTROL_SetProblem(PROBLEM_MANUAL_STOP);
 			}
 			break;
 
@@ -290,9 +292,81 @@ void CONTROL_HighPriorityProcess()
 		{
 			CONTROL_StopProcess();
 			CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
-			DataTable[REG_PROBLEM] = Problem;
-			DataTable[REG_OP_RESULT] = (Problem == PROBLEM_NONE) ? OPRESULT_OK : OPRESULT_FAIL;
+
+			// Завершения регулятора с проблемой
+			if(Problem != PROBLEM_NONE)
+			{
+				CONTROL_SetProblem(Problem);
+				return;
+			}
+
+			CONTROL_ImpulseAmplitudeValues();
 		}
+	}
+}
+//-----------------------------------------------
+
+void CONTROL_SetProblem(Int16U Problem)
+{
+	DataTable[REG_PROBLEM] = Problem;
+	DataTable[REG_OP_RESULT] = OPRESULT_FAIL;
+}
+//-----------------------------------------------
+
+void CONTROL_ImpulseAmplitudeValues()
+{
+	if(DataTable[REG_PULSE_SHAPE] == PSH_Trapeze)
+	{
+		// Проверка наличия индекса завершения полки трапеции
+		if(REGULATOR_FlattopLastIndex < (RESULT_TRAPEZE_POINTS - 1))
+		{
+			CONTROL_SetProblem(PROBLEM_TRAPEZE_INDEX);
+			return;
+		}
+
+		float AvgDAC = 0, AvgCurrent = 0;
+		for(Int16U i = 0; i < RESULT_TRAPEZE_POINTS; i++)
+		{
+			Int16U idx = REGULATOR_FlattopLastIndex - i;
+			AvgDAC += CONTROL_DACRawData[idx];
+			AvgCurrent += CONTROL_ValuesCurrent[idx];
+		}
+
+		DataTable[REG_RESULT_CURRENT] = AvgCurrent / RESULT_TRAPEZE_POINTS;
+		DataTable[REG_RESULT_MAX_DAC] = AvgDAC / RESULT_TRAPEZE_POINTS;
+		DataTable[REG_OP_RESULT] = OPRESULT_OK;
+	}
+	else
+	{
+		// Поиск индекса максимального значения ЦАП
+		Int16U MaxIndex = 0;
+		float MaxDAC = CONTROL_DACRawData[0];
+		for(Int16U i = 1; i < CONTROL_Values_Counter; i++)
+			if(CONTROL_DACRawData[i] > MaxDAC)
+			{
+				MaxIndex = i;
+				MaxDAC = CONTROL_DACRawData[i];
+			}
+
+		// Проверка попадания максимального индекса в допустимые границы
+		if(MaxIndex < RESULT_SIN_EXTRA_POINTS || (MaxIndex + RESULT_SIN_EXTRA_POINTS) >= CONTROL_Values_Counter)
+		{
+			CONTROL_SetProblem(PROBLEM_SIN_INDEX);
+			return;
+		}
+
+		Int16U cnt = 0;
+		float AvgDAC = 0, AvgCurrent = 0;
+		for(Int16U i = MaxIndex - RESULT_SIN_EXTRA_POINTS; i <= MaxIndex + RESULT_SIN_EXTRA_POINTS; i++)
+		{
+			AvgDAC += CONTROL_DACRawData[i];
+			AvgCurrent += CONTROL_ValuesCurrent[i];
+			cnt++;
+		}
+
+		DataTable[REG_RESULT_CURRENT] = AvgCurrent / cnt;
+		DataTable[REG_RESULT_MAX_DAC] = AvgDAC / cnt;
+		DataTable[REG_OP_RESULT] = OPRESULT_OK;
 	}
 }
 //-----------------------------------------------

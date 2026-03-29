@@ -23,6 +23,7 @@ typedef enum __PulseState
 
 // Variabls
 //
+Int16U REGULATOR_FlattopLastIndex;
 static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter, ScopeStep;
 static float RegulatorAlowedError, Kp, Ki, KiTune, QiMax, PulseAmplitude, TrapezeRate;
 static bool DisableRegulator, DisableFollowingError, DisableDACOutput;
@@ -164,7 +165,10 @@ float REGULATOR_GetCurrent(Int16U Tick)
 		case PST_TrapezeFlattop:
 			FlattopCounter++;
 			if(FlattopCounter >= PulseLengthTicks)
+			{
+				REGULATOR_FlattopLastIndex = Tick;
 				PState = PST_TrapezeFall;
+			}
 			break;
 
 		case PST_TrapezeFall:
@@ -244,6 +248,7 @@ void REGULATOR_CashVariables()
 	}
 	QiMax = DataTable[REG_REGULATOR_QI_MAX];
 
+	REGULATOR_FlattopLastIndex = 0;
 	PulseCounter = 0;
 	PShape = DataTable[REG_PULSE_SHAPE];
 	switch(PShape)

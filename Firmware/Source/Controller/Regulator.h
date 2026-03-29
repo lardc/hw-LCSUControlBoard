@@ -16,6 +16,10 @@ typedef enum __PulseShape
 	PSH_Trapeze
 } PulseShape;
 
+// Variables
+//
+extern Int16U REGULATOR_FlattopLastIndex;
+
 // Functions
 //
 bool REGULATOR_Process(pInt16U Problem);
