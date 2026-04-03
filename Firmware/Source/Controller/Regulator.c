@@ -143,7 +143,7 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			if(PState == PST_ModSine && Tick > (PulseLengthTicks / 2) && Current < LINEAR_FRAGMENT_AMPLITUDE)
 			{
 				Current = LINEAR_FRAGMENT_AMPLITUDE;
-				TailDecay = LINEAR_FRAGMENT_AMPLITUDE * (PulseLengthTicks - Tick);
+				TailDecay = LINEAR_FRAGMENT_AMPLITUDE / (PulseLengthTicks - Tick);
 				PState = PST_ModSineTail;
 			}
 			break;
