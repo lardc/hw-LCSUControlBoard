@@ -41,7 +41,7 @@ Int16U REGULATOR_DACApplyLimits(float Value, Int16U LimitValue);
 //
 bool REGULATOR_Process(pInt16U Problem)
 {
-	static float Qi = 0, PrevCurrent = 0;
+	static float Qi = 0, PrevSetpointCurrent = 0;
 	static Int16U FollowingErrorCounter = 0;
 	float RegulatorError, RegulatorRelativeError;
 
@@ -56,15 +56,15 @@ bool REGULATOR_Process(pInt16U Problem)
 		RegulatorError = 0;
 		RegulatorRelativeError = 0;
 
-		PrevCurrent = 0;
+		PrevSetpointCurrent = 0;
 		Qi = 0;
 		FollowingErrorCounter = 0;
 	}
 	else
 	{
 		// Для ошибки берётся предыдущее задание
-		RegulatorError = PrevCurrent - MeasuredCurrent;
-		RegulatorRelativeError = (PrevCurrent == 0) ? 0 : (RegulatorError / PrevCurrent);
+		RegulatorError = PrevSetpointCurrent - MeasuredCurrent;
+		RegulatorRelativeError = (PrevSetpointCurrent == 0) ? 0 : (RegulatorError / PrevSetpointCurrent);
 	}
 
 	// Проверка Following Error
@@ -92,9 +92,9 @@ bool REGULATOR_Process(pInt16U Problem)
 		Qi = -QiMax;
 
 	// Задание
-	float Current = REGULATOR_GetCurrent(PulseCounter);
+	float SetpointCurrent = REGULATOR_GetCurrent(PulseCounter);
 	// Скорректированное значение
-	float RegulatorOutput = Current + (DisableRegulator ? 0 : (Qp + Qi));
+	float RegulatorOutput = SetpointCurrent + (DisableRegulator ? 0 : (Qp + Qi));
 
 	// Пересчёт в ЦАП
 	float ValueToDAC = CU_ItoDAC(RegulatorOutput);
@@ -102,9 +102,9 @@ bool REGULATOR_Process(pInt16U Problem)
 	LL_WriteDAC(DisableDACOutput ? 0 : DACSetpoint);
 
 	REGULATOR_LoggingData(MeasuredCurrent, MeasuredBatteryVoltage, RegulatorOutput,
-			RegulatorError, 0, DACSetpoint);
+			RegulatorError, SetpointCurrent, DACSetpoint);
 	PulseCounter++;
-	PrevCurrent = Current;
+	PrevSetpointCurrent = SetpointCurrent;
 
 	return (PState == PST_Break);
 }
