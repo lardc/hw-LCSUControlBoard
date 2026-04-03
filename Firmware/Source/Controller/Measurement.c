@@ -6,6 +6,7 @@
 #include "Global.h"
 #include "Interrupts.h"
 #include "ConvertUtils.h"
+#include "Delay.h"
 
 // Variables
 //
@@ -21,11 +22,20 @@ float MEASURE_DMAExtractVolatge();
 //
 float MEASURE_SingleSampleBatteryVoltage()
 {
+	Int16U SafeCounter = 0;
+	const Int16U SafeCounterMax = 100;
+
+	// Программный запуск измерения
 	INT_VBatReady = false;
 	ADC_SamplingStart(ADC1);
-	while(!INT_VBatReady){}
+	while(!INT_VBatReady && SafeCounter < SafeCounterMax)
+	{
+		SafeCounter++;
+		DELAY_US(1);
+	}
+	INT_VBatReady = false;
 
-	return CU_ADCtoV(MEASURE_DMAExtractVolatge());
+	return (SafeCounter >= SafeCounterMax) ? 0 : CU_ADCtoV(MEASURE_DMAExtractVolatge());
 }
 //-----------------------------------------------
 

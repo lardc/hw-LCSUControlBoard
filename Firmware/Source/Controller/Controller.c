@@ -275,7 +275,7 @@ void CONTROL_LogicProcess()
 
 bool CONTROL_BatteryVoltageCheck()
 {
-	if(CONTROL_SubState == SS_Pulse)
+	if(CONTROL_State == DS_ConfigReady || CONTROL_SubState == SS_Pulse)
 		return false;
 
 	DataTable[REG_BATTERY_VOLTAGE] = MEASURE_SingleSampleBatteryVoltage();
