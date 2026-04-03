@@ -49,13 +49,13 @@
 #define REG_AFTER_PULSE_PAUSE			9	// Пауза после импульса (мс)
 #define REG_CURRENT_PER_CURBOARD		10	// Максимальная амплитуда тока с одной CurrentBoard (А)
 #define REG_CURBOARDS					11	// Количество CurrentBoard
-//
+// 12
 #define REG_FAN_OPERATE_PERIOD			13	// Период работы вентилятора (сек)
 #define REG_FAN_OPERATE_TIME			14	// Время включенного состояния вентилятора (сек)
-//
+// 15
 #define REG_CONFIG_READY_STATE_TIMEOUT	16	// Таймаут нахождения блока в состоянии DS_ConfigReady
 #define REG_TRAPEZE_CURRENT_RATE		17	// dI/dt фронтов трапецеидального импульса тока (А/мкс)
-
+// 18
 #define REG_PULSE_SHAPE					19	// Форма импульса (0 - полусинус, 1 - мод. полусинус, 2 - трапеция)
 //
 #define REG_DAC_I_RANGE0_P2				20	// Диапазон 0 - Коэффициент тонкой подстройки Р2
@@ -96,15 +96,14 @@
 #define REG_REGULATOR_TF_Ki_RANG0		48	// Диапазон 0 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
 #define REG_REGULATOR_TF_Ki_RANG1		49	// Диапазон 1 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
 //
-#define REG_REGULATOR_DELAY				50	// Задержка включения регулятора (в тактах регулятора)
+// 50
 #define REG_REGULATOR_ALLOWED_ERR		51	// Максимально допустимая ошибка регулятора
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
 //
 #define REG_REF_VOLTAGE_VARIABLE		54	// Переменное значение опорного напряжения на платах версии 1.1
-//
+// 55 - 59
 #define REG_CFG_NODE_ID					60	// Настройка CAN NodeID
-//
 #define REG_LOW_ITM_LIMIT				61	// Минимальное допустимое значение по Itm
 #define REG_HIGH_ITM_LIMIT				62	// Максимальное допустимое значение по Itm
 //
