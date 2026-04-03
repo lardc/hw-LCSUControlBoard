@@ -5,7 +5,7 @@
 #include "LowLevel.h"
 #include "ConvertUtils.h"
 #include "Controller.h"
-#include "math.h"
+#include <math.h>
 #include "Measurement.h"
 
 // Definitions
@@ -189,7 +189,7 @@ float REGULATOR_GetCurrent(Int16U Tick)
 	}
 
 	// Условие окончания формирования
-	if(Current < 0)
+	if(Current < 0 || Tick >= VALUES_x_SIZE)
 	{
 		Current = 0;
 		PState = PST_Break;
