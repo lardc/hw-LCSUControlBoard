@@ -376,7 +376,7 @@ void CONTROL_StartPrepare()
 	CONTROL_CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	CU_LoadConvertParams();
-	REGULATOR_CashVariables();
+	REGULATOR_CacheVariables();
 	CONTROL_SwitchCurrentRangeRelay();
 }
 //-----------------------------------------------

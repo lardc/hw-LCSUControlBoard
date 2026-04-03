@@ -23,6 +23,6 @@ extern Int16U REGULATOR_FlattopLastIndex;
 // Functions
 //
 bool REGULATOR_Process(pInt16U Problem);
-void REGULATOR_CashVariables();
+void REGULATOR_CacheVariables();
 
 #endif /* REGULATOR_H_ */

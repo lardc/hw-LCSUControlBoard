@@ -208,7 +208,7 @@ void REGULATOR_LoggingData(float MeasuredCurrent, float MeasuredBatteryVoltage, 
 }
 //-----------------------------------------------
 
-void REGULATOR_CashVariables()
+void REGULATOR_CacheVariables()
 {
 	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	PulseAmplitude = DataTable[REG_CURRENT_PULSE_VALUE];
