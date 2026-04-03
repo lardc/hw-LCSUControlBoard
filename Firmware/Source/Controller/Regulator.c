@@ -128,9 +128,16 @@ float REGULATOR_GetCurrent(Int16U Tick)
 	static float PrevCurrent = 0, TailDecay = 0;
 	static Int16U FlattopCounter = 0;
 
+	// Условия досрочного завершения расчёта
 	if(Tick == 0)
 	{
 		PrevCurrent = 0;
+		return 0;
+	}
+	else if(Tick >= VALUES_x_SIZE)
+	{
+		PrevCurrent = 0;
+		PState = PST_Break;
 		return 0;
 	}
 
@@ -181,7 +188,8 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			break;
 	}
 
-	if(Current < 0 || Tick >= VALUES_x_SIZE)
+	// Условие окончания формирования
+	if(Current < 0)
 	{
 		Current = 0;
 		PState = PST_Break;
