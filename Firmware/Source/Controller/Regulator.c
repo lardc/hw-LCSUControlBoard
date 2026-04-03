@@ -64,7 +64,7 @@ bool REGULATOR_Process(pInt16U Problem)
 	{
 		// Для ошибки берётся предыдущее задание
 		RegulatorError = PrevCurrent - MeasuredCurrent;
-		RegulatorRelativeError = RegulatorError / PrevCurrent;
+		RegulatorRelativeError = (PrevCurrent == 0) ? 0 : (RegulatorError / PrevCurrent);
 	}
 
 	// Проверка Following Error
