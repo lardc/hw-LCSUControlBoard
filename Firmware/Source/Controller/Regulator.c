@@ -163,6 +163,7 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			break;
 
 		case PST_TrapezeFlattop:
+			Current = PrevCurrent;
 			FlattopCounter++;
 			if(FlattopCounter >= PulseLengthTicks)
 			{
