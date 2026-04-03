@@ -24,7 +24,7 @@ typedef enum __PulseState
 // Variabls
 //
 Int16U REGULATOR_FlattopLastIndex;
-static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter, ScopeStep;
+static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter;
 static float RegulatorAlowedError, Kp, Ki, KiTune, QiMax, PulseAmplitude, TrapezeRate;
 static bool DisableRegulator, DisableFollowingError, DisableDACOutput;
 static PulseShape PShape;
@@ -180,7 +180,7 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			break;
 	}
 
-	if(Current < 0)
+	if(Current < 0 || Tick >= VALUES_x_SIZE)
 	{
 		Current = 0;
 		PState = PST_Break;
@@ -194,42 +194,22 @@ float REGULATOR_GetCurrent(Int16U Tick)
 void REGULATOR_LoggingData(float MeasuredCurrent, float MeasuredBatteryVoltage, float RegulatorOutput,
 		float RegulatorError, float Setpoint, float DACValue)
 {
-	static Int16U ScopeLogStep = 0, LocalCounter = 0;
+	if(CONTROL_Values_Counter >= VALUES_x_SIZE)
+		return;
 
-	// Сброс локального счетчика в начале логгирования
-	if (CONTROL_Values_Counter == 0)
-		LocalCounter = 0;
+	CONTROL_ValuesCurrent[CONTROL_Values_Counter] = MeasuredCurrent;
+	CONTROL_ValuesBatteryVoltage[CONTROL_Values_Counter] = MeasuredBatteryVoltage;
+	CONTROL_RegulatorOutput[CONTROL_Values_Counter] = RegulatorOutput;
+	CONTROL_RegulatorErr[CONTROL_Values_Counter] = RegulatorError;
+	CONTROL_CurentTable[CONTROL_Values_Counter] = Setpoint;
+	CONTROL_DACRawData[CONTROL_Values_Counter] = DACValue;
 
-	if (ScopeLogStep++ >= ScopeStep)
-	{
-		ScopeLogStep = 0;
-
-		CONTROL_ValuesCurrent[LocalCounter] = MeasuredCurrent;
-		CONTROL_ValuesBatteryVoltage[LocalCounter] = MeasuredBatteryVoltage;
-		CONTROL_RegulatorOutput[LocalCounter] = RegulatorOutput;
-		CONTROL_RegulatorErr[LocalCounter] = RegulatorError;
-		CONTROL_CurentTable[LocalCounter] = Setpoint;
-		CONTROL_DACRawData[LocalCounter] = DACValue;
-
-		CONTROL_Values_Counter = LocalCounter;
-
-		++LocalCounter;
-	}
-
-	// Условие обновления глобального счетчика данных
-	if (CONTROL_Values_Counter < VALUES_x_SIZE)
-		CONTROL_Values_Counter = LocalCounter;
-
-	// Сброс локального счетчика
-	if (LocalCounter >= VALUES_x_SIZE)
-		LocalCounter = 0;
+	CONTROL_Values_Counter++;
 }
 //-----------------------------------------------
 
 void REGULATOR_CashVariables()
 {
-	ScopeStep = DataTable[REG_SCOPE_STEP];
-
 	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	PulseAmplitude = DataTable[REG_CURRENT_PULSE_VALUE];
 

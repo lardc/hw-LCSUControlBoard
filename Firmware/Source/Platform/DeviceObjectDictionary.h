@@ -49,7 +49,7 @@
 #define REG_AFTER_PULSE_PAUSE			9	// Пауза после импульса (мс)
 #define REG_CURRENT_PER_CURBOARD		10	// Максимальная амплитуда тока с одной CurrentBoard (А)
 #define REG_CURBOARDS					11	// Количество CurrentBoard
-#define REG_SCOPE_STEP					12	// Шаг сохранения оцифрованных значений
+//
 #define REG_FAN_OPERATE_PERIOD			13	// Период работы вентилятора (сек)
 #define REG_FAN_OPERATE_TIME			14	// Время включенного состояния вентилятора (сек)
 //
