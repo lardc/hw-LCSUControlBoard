@@ -77,6 +77,7 @@ bool REGULATOR_Process(pInt16U Problem)
 
 		if(FollowingErrorCounter >= FollowingErrorCounterMax)
 		{
+			REGULATOR_LoggingData(MeasuredCurrent, MeasuredBatteryVoltage, 0, RegulatorError, 0, 0);
 			*Problem = PROBLEM_FOLLOWING_ERROR;
 			return true;
 		}
