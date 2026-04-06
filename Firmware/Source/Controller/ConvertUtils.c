@@ -28,13 +28,8 @@ float CU_ADCtoX(float Data, ConvertParams* Coefficients);
 // Functions
 float CU_ItoDAC(float Current)
 {
-	float K, B;
-
-	K = CurrentToDacParams.K;
-	B = CurrentToDacParams.B;
-
-	float DACval = Current * K + B;
-	return DACval * DACval * CurrentToDacParams.P2 + DACval * CurrentToDacParams.P1 + CurrentToDacParams.P0;
+	Current = Current * Current * CurrentToDacParams.P2 + Current * CurrentToDacParams.P1 + CurrentToDacParams.P0;
+	return Current * CurrentToDacParams.K + CurrentToDacParams.B;
 }
 //-----------------------------
 
