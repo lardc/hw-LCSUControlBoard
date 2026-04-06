@@ -15,7 +15,6 @@ typedef enum __CurrentRanges
 // Functions
 float CU_ItoDAC(float Current);
 float CU_ADCtoI(float Data);
-float CU_ItoIcorrect(float Current);
 float CU_ADCtoV(float Data);
 void CU_LoadConvertParams();
 

@@ -33,13 +33,8 @@ float CU_ItoDAC(float Current)
 	K = CurrentToDacParams.K;
 	B = CurrentToDacParams.B;
 
-	return Current * K + B;
-}
-//-----------------------------
-
-float CU_ItoIcorrect(float Current)
-{
-	return Current * Current * CurrentToDacParams.P2 + Current * CurrentToDacParams.P1 + CurrentToDacParams.P0;
+	float DACval = Current * K + B;
+	return DACval * DACval * CurrentToDacParams.P2 + DACval * CurrentToDacParams.P1 + CurrentToDacParams.P0;
 }
 //-----------------------------
 
