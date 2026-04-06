@@ -338,12 +338,16 @@ void CONTROL_ImpulseAmplitudeValues()
 	else
 	{
 		float AvgCurrent = 0, AvgDAC = 0;
-		MEASURE_FindMax((float *)CONTROL_ValuesCurrent, (float *)CONTROL_DACRawData, CONTROL_Values_Counter,
-				&AvgDAC, &AvgCurrent);
-
-		DataTable[REG_RESULT_CURRENT] = AvgCurrent;
-		DataTable[REG_RESULT_MAX_DAC] = AvgDAC;
-		DataTable[REG_OP_RESULT] = OPRESULT_OK;
+		bool Result = MEASURE_FindMax((float *)CONTROL_ValuesCurrent, (float *)CONTROL_DACRawData,
+				CONTROL_Values_Counter, &AvgDAC, &AvgCurrent);
+		if(Result)
+		{
+			DataTable[REG_RESULT_CURRENT] = AvgCurrent;
+			DataTable[REG_RESULT_MAX_DAC] = AvgDAC;
+			DataTable[REG_OP_RESULT] = OPRESULT_OK;
+		}
+		else
+			CONTROL_SetProblem(PROBLEM_SIN_CALC_FAIL);
 	}
 }
 //-----------------------------------------------

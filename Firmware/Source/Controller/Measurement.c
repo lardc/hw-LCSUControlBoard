@@ -79,8 +79,11 @@ float MEASURE_DMAExtractVolatge()
 }
 //-----------------------------------------------
 
-void MEASURE_FindMax(float *CurrentInputArray, float *DACInputArray, Int16U Elements, float *AvgDAC, float *AvgCurrent)
+bool MEASURE_FindMax(float *CurrentInputArray, float *DACInputArray, Int16U Elements, float *AvgDAC, float *AvgCurrent)
 {
+	if(Elements < RESULT_SIN_MAX_POINTS)
+		return false;
+
 	// Копирование значений
 	for(Int16U i = 0; i < Elements && i < VALUES_x_SIZE; i++)
 	{
@@ -98,6 +101,9 @@ void MEASURE_FindMax(float *CurrentInputArray, float *DACInputArray, Int16U Elem
 		AvgIndex += FindMax[i].Index;
 	MaxIndex = roundf(AvgIndex / RESULT_SIN_MAX_POINTS);
 
+	if(MaxIndex < RESULT_SIN_EXTRA_POINTS || (MaxIndex + RESULT_SIN_EXTRA_POINTS) >= Elements)
+		return false;
+
 	// Взятие средних значений тока и ЦАП вокруг среднего максимального индекса
 	Int16U cnt = 0;
 	*AvgDAC = 0, *AvgCurrent = 0;
@@ -109,6 +115,8 @@ void MEASURE_FindMax(float *CurrentInputArray, float *DACInputArray, Int16U Elem
 	}
 	*AvgDAC /= cnt;
 	*AvgCurrent /= cnt;
+
+	return true;
 }
 //-----------------------------------------------
 

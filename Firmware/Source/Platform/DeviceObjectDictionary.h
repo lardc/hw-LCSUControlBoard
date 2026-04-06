@@ -159,6 +159,7 @@
 #define PROBLEM_SYNC_STOP				2
 #define PROBLEM_MANUAL_STOP				3
 #define PROBLEM_TRAPEZE_INDEX			4
+#define PROBLEM_SIN_CALC_FAIL			5
 
 //  Warning
 #define WARNING_NONE					0

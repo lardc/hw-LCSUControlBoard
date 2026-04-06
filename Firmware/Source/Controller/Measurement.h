@@ -14,6 +14,6 @@ extern Int16U MEASURE_ADC_BatteryVoltageRaw[ADC_DMA_BUFF_SIZE];
 // Functions
 float MEASURE_SingleSampleBatteryVoltage();
 void MEASURE_SampleParams(float *Current, float *BatteryVoltage);
-void MEASURE_FindMax(float *CurrentInputArray, float *DACInputArray, Int16U Elements, float *AvgDAC, float *AvgCurrent);
+bool MEASURE_FindMax(float *CurrentInputArray, float *DACInputArray, Int16U Elements, float *AvgDAC, float *AvgCurrent);
 
 #endif /* MEASUREMENT_H_ */
