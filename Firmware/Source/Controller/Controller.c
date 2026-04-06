@@ -411,8 +411,7 @@ void CONTROL_ExternalInterruptProcess()
 	{
 		CONTROL_StopProcess();
 		CONTROL_SetDeviceState(DS_InProcess, SS_WaitAfterPulse);
-		DataTable[REG_PROBLEM] = PROBLEM_SYNC_STOP;
-		DataTable[REG_OP_RESULT] = OPRESULT_FAIL;
+		CONTROL_SetProblem(PROBLEM_SYNC_STOP);
 	}
 }
 //------------------------------------------
