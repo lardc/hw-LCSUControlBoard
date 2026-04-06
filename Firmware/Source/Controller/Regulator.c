@@ -25,8 +25,8 @@ typedef enum __PulseState
 //
 Int16U REGULATOR_FlattopLastIndex;
 static Int16U DACLimitValue, FollowingErrorCounterMax, PulseLengthTicks, PulseCounter;
-static float RegulatorAlowedError, Kp, Ki, KiTune, QiMax, PulseAmplitude, TrapezeRate;
-static bool DisableRegulator, DisableFollowingError, DisableDACOutput;
+static float RegulatorAlowedError, Kp, Ki, QiMax, PulseAmplitude, TrapezeRate;
+static bool DisableRegulator, DisableFollowingError, DisableDACOutput, KiMute;
 static PulseShape PShape;
 static PulseState PState;
 
@@ -85,7 +85,7 @@ bool REGULATOR_Process(pInt16U Problem)
 
 	// Расчёт корректировок
 	float Qp = RegulatorError * Kp;
-	Qi += RegulatorError * (Ki + KiTune);
+	Qi += RegulatorError * (KiMute ? 0 : Ki);
 
 	if(Qi > QiMax)
 		Qi = QiMax;
@@ -151,7 +151,7 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			if(PState == PST_ModSine && Tick > (PulseLengthTicks / 2) && Current < LINEAR_FRAGMENT_AMPLITUDE)
 			{
 				Current = LINEAR_FRAGMENT_AMPLITUDE;
-				TailDecay = LINEAR_FRAGMENT_AMPLITUDE / (PulseLengthTicks - Tick);
+				TailDecay = LINEAR_FRAGMENT_AMPLITUDE / (VALUES_x_SIZE - Tick);
 				PState = PST_ModSineTail;
 			}
 			break;
@@ -166,6 +166,7 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			{
 				Current = PulseAmplitude;
 				FlattopCounter = 0;
+				KiMute = false;
 				PState = PST_TrapezeFlattop;
 			}
 			break;
@@ -219,7 +220,6 @@ void REGULATOR_LoggingData(float MeasuredCurrent, float MeasuredBatteryVoltage, 
 
 void REGULATOR_CacheVariables()
 {
-	float CurrentMax = DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS];
 	PulseAmplitude = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	// Кеширование коэффициентов регулятора
@@ -228,19 +228,18 @@ void REGULATOR_CacheVariables()
 	{
 		Kp = DataTable[REG_REGULATOR_RANGE2_Kp];
 		Ki = DataTable[REG_REGULATOR_RANGE2_Ki];
-		KiTune = (CurrentMax - PulseAmplitude) * DataTable[REG_REGULATOR_TF_Ki_RANG2];
 	}
 	else
 	{
 		Kp = DataTable[REG_REGULATOR_RANGE0_Kp + CurrentRange * 2];
 		Ki = DataTable[REG_REGULATOR_RANGE0_Ki + CurrentRange * 2];
-		KiTune = (CurrentMax - PulseAmplitude) * DataTable[REG_REGULATOR_TF_Ki_RANG0 + CurrentRange];
 	}
 	QiMax = DataTable[REG_REGULATOR_QI_MAX];
 
 	REGULATOR_FlattopLastIndex = 0;
 	PulseCounter = 0;
 	PShape = DataTable[REG_PULSE_SHAPE];
+	KiMute = false;
 	switch(PShape)
 	{
 		case PSH_Sine:
@@ -250,6 +249,7 @@ void REGULATOR_CacheVariables()
 			PState = PST_ModSine;
 			break;
 		case PSH_Trapeze:
+			KiMute = true;
 			PState = PST_TrapezeRise;
 			break;
 		default:

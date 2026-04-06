@@ -92,11 +92,7 @@
 #define REG_REGULATOR_RANGE0_Ki			45	// Диапазон 0 - Интегральный коэффициент регулятора
 #define REG_REGULATOR_RANGE1_Kp			46	// Диапазон 1 - Пропорциональный коэффициент регулятора
 #define REG_REGULATOR_RANGE1_Ki			47	// Диапазон 1 - Интегральный коэффициент регулятора
-//
-#define REG_REGULATOR_TF_Ki_RANG0		48	// Диапазон 0 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
-#define REG_REGULATOR_TF_Ki_RANG1		49	// Диапазон 1 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
-//
-// 50
+// 48 - 50
 #define REG_REGULATOR_ALLOWED_ERR		51	// Максимально допустимая ошибка регулятора
 #define REG_FOLLOWING_ERR_CNT			52	// Максимальное значение счетчика FollowingError
 #define REG_FOLLOWING_ERR_MUTE			53	// Выключение слежения за FollowingError
@@ -114,8 +110,7 @@
 #define REG_DAC_I_RANGE2_P0				66	// Диапазон 2 - Коэффициент тонкой подстройки Р0
 #define REG_DAC_I_RANGE2_K				67	// Диапазон 2 - Коэффициент пересчета в значение ЦАП
 #define REG_DAC_I_RANGE2_B				68	// Диапазон 2 - Смещение пересчета в значение ЦАП
-//
-#define REG_REGULATOR_TF_Ki_RANG2		69	// Диапазон 2 - Коэффициент подстройки значения Ki от тока (в ед. (dKi / dI))
+// 69
 #define REG_REGULATOR_RANGE2_Kp			70	// Диапазон 2 - Пропорциональный коэффициент регулятора
 #define REG_REGULATOR_RANGE2_Ki			71	// Диапазон 2 - Интегральный коэффициент регулятора
 //
