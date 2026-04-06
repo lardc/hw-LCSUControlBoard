@@ -59,12 +59,12 @@ float MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize)
 
 float MEASURE_DMAExtractCurrent()
 {
-	return MEASURE_DMAExtractX(&MEASURE_ADC_CurrentRaw[1], ADC_DMA_BUFF_SIZE - 1);
+	return MEASURE_DMAExtractX(MEASURE_ADC_CurrentRaw, ADC_DMA_BUFF_SIZE);
 }
 //-----------------------------------------------
 
 float MEASURE_DMAExtractVolatge()
 {
-	return MEASURE_DMAExtractX(&MEASURE_ADC_BatteryVoltageRaw[1], ADC_DMA_BUFF_SIZE - 1);
+	return MEASURE_DMAExtractX(MEASURE_ADC_BatteryVoltageRaw, ADC_DMA_BUFF_SIZE);
 }
 //-----------------------------------------------
