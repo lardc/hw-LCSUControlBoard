@@ -8,7 +8,7 @@
 // Functions
 //
 void LL_ToggleBoardLED();
-void LL_LSLCurrentBoardLock(bool State);
+void LL_CurrentBoardLock(bool State);
 void LL_PowerSupplyEnable(bool State);
 void LL_SetCurrentRange0();
 void LL_SetCurrentRange1();
