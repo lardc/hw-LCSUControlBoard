@@ -98,8 +98,8 @@
 #define TRAPEZE_CUR_RATE_DEF		3			// A/мкс
 //
 #define TRAPEZE_DURATION_MIN		1			// мс
-#define TRAPEZE_DURATION_MAX		10			// мс
-#define TRAPEZE_DURATION_DEF		10			// мс
+#define TRAPEZE_DURATION_MAX		5			// мс
+#define TRAPEZE_DURATION_DEF		1			// мс
 //
 #define ALLOWED_ERR_MIN				0			// %
 #define ALLOWED_ERR_MAX				15			// %
