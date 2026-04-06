@@ -118,7 +118,7 @@
 											// 1 - версия  1.1
 // Несохраняемые регистры чтения-записи
 #define REG_CURRENT_PULSE_VALUE			128	// Задание амплитуды импульса тока (А)
-#define REG_TRAPEZE_DURATION			129	// Длительность импульса тока (мс)
+#define REG_TRAPEZE_FLATTOP				129	// Длительность полки тока трапеции (мс)
 //
 #define REG_DBG							150	// Регистр режима Отладки
 #define REG_DBG_DISABLE_REGLTR			151	// Отключение коэффициентов регулятора

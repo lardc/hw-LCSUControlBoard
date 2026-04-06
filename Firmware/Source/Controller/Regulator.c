@@ -256,7 +256,7 @@ void REGULATOR_CacheVariables()
 			PState = PST_Break;
 			break;
 	}
-	PulseLengthTicks = ((PShape == PSH_Trapeze) ? (DataTable[REG_TRAPEZE_DURATION] * 1000) : SINE_PULSE_DURATION)
+	PulseLengthTicks = ((PShape == PSH_Trapeze) ? (DataTable[REG_TRAPEZE_FLATTOP] * 1000) : SINE_PULSE_DURATION)
 			/ TIMER15_uS;
 	TrapezeRate = DataTable[REG_TRAPEZE_CURRENT_RATE] * TIMER15_uS;
 	DACLimitValue =
