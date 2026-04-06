@@ -24,6 +24,7 @@
 #define ADC_REF_VOLTAGE_PCB11					3000.0f	// Опорное напряжение (в мВ)
 #define ADC_RESOLUTION							4095	// Разрешение АЦП
 //
+#define RESULT_SIN_MAX_POINTS					10		// Число точек поиска максимума
 #define RESULT_SIN_EXTRA_POINTS					1		// Число добавленных точек для синуса
 #define RESULT_TRAPEZE_POINTS					3		// Число последних точек для трапеции
 

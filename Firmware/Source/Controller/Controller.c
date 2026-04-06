@@ -18,7 +18,6 @@
 #include "Constraints.h"
 #include "InitConfig.h"
 #include "JSONDescription.h"
-#include "stdlib.h"
 
 // Variables
 //
@@ -338,34 +337,12 @@ void CONTROL_ImpulseAmplitudeValues()
 	}
 	else
 	{
-		// Поиск индекса максимального значения ЦАП
-		Int16U MaxIndex = 0;
-		float MaxDAC = CONTROL_DACRawData[0];
-		for(Int16U i = 1; i < CONTROL_Values_Counter; i++)
-			if(CONTROL_DACRawData[i] > MaxDAC)
-			{
-				MaxIndex = i;
-				MaxDAC = CONTROL_DACRawData[i];
-			}
+		float AvgCurrent = 0, AvgDAC = 0;
+		MEASURE_FindMax((float *)CONTROL_ValuesCurrent, (float *)CONTROL_DACRawData, CONTROL_Values_Counter,
+				&AvgDAC, &AvgCurrent);
 
-		// Проверка попадания максимального индекса в допустимые границы
-		if(MaxIndex < RESULT_SIN_EXTRA_POINTS || (MaxIndex + RESULT_SIN_EXTRA_POINTS) >= CONTROL_Values_Counter)
-		{
-			CONTROL_SetProblem(PROBLEM_SIN_INDEX);
-			return;
-		}
-
-		Int16U cnt = 0;
-		float AvgDAC = 0, AvgCurrent = 0;
-		for(Int16U i = MaxIndex - RESULT_SIN_EXTRA_POINTS; i <= MaxIndex + RESULT_SIN_EXTRA_POINTS; i++)
-		{
-			AvgDAC += CONTROL_DACRawData[i];
-			AvgCurrent += CONTROL_ValuesCurrent[i];
-			cnt++;
-		}
-
-		DataTable[REG_RESULT_CURRENT] = AvgCurrent / cnt;
-		DataTable[REG_RESULT_MAX_DAC] = AvgDAC / cnt;
+		DataTable[REG_RESULT_CURRENT] = AvgCurrent;
+		DataTable[REG_RESULT_MAX_DAC] = AvgDAC;
 		DataTable[REG_OP_RESULT] = OPRESULT_OK;
 	}
 }

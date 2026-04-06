@@ -140,7 +140,7 @@
 
 #define REG_RESULT_CURRENT				200	// Достигнутое значение импульса тока (А)
 #define REG_BATTERY_VOLTAGE				201	// Напряжение на батарее конденсаторов (В)
-#define REG_RESULT_MAX_DAC				202	// Максимальное значение выхода ЦАП
+#define REG_RESULT_MAX_DAC				202	// Значение ЦАП в точке измерения тока
 // -----------------------------
 #define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID
 #define REG_FWINFO_MASTER_NID			257	// Device CAN master node ID (if presented)
