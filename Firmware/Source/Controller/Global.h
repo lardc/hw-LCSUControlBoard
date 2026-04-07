@@ -37,5 +37,6 @@
 #define TIME_FAULT_EXT_LED_BLINK				250		// Период мигания внешней индикации в состоянии Fault (в мс)
 #define EXT_LAMP_ON_STATE_TIME					500		// Время зажигания внешнего индикатора во время импульса (в мс)
 #define DAC_UNLOCK_STAB_TIME					100		// Время стабилизации выхода ЦАП после разблокировки (в мкс)
+#define CURRENT_RANGE_CHANGE_DELAY				50		// Задержка на переключение реле диапазона тока (в мс)
 
 #endif //  __GLOBAL_H

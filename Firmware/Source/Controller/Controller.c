@@ -50,8 +50,8 @@ void CONTROL_UpdateWatchDog();
 void CONTROL_ResetToDefaultState();
 void CONTROL_LogicProcess();
 void CONTROL_ResetOutputRegisters();
-void CONTROL_StartPrepare();
-void CONTROL_SwitchCurrentRangeRelay();
+bool CONTROL_StartPrepareCached();
+bool CONTROL_SwitchCurrentRangeRelayCached();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_SetProblem(Int16U Problem);
@@ -226,6 +226,8 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 void CONTROL_LogicProcess()
 {
+	static Int64U PulsePrepareDelayTimer = 0;
+
 	switch(CONTROL_SubState)
 	{
 		case SS_PowerPrepare:
@@ -242,8 +244,18 @@ void CONTROL_LogicProcess()
 			break;
 
 		case SS_PulsePrepare:
-			CONTROL_StartPrepare();
-			CONTROL_SetDeviceState(DS_ConfigReady, SS_None);
+			if(CONTROL_StartPrepareCached())
+				CONTROL_SetDeviceState(DS_ConfigReady, SS_None);
+			else
+			{
+				PulsePrepareDelayTimer = CONTROL_TimeCounter + CURRENT_RANGE_CHANGE_DELAY;
+				CONTROL_SetDeviceState(DS_InProcess, SS_PulsePrepareDelay);
+			}
+			break;
+
+		case SS_PulsePrepareDelay:
+			if(CONTROL_TimeCounter > PulsePrepareDelayTimer)
+				CONTROL_SetDeviceState(DS_ConfigReady, SS_None);
 			break;
 
 		case SS_WaitAfterPulse:
@@ -352,13 +364,13 @@ void CONTROL_ImpulseAmplitudeValues()
 }
 //-----------------------------------------------
 
-void CONTROL_StartPrepare()
+bool CONTROL_StartPrepareCached()
 {
 	CONTROL_CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	CU_LoadConvertParams();
 	REGULATOR_CacheVariables();
-	CONTROL_SwitchCurrentRangeRelay();
+	return CONTROL_SwitchCurrentRangeRelayCached();
 }
 //-----------------------------------------------
 
@@ -379,12 +391,22 @@ Int16U CONTROL_GetCurrentRange()
 }
 //-----------------------------------------------
 
-void CONTROL_SwitchCurrentRangeRelay()
+bool CONTROL_SwitchCurrentRangeRelayCached()
 {
-	if(CONTROL_GetCurrentRange() == CurrentRange0)
-		LL_SetCurrentRange0();
+	static CurrentRanges PrevRange = CurrentRangeUndef;
+	CurrentRanges NewRange = CONTROL_GetCurrentRange();
+
+	if(PrevRange == NewRange)
+		return true;
 	else
-		LL_SetCurrentRange1();
+	{
+		PrevRange = NewRange;
+		if(CurrentRange0 == NewRange)
+			LL_SetCurrentRange0();
+		else
+			LL_SetCurrentRange1();
+		return false;
+	}
 }
 //-----------------------------------------------
 

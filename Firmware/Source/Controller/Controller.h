@@ -21,11 +21,12 @@ typedef enum __DeviceState
 
 typedef enum __DeviceSubState
 {
-	SS_None = 0,
-	SS_PowerPrepare = 1,
-	SS_PulsePrepare = 2,
-	SS_WaitAfterPulse = 3,
-	SS_Pulse = 4
+	SS_None,
+	SS_PowerPrepare,
+	SS_PulsePrepare,
+	SS_PulsePrepareDelay,
+	SS_WaitAfterPulse,
+	SS_Pulse
 } DeviceSubState;
 
 // Variables

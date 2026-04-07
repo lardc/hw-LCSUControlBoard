@@ -9,7 +9,8 @@ typedef enum __CurrentRanges
 {
 	CurrentRange0,
 	CurrentRange1,
-	CurrentRange2
+	CurrentRange2,
+	CurrentRangeUndef
 } CurrentRanges;
 
 // Functions
