@@ -120,7 +120,7 @@ void CONTROL_ResetToDefaultState()
 {
 	CONTROL_ResetOutputRegisters();
 	
-	LL_CurrentBoardLock(false);
+	LL_CurrentBoardLock(true);
 	LL_PowerSupplyEnable(false);
 
 	CONTROL_SetDeviceState(DS_None, SS_None);
@@ -414,7 +414,8 @@ void CONTROL_StopProcess()
 {
 	TIM_Stop(TIM15);
 	LL_WriteDAC(0);
-	LL_CurrentBoardLock(false);
+	DELAY_US(TIMER15_uS);
+	LL_CurrentBoardLock(true);
 	LL_OutputAmplifierOffset(true);
 	INITCFG_ADC1SoftTrig(true);
 
@@ -448,7 +449,7 @@ void CONTROL_StartProcess()
 	CONTROL_HandleExternalLamp(true);
 
 	LL_OutputAmplifierOffset(false);
-	LL_CurrentBoardLock(true);
+	LL_CurrentBoardLock(false);
 	DELAY_US(DAC_UNLOCK_STAB_TIME);
 
 	INITCFG_ADC1SoftTrig(false);
