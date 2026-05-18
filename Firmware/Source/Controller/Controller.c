@@ -458,6 +458,8 @@ void CONTROL_StartProcess()
 	DELAY_US(DAC_UNLOCK_STAB_TIME);
 
 	INITCFG_ADC1SoftTrig(false);
+	INITCFG_ReloadCurrentADC_DMA();
+
 	TIM_Reset(TIM15);
 	TIM_Start(TIM15);
 }

@@ -158,8 +158,22 @@ void INITCFG_ADC1SoftTrig(bool Enable)
 void INITCFG_ADCConfigChannel(ADC_TypeDef* ADCx, Int16U Channel)
 {
 	ADC_SamplingStop(ADCx);
+	ADC_ChannelSeqReset(ADCx);
+	ADC_ChannelSeqLen(ADCx, ADC_DMA_BUFF_SIZE);
 	for (uint8_t i = 1; i <= ADC_DMA_BUFF_SIZE; ++i)
 		ADC_ChannelSet_Sequence(ADCx, Channel, i);
+}
+//------------------------------------------------
+
+void INITCFG_ReloadCurrentADC_DMA()
+{
+	ADC_SamplingStop(ADC3);
+	DMA_ChannelEnable(DMA_ADC_CURRENT_CHANNEL, false);
+	DMA_TransferCompleteReset(DMA2, DMA_ISR_TCIF5);
+	DMAChannelX_DataConfig(DMA_ADC_CURRENT_CHANNEL, (uint32_t)MEASURE_ADC_CurrentRaw,
+			(uint32_t)(&ADC3->DR), ADC_DMA_BUFF_SIZE);
+	DMA_ChannelEnable(DMA_ADC_CURRENT_CHANNEL, true);
+	ADC_SamplingStart(ADC3);
 }
 //------------------------------------------------
 

@@ -48,7 +48,7 @@ void LL_SetCurrentRange0()
 			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, true);
 			break;
 	}
-	ADC_SamplingStart(ADC3);
+	INITCFG_ReloadCurrentADC_DMA();
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
 }
 //-----------------------------
@@ -66,7 +66,7 @@ void LL_SetCurrentRange1()
 			GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, false);
 			break;
 	}
-	ADC_SamplingStart(ADC3);
+	INITCFG_ReloadCurrentADC_DMA();
 	GPIO_SetState(GPIO_CURRENT_RANGE, true);
 }
 //-----------------------------

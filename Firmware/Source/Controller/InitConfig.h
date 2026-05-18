@@ -20,5 +20,6 @@ void INITCFG_ConfigDAC();
 void INITCFG_ConfigDMA();
 void INITCFG_ConfigExtInterrupt();
 void INITCFG_ADCConfigChannel(ADC_TypeDef* ADCx, Int16U Channel);
+void INITCFG_ReloadCurrentADC_DMA();
 
 #endif //__INITCONFIG_H
