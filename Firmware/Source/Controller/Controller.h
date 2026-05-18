@@ -45,6 +45,7 @@ extern volatile float  CONTROL_RegulatorOutput[];
 extern volatile float  CONTROL_CurentTable[];
 extern volatile float  CONTROL_DACRawData[];
 extern volatile float  CONTROL_CurrentADCLastFlattopRawData[];
+extern volatile float  CONTROL_CurrentADCDataCount[];
 //
 extern volatile float CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 
