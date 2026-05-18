@@ -179,9 +179,17 @@ float REGULATOR_GetCurrent(Int16U Tick)
 				REGULATOR_FlattopLastIndex = Tick;
 				PState = PST_TrapezeFall;
 			}
+			// Сохранение сырых значений DMA оцифровки
+			for(int i = 0; i < ADC_DMA_BUFF_SIZE; i++)
+			{
+				CONTROL_CurrentADCLastFlattopRawData[CONTROL_Values_SmallCounter] = MEASURE_ADC_CurrentRaw[i];
+				if(CONTROL_Values_SmallCounter++ >= VALUES_x_SMALL_SIZE)
+					CONTROL_Values_SmallCounter = 0;
+			}
 			break;
 
 		case PST_TrapezeFall:
+			CONTROL_Values_SmallCounter = VALUES_x_SMALL_SIZE;
 			Current = PrevCurrent - TrapezeRate;
 			break;
 

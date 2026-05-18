@@ -31,6 +31,7 @@ volatile Int64U	CONTROL_AfterPulsePause = 0;
 volatile Int64U	CONTROL_BatteryChargeTimeCounter = 0;
 volatile Int64U CONTROL_ConfigStateCounter = 0;
 volatile Int16U CONTROL_Values_Counter = 0;
+volatile Int16U CONTROL_Values_SmallCounter = 0;
 volatile Int16U CONTROL_ExtInfoCounter = 0;
 volatile float 	CONTROL_ValuesCurrent[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
@@ -38,6 +39,7 @@ volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
 volatile float  CONTROL_CurentTable[VALUES_x_SIZE];
 volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
+volatile float  CONTROL_CurrentADCLastFlattopRawData[VALUES_x_SMALL_SIZE];
 volatile float  CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 //
 float CONTROL_CurrentTarget;
@@ -63,18 +65,18 @@ void CONTROL_Init()
 {
 	// Переменные для конфигурации EndPoint
 	Int16U FEPIndexes[FEP_COUNT] = {EP_CURRENT, EP_BATTERY_VOLTAGE, EP_REGULATOR_OUTPUT, EP_REGULATOR_ERR, EP_CUR_TABLE,
-			EP_DAC_RAW_DATA, EP_ExtInfoData};
+			EP_DAC_RAW_DATA, EP_ADC_FLATTOP_LAST_RAW_DATA, EP_ExtInfoData};
 
-	Int16U FEPSized[FEP_COUNT] =
-			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_EXT_INFO_SIZE};
+	Int16U FEPSized[FEP_COUNT] = {VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE,
+			VALUES_x_SIZE, VALUES_x_SMALL_SIZE, VALUES_EXT_INFO_SIZE};
 
 	pInt16U FEPCounters[FEP_COUNT] = {(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
-			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_ExtInfoCounter};
+			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_SmallCounter, (pInt16U)&CONTROL_ExtInfoCounter};
 
 	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)CONTROL_ValuesCurrent, (pFloat32)CONTROL_ValuesBatteryVoltage,
 			(pFloat32)CONTROL_RegulatorOutput, (pFloat32)CONTROL_RegulatorErr, (pFloat32)CONTROL_CurentTable,
-			(pFloat32)CONTROL_DACRawData, (pFloat32)CONTROL_ExtInfoData};
+			(pFloat32)CONTROL_DACRawData, (pFloat32)CONTROL_CurrentADCLastFlattopRawData, (pFloat32)CONTROL_ExtInfoData};
 
 	// Конфигурация сервиса работы DataTable и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};

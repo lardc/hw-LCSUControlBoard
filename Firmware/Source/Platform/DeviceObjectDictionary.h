@@ -178,6 +178,7 @@
 #define EP_REGULATOR_ERR				4	// Ошибка относительно задания (в %)
 #define EP_CUR_TABLE					5
 #define EP_DAC_RAW_DATA					6
+#define EP_ADC_FLATTOP_LAST_RAW_DATA	7
 
 #define EP_ExtInfoData					20	// External information from flash
 
