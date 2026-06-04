@@ -77,7 +77,7 @@ bool REGULATOR_Process(pInt16U Problem)
 
 		if(FollowingErrorCounter >= FollowingErrorCounterMax)
 		{
-			REGULATOR_LoggingData(MeasuredCurrent, MeasuredBatteryVoltage, 0, RegulatorError, 0, 0);
+			REGULATOR_LoggingData(MeasuredCurrent, MeasuredBatteryVoltage, 0, RegulatorRelativeError, 0, 0);
 			*Problem = PROBLEM_FOLLOWING_ERROR;
 			return true;
 		}
@@ -103,7 +103,7 @@ bool REGULATOR_Process(pInt16U Problem)
 	LL_WriteDAC(DisableDACOutput ? 0 : DACSetpoint);
 
 	REGULATOR_LoggingData(MeasuredCurrent, MeasuredBatteryVoltage, RegulatorOutput,
-			RegulatorError, SetpointCurrent, DACSetpoint);
+			RegulatorRelativeError, SetpointCurrent, DACSetpoint);
 	PulseCounter++;
 	PrevSetpointCurrent = SetpointCurrent;
 
@@ -179,9 +179,18 @@ float REGULATOR_GetCurrent(Int16U Tick)
 				REGULATOR_FlattopLastIndex = Tick;
 				PState = PST_TrapezeFall;
 			}
+			// Сохранение сырых значений DMA оцифровки
+			for(int i = 0; i < ADC_DMA_BUFF_SIZE; i++)
+			{
+				CONTROL_CurrentADCLastFlattopRawData[CONTROL_Values_SmallCounter] = MEASURE_ADC_CurrentRaw[i];
+				CONTROL_CurrentADCDataCount[CONTROL_Values_SmallCounter] = i;
+				if(CONTROL_Values_SmallCounter++ >= VALUES_x_SMALL_SIZE)
+					CONTROL_Values_SmallCounter = 0;
+			}
 			break;
 
 		case PST_TrapezeFall:
+			CONTROL_Values_SmallCounter = VALUES_x_SMALL_SIZE;
 			Current = PrevCurrent - TrapezeRate;
 			break;
 
@@ -210,7 +219,7 @@ void REGULATOR_LoggingData(float MeasuredCurrent, float MeasuredBatteryVoltage, 
 	CONTROL_ValuesCurrent[CONTROL_Values_Counter] = MeasuredCurrent;
 	CONTROL_ValuesBatteryVoltage[CONTROL_Values_Counter] = MeasuredBatteryVoltage;
 	CONTROL_RegulatorOutput[CONTROL_Values_Counter] = RegulatorOutput;
-	CONTROL_RegulatorErr[CONTROL_Values_Counter] = RegulatorError;
+	CONTROL_RegulatorErr[CONTROL_Values_Counter] = RegulatorError * 100;
 	CONTROL_CurentTable[CONTROL_Values_Counter] = Setpoint;
 	CONTROL_DACRawData[CONTROL_Values_Counter] = DACValue;
 

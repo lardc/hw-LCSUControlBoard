@@ -21,11 +21,12 @@ typedef enum __DeviceState
 
 typedef enum __DeviceSubState
 {
-	SS_None = 0,
-	SS_PowerPrepare = 1,
-	SS_PulsePrepare = 2,
-	SS_WaitAfterPulse = 3,
-	SS_Pulse = 4
+	SS_None,
+	SS_PowerPrepare,
+	SS_PulsePrepare,
+	SS_PulsePrepareDelay,
+	SS_WaitAfterPulse,
+	SS_Pulse
 } DeviceSubState;
 
 // Variables
@@ -35,6 +36,7 @@ extern volatile Int64U CONTROL_TimeCounter;
 extern Int64U CONTROL_LEDTimeout;
 extern volatile Int16U CONTROL_Values_Counter;
 extern volatile Int16U CONTROL_RegulatorErr_Counter;
+extern volatile Int16U CONTROL_Values_SmallCounter;
 extern volatile Int16U CONTROL_ExtInfoCounter;
 extern volatile float  CONTROL_ValuesCurrent[];
 extern volatile float  CONTROL_RegulatorErr[];
@@ -42,6 +44,8 @@ extern volatile float  CONTROL_ValuesBatteryVoltage[];
 extern volatile float  CONTROL_RegulatorOutput[];
 extern volatile float  CONTROL_CurentTable[];
 extern volatile float  CONTROL_DACRawData[];
+extern volatile float  CONTROL_CurrentADCLastFlattopRawData[];
+extern volatile float  CONTROL_CurrentADCDataCount[];
 //
 extern volatile float CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 

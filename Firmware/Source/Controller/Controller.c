@@ -31,6 +31,7 @@ volatile Int64U	CONTROL_AfterPulsePause = 0;
 volatile Int64U	CONTROL_BatteryChargeTimeCounter = 0;
 volatile Int64U CONTROL_ConfigStateCounter = 0;
 volatile Int16U CONTROL_Values_Counter = 0;
+volatile Int16U CONTROL_Values_SmallCounter = 0;
 volatile Int16U CONTROL_ExtInfoCounter = 0;
 volatile float 	CONTROL_ValuesCurrent[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorErr[VALUES_x_SIZE];
@@ -38,6 +39,8 @@ volatile float  CONTROL_ValuesBatteryVoltage[VALUES_x_SIZE];
 volatile float  CONTROL_RegulatorOutput[VALUES_x_SIZE];
 volatile float  CONTROL_CurentTable[VALUES_x_SIZE];
 volatile float  CONTROL_DACRawData[VALUES_x_SIZE];
+volatile float  CONTROL_CurrentADCLastFlattopRawData[VALUES_x_SMALL_SIZE];
+volatile float  CONTROL_CurrentADCDataCount[VALUES_x_SMALL_SIZE];
 volatile float  CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 //
 float CONTROL_CurrentTarget;
@@ -50,8 +53,8 @@ void CONTROL_UpdateWatchDog();
 void CONTROL_ResetToDefaultState();
 void CONTROL_LogicProcess();
 void CONTROL_ResetOutputRegisters();
-void CONTROL_StartPrepare();
-void CONTROL_SwitchCurrentRangeRelay();
+bool CONTROL_StartPrepareCached();
+bool CONTROL_SwitchCurrentRangeRelayCached();
 bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_SetProblem(Int16U Problem);
@@ -63,18 +66,20 @@ void CONTROL_Init()
 {
 	// Переменные для конфигурации EndPoint
 	Int16U FEPIndexes[FEP_COUNT] = {EP_CURRENT, EP_BATTERY_VOLTAGE, EP_REGULATOR_OUTPUT, EP_REGULATOR_ERR, EP_CUR_TABLE,
-			EP_DAC_RAW_DATA, EP_ExtInfoData};
+			EP_DAC_RAW_DATA, EP_ADC_FLATTOP_LAST_RAW_DATA, EP_ADC_FLATTOP_DATA_COUNT, EP_ExtInfoData};
 
-	Int16U FEPSized[FEP_COUNT] =
-			{VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_EXT_INFO_SIZE};
+	Int16U FEPSized[FEP_COUNT] = {VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE, VALUES_x_SIZE,
+			VALUES_x_SIZE, VALUES_x_SMALL_SIZE, VALUES_x_SMALL_SIZE, VALUES_EXT_INFO_SIZE};
 
 	pInt16U FEPCounters[FEP_COUNT] = {(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
 			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_Counter,
-			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_ExtInfoCounter};
+			(pInt16U)&CONTROL_Values_Counter, (pInt16U)&CONTROL_Values_SmallCounter, (pInt16U)&CONTROL_Values_SmallCounter,
+			(pInt16U)&CONTROL_ExtInfoCounter};
 
 	pFloat32 FEPDatas[FEP_COUNT] = {(pFloat32)CONTROL_ValuesCurrent, (pFloat32)CONTROL_ValuesBatteryVoltage,
 			(pFloat32)CONTROL_RegulatorOutput, (pFloat32)CONTROL_RegulatorErr, (pFloat32)CONTROL_CurentTable,
-			(pFloat32)CONTROL_DACRawData, (pFloat32)CONTROL_ExtInfoData};
+			(pFloat32)CONTROL_DACRawData, (pFloat32)CONTROL_CurrentADCLastFlattopRawData,
+			(pFloat32)CONTROL_CurrentADCDataCount, (pFloat32)CONTROL_ExtInfoData};
 
 	// Конфигурация сервиса работы DataTable и EPROM
 	EPROMServiceConfig EPROMService = {(FUNC_EPROM_WriteValues)&NFLASH_WriteDT, (FUNC_EPROM_ReadValues)&NFLASH_ReadDT};
@@ -120,7 +125,7 @@ void CONTROL_ResetToDefaultState()
 {
 	CONTROL_ResetOutputRegisters();
 	
-	LL_LSLCurrentBoardLock(true);
+	LL_CurrentBoardLock(true);
 	LL_PowerSupplyEnable(false);
 
 	CONTROL_SetDeviceState(DS_None, SS_None);
@@ -226,6 +231,8 @@ static Boolean CONTROL_DispatchAction(Int16U ActionID, pInt16U pUserError)
 
 void CONTROL_LogicProcess()
 {
+	static Int64U PulsePrepareDelayTimer = 0;
+
 	switch(CONTROL_SubState)
 	{
 		case SS_PowerPrepare:
@@ -242,8 +249,18 @@ void CONTROL_LogicProcess()
 			break;
 
 		case SS_PulsePrepare:
-			CONTROL_StartPrepare();
-			CONTROL_SetDeviceState(DS_ConfigReady, SS_None);
+			if(CONTROL_StartPrepareCached())
+				CONTROL_SetDeviceState(DS_ConfigReady, SS_None);
+			else
+			{
+				PulsePrepareDelayTimer = CONTROL_TimeCounter + CURRENT_RANGE_CHANGE_DELAY;
+				CONTROL_SetDeviceState(DS_InProcess, SS_PulsePrepareDelay);
+			}
+			break;
+
+		case SS_PulsePrepareDelay:
+			if(CONTROL_TimeCounter > PulsePrepareDelayTimer)
+				CONTROL_SetDeviceState(DS_ConfigReady, SS_None);
 			break;
 
 		case SS_WaitAfterPulse:
@@ -352,13 +369,13 @@ void CONTROL_ImpulseAmplitudeValues()
 }
 //-----------------------------------------------
 
-void CONTROL_StartPrepare()
+bool CONTROL_StartPrepareCached()
 {
 	CONTROL_CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
 
 	CU_LoadConvertParams();
 	REGULATOR_CacheVariables();
-	CONTROL_SwitchCurrentRangeRelay();
+	return CONTROL_SwitchCurrentRangeRelayCached();
 }
 //-----------------------------------------------
 
@@ -379,12 +396,22 @@ Int16U CONTROL_GetCurrentRange()
 }
 //-----------------------------------------------
 
-void CONTROL_SwitchCurrentRangeRelay()
+bool CONTROL_SwitchCurrentRangeRelayCached()
 {
-	if(CONTROL_GetCurrentRange() == CurrentRange0)
-		LL_SetCurrentRange0();
+	static CurrentRanges PrevRange = CurrentRangeUndef;
+	CurrentRanges NewRange = CONTROL_GetCurrentRange();
+
+	if(PrevRange == NewRange)
+		return true;
 	else
-		LL_SetCurrentRange1();
+	{
+		PrevRange = NewRange;
+		if(CurrentRange0 == NewRange)
+			LL_SetCurrentRange0();
+		else
+			LL_SetCurrentRange1();
+		return false;
+	}
 }
 //-----------------------------------------------
 
@@ -392,7 +419,8 @@ void CONTROL_StopProcess()
 {
 	TIM_Stop(TIM15);
 	LL_WriteDAC(0);
-	LL_LSLCurrentBoardLock(true);
+	DELAY_US(TIMER15_uS);
+	LL_CurrentBoardLock(true);
 	LL_OutputAmplifierOffset(true);
 	INITCFG_ADC1SoftTrig(true);
 
@@ -426,7 +454,8 @@ void CONTROL_StartProcess()
 	CONTROL_HandleExternalLamp(true);
 
 	LL_OutputAmplifierOffset(false);
-	LL_LSLCurrentBoardLock(false);
+	LL_CurrentBoardLock(false);
+	DELAY_US(DAC_UNLOCK_STAB_TIME);
 
 	INITCFG_ADC1SoftTrig(false);
 	TIM_Reset(TIM15);

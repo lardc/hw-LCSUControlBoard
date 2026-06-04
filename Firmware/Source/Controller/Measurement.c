@@ -67,15 +67,21 @@ float MEASURE_DMAExtractX(Int16U* InputArray, Int16U ArraySize)
 }
 //-----------------------------------------------
 
+/*
+ * Первое значение массива пропускается, т.к. в отдельных случаях в нём содержатся
+ * завышенные результаты на протяжении всего формирования импульса.
+ * Перезагрузка DMA при старте измерения не помогает.
+ * https://avocadotest.slack.com/archives/C06KP436TKJ/p1779118495144019?thread_ts=1778071968.228139&cid=C06KP436TKJ
+ */
 float MEASURE_DMAExtractCurrent()
 {
-	return MEASURE_DMAExtractX(MEASURE_ADC_CurrentRaw, ADC_DMA_BUFF_SIZE);
+	return MEASURE_DMAExtractX(&MEASURE_ADC_CurrentRaw[1], ADC_DMA_BUFF_SIZE - 1);
 }
 //-----------------------------------------------
 
 float MEASURE_DMAExtractVolatge()
 {
-	return MEASURE_DMAExtractX(MEASURE_ADC_BatteryVoltageRaw, ADC_DMA_BUFF_SIZE);
+	return MEASURE_DMAExtractX(&MEASURE_ADC_BatteryVoltageRaw[1], ADC_DMA_BUFF_SIZE - 1);
 }
 //-----------------------------------------------
 
