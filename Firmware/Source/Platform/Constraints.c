@@ -20,10 +20,10 @@ const TableItemConstraint Constraint[DATA_TABLE_WP_START] = {
 		{0, INT16U_MAX, 0},																		// 6
 		{NO, YES, YES},																			// 7
 		{NO, YES, YES},																			// 8
-		{AFTER_PULSE_PAUSE_MIN, AFTER_PULSE_PAUSE_MAX, AFTER_PULSE_PAUSE_DEF},					// 9
+		{0, 0, 0},																				// 9
 		{I_PER_CURBOARD_MIN, I_PER_CURBOARD_MAX, I_PER_CURBOARD_DEF},							// 10
 		{CURBOARDS_MIN, CURBOARDS_MAX, CURBOARDS_DEF},											// 11
-		{0, 0, 0},																				// 12
+		{PULSE_PAUSE_AVG_CURR_MIN, PULSE_PAUSE_AVG_CURR_MAX, PULSE_PAUSE_AVG_CURR_DEF},			// 12
 		{FAN_PERIOD_MIN, FAN_PERIOD_MAX, FAN_PERIOD_DEF},										// 13
 		{FAN_TIME_MIN, FAN_TIME_MAX, FAN_TIME_DEF},												// 14
 		{0, 0, 0},																				// 15

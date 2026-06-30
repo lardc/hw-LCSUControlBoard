@@ -43,7 +43,8 @@ volatile float  CONTROL_CurrentADCLastFlattopRawData[VALUES_x_SMALL_SIZE];
 volatile float  CONTROL_CurrentADCDataCount[VALUES_x_SMALL_SIZE];
 volatile float  CONTROL_ExtInfoData[VALUES_EXT_INFO_SIZE];
 //
-float CONTROL_CurrentTarget;
+static float CONTROL_CurrentTarget = 0, CONTROL_SavedCurrentPulseWidth = 0;
+static CurrentRanges CONTROL_SavedCurrentRange = CurrentRangeUndef;
 
 // Forward functions
 //
@@ -59,6 +60,7 @@ bool CONTROL_BatteryVoltageCheck();
 void CONTROL_InitStoragePointers();
 void CONTROL_SetProblem(Int16U Problem);
 void CONTROL_ImpulseAmplitudeValues();
+Int16U CONTROL_CalcPostPulseDelay();
 
 // Functions
 //
@@ -372,6 +374,7 @@ void CONTROL_ImpulseAmplitudeValues()
 bool CONTROL_StartPrepareCached()
 {
 	CONTROL_CurrentTarget = DataTable[REG_CURRENT_PULSE_VALUE];
+	CONTROL_SavedCurrentPulseWidth = DataTable[REG_TRAPEZE_FLATTOP];
 
 	CU_LoadConvertParams();
 	REGULATOR_CacheVariables();
@@ -399,7 +402,7 @@ Int16U CONTROL_GetCurrentRange()
 bool CONTROL_SwitchCurrentRangeRelayCached()
 {
 	static CurrentRanges PrevRange = CurrentRangeUndef;
-	CurrentRanges NewRange = CONTROL_GetCurrentRange();
+	CurrentRanges NewRange = CONTROL_SavedCurrentRange = CONTROL_GetCurrentRange();
 
 	if(PrevRange == NewRange)
 		return true;
@@ -424,10 +427,40 @@ void CONTROL_StopProcess()
 	LL_OutputAmplifierOffset(true);
 	INITCFG_ADC1SoftTrig(true);
 
-	float AfterPulseCoefficient = CONTROL_CurrentTarget
-			/ (DataTable[REG_CURRENT_PER_CURBOARD] * DataTable[REG_CURBOARDS]);
-	CONTROL_AfterPulsePause = CONTROL_TimeCounter + DataTable[REG_AFTER_PULSE_PAUSE] * AfterPulseCoefficient;
+	Int16U PostPulseDelay = CONTROL_CalcPostPulseDelay();
+	DataTable[REG_POST_PULSE_DELAY] = PostPulseDelay;
+
+	CONTROL_AfterPulsePause = CONTROL_TimeCounter + PostPulseDelay;
 	CONTROL_BatteryChargeTimeCounter = CONTROL_TimeCounter + DataTable[REG_BATTERY_RECHARGE_TIMEOUT];
+}
+//------------------------------------------
+
+Int16U CONTROL_CalcPostPulseDelay()
+{
+	// Пауза для
+	const Int16U DefaultPause = 30000;
+
+	if(CONTROL_CurrentTarget == 0 || CONTROL_SavedCurrentPulseWidth == 0
+			|| CONTROL_SavedCurrentRange == CurrentRangeUndef || DataTable[REG_TARGET_AVG_CURRENT] == 0)
+		return DefaultPause;
+
+	// Эмпирически полученная поправка на основе фактического нагрева транзисторов
+	// https://avocadotest.slack.com/archives/C06KP436TKJ/p1778834528802609?thread_ts=1778229993.611749&cid=C06KP436TKJ
+	const float PulseWidthAdjustment = 1.939f;
+
+	// Режимы выполнение теста
+	// 1мс - минимальная длительность импульса
+	// 10мс - максимальная длительность импульса
+
+	// Поправка рассчитывается методом линейной аппроксимации точек в координатах [длительность импульса], [температура]
+	float PauseTune = 1.0f + (PulseWidthAdjustment - 1.0f) / (10.0f - 1.0f) * (10.0f - CONTROL_SavedCurrentPulseWidth);
+
+	// Ток с одной платы
+	float CurrentPerBoard = CONTROL_CurrentTarget
+			/ ((CONTROL_SavedCurrentRange == CurrentRange0) ? 1.0f : DataTable[REG_CURBOARDS]);
+
+	// Рассчитанное значение паузы
+	return CurrentPerBoard * CONTROL_SavedCurrentPulseWidth / DataTable[REG_TARGET_AVG_CURRENT] * PauseTune;
 }
 //------------------------------------------
 

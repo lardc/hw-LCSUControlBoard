@@ -34,9 +34,9 @@
 #define SHUNT_RESISTANCE_MAX		5000		// мкОм
 #define SHUNT_RESISTANCE_DEF		250			// мкОм
 //
-#define AFTER_PULSE_PAUSE_MIN		0			// мс
-#define AFTER_PULSE_PAUSE_MAX		40000		// мс
-#define AFTER_PULSE_PAUSE_DEF		15000		// мс
+#define PULSE_PAUSE_AVG_CURR_MIN	0.1f		// A
+#define PULSE_PAUSE_AVG_CURR_MAX	0.5f		// A
+#define PULSE_PAUSE_AVG_CURR_DEF	0.36f		// A
 //
 #define I_PER_CURBOARD_MIN			50			// A
 #define I_PER_CURBOARD_MAX			1500		// A

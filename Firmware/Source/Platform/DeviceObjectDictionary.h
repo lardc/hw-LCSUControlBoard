@@ -46,10 +46,10 @@
 #define REG_REGULATOR_QI_MAX			6	// Ограничение уровня интегральной составляющей
 #define REG_FAN_CTRL					7	// Включение управления вентилятором
 #define REG_EXT_IND_CTRL				8	// Включение управления внешним индикатором
-#define REG_AFTER_PULSE_PAUSE			9	// Пауза после импульса (мс)
+// 9
 #define REG_CURRENT_PER_CURBOARD		10	// Максимальная амплитуда тока с одной CurrentBoard (А)
 #define REG_CURBOARDS					11	// Количество CurrentBoard
-// 12
+#define REG_TARGET_AVG_CURRENT			12	// Целевое среднее значение тока для расчёта паузы между импульсами (А)
 #define REG_FAN_OPERATE_PERIOD			13	// Период работы вентилятора (сек)
 #define REG_FAN_OPERATE_TIME			14	// Время включенного состояния вентилятора (сек)
 // 15
@@ -136,6 +136,7 @@
 #define REG_RESULT_CURRENT				200	// Достигнутое значение импульса тока (А)
 #define REG_BATTERY_VOLTAGE				201	// Напряжение на батарее конденсаторов (В)
 #define REG_RESULT_MAX_DAC				202	// Значение ЦАП в точке измерения тока
+#define REG_POST_PULSE_DELAY			203	// Рассчитанное значение паузы после импульса (мс)
 // -----------------------------
 #define REG_FWINFO_SLAVE_NID			256	// Device CAN slave node ID
 #define REG_FWINFO_MASTER_NID			257	// Device CAN master node ID (if presented)
