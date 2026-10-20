@@ -52,7 +52,7 @@ void INITCFG_ConfigIO()
 	GPIO_SetState(GPIO_LED, false);
 	GPIO_SetState(GPIO_IND_CTRL, false);
 	GPIO_SetState(GPIO_CURRENT_RANGE, false);
-	GPIO_SetState(GPIO_OUT_LOCK, true);
+	GPIO_SetState(GPIO_OUT_LOCK, false);
 	GPIO_SetState(GPIO_OFFSET_CTRL, true);
 	GPIO_SetState(GPIO_CURRENT_RANGE_SWITCH_PCB11, false);
 

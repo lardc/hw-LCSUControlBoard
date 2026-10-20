@@ -26,8 +26,6 @@ GPIO_PortPinSettingMacro GPIO_OUT_LOCK						= {GPIOB, Pin_6};
 GPIO_PortPinSettingMacro GPIO_CURRENT_RANGE					= {GPIOA, Pin_3};
 GPIO_PortPinSettingMacro GPIO_CURRENT_RANGE_SWITCH_PCB11	= {GPIOB, Pin_0};
 
-
-
 // Определения для входных портов
 GPIO_PortPinSettingMacro GPIO_SYNC							= {GPIOB, Pin_10};
 
