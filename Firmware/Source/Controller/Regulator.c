@@ -59,6 +59,8 @@ bool REGULATOR_Process(pInt16U Problem)
 		PrevSetpointCurrent = 0;
 		Qi = 0;
 		FollowingErrorCounter = 0;
+
+		MeasuredCurrent = 0;
 	}
 	else
 	{
