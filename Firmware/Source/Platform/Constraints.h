@@ -14,7 +14,7 @@
 #define CURRENT_THRESHOLD_MAX_HIGH	1100		// A
 #define CURRENT_THRESHOLD_DEF_HIGH	1100		// A
 //
-#define V_BAT_THRESHOLD_MIN			10			// В
+#define V_BAT_THRESHOLD_MIN			0			// В
 #define V_BAT_THRESHOLD_MAX			50			// В
 #define V_BAT_THRESHOLD_DEF			45			// В
 //
