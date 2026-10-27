@@ -59,8 +59,6 @@ bool REGULATOR_Process(pInt16U Problem)
 		PrevSetpointCurrent = 0;
 		Qi = 0;
 		FollowingErrorCounter = 0;
-
-		MeasuredCurrent = 0;
 	}
 	else
 	{
@@ -186,7 +184,8 @@ float REGULATOR_GetCurrent(Int16U Tick)
 			{
 				CONTROL_CurrentADCLastFlattopRawData[CONTROL_Values_SmallCounter] = MEASURE_ADC_CurrentRaw[i];
 				CONTROL_CurrentADCDataCount[CONTROL_Values_SmallCounter] = i;
-				if(CONTROL_Values_SmallCounter++ >= VALUES_x_SMALL_SIZE)
+				CONTROL_Values_SmallCounter++;
+				if(CONTROL_Values_SmallCounter >= VALUES_x_SMALL_SIZE)
 					CONTROL_Values_SmallCounter = 0;
 			}
 			break;
